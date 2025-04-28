@@ -4,96 +4,96 @@ import java.util.Date;
 
 public class DichVuDTO {
 
-    private int id;
-    private String tenDichVu;
-    private int donViTinh;
-    private String donGia;
-    private String moTa;
-    private Date createdAt;
-    private Date updatedAt;
-    private String status;
+    private int ID;
+    private String Ten_Dich_Vu;
+    private int Don_Vi_Tinh;
+    private double Don_Gia;
+    private String Mo_Ta;
+    private Date Ngay_Tao;
+    private Date Ngay_Cap_Nhat;
+    private int Status;
+
+    public DichVuDTO(int ID, String Ten_Dich_Vu, int Don_Vi_Tinh, double Don_Gia, String Mo_Ta, Date Ngay_Tao, Date Ngay_Cap_Nhat, int Status) {
+        this.ID = ID;
+        this.Ten_Dich_Vu = Ten_Dich_Vu;
+        this.Don_Vi_Tinh = Don_Vi_Tinh;
+        this.Don_Gia = Don_Gia;
+        this.Mo_Ta = Mo_Ta;
+        this.Ngay_Tao = Ngay_Tao;
+        this.Ngay_Cap_Nhat = Ngay_Cap_Nhat;
+        this.Status = Status;
+    }
 
     public DichVuDTO() {
     }
 
-    public DichVuDTO(int id, String tenDichVu, int donViTinh, String donGia, String moTa, Date createdAt, Date updatedAt, String status) {
-        this.id = id;
-        this.tenDichVu = tenDichVu;
-        this.donViTinh = donViTinh;
-        this.donGia = donGia;
-        this.moTa = moTa;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-        this.status = status;
-    }
-
     @Override
     public String toString() {
-        return "DichVuModel{" + "id=" + id + ", tenDichVu=" + tenDichVu + ", donViTinh=" + donViTinh + ", donGia=" + donGia + ", moTa=" + moTa + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + ", status=" + status + '}';
+        return "DichVuDTO{" + "ID=" + ID + ", Ten_Dich_Vu=" + Ten_Dich_Vu + ", Don_Vi_Tinh=" + Don_Vi_Tinh + ", Don_Gia=" + Don_Gia + ", Mo_Ta=" + Mo_Ta + ", Ngay_Tao=" + Ngay_Tao + ", Ngay_Cap_Nhat=" + Ngay_Cap_Nhat + ", Status=" + Status + '}';
     }
 
-    public int getId() {
-        return id;
+    public int getID() {
+        return ID;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setID(int ID) {
+        this.ID = ID;
     }
 
-    public String getTenDichVu() {
-        return tenDichVu;
+    public String getTen_Dich_Vu() {
+        return Ten_Dich_Vu;
     }
 
-    public void setTenDichVu(String tenDichVu) {
-        this.tenDichVu = tenDichVu;
+    public void setTen_Dich_Vu(String Ten_Dich_Vu) {
+        this.Ten_Dich_Vu = Ten_Dich_Vu;
     }
 
-    public int getDonViTinh() {
-        return donViTinh;
+    public int getDon_Vi_Tinh() {
+        return Don_Vi_Tinh;
     }
 
-    public void setDonViTinh(int donViTinh) {
-        this.donViTinh = donViTinh;
+    public void setDon_Vi_Tinh(int Don_Vi_Tinh) {
+        this.Don_Vi_Tinh = Don_Vi_Tinh;
     }
 
-    public String getDonGia() {
-        return donGia;
+    public double getDon_Gia() {
+        return Don_Gia;
     }
 
-    public void setDonGia(String donGia) {
-        this.donGia = donGia;
+    public void setDon_Gia(double Don_Gia) {
+        this.Don_Gia = Don_Gia;
     }
 
-    public String getMoTa() {
-        return moTa;
+    public String getMo_Ta() {
+        return Mo_Ta;
     }
 
-    public void setMoTa(String moTa) {
-        this.moTa = moTa;
+    public void setMo_Ta(String Mo_Ta) {
+        this.Mo_Ta = Mo_Ta;
     }
 
-    public Date getCreatedAt() {
-        return createdAt;
+    public Date getNgay_Tao() {
+        return Ngay_Tao;
     }
 
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
+    public void setNgay_Tao(Date Ngay_Tao) {
+        this.Ngay_Tao = Ngay_Tao;
     }
 
-    public Date getUpdatedAt() {
-        return updatedAt;
+    public Date getNgay_Cap_Nhat() {
+        return Ngay_Cap_Nhat;
     }
 
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
+    public void setNgay_Cap_Nhat(Date Ngay_Cap_Nhat) {
+        this.Ngay_Cap_Nhat = Ngay_Cap_Nhat;
     }
 
-    public String getStatus() {
-        return status;
+    public int getStatus() {
+        return Status;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setStatus(int Status) {
+        this.Status = Status;
     }
 
 }

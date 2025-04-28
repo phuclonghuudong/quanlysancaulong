@@ -4,76 +4,76 @@ import java.util.Date;
 
 public class LoaiSanDTO {
 
-    private int id;
-    private String tenLoaiSan;
-    private String moTa;
-    private Date createdAt;
-    private Date updatedAt;
-    private String status;
+    private int ID;
+    private String Ten_Loai;
+    private String Mo_Ta;
+    private Date Ngay_Tao;
+    private Date Ngay_Cap_Nhat;
+    private int Status;
+
+    @Override
+    public String toString() {
+        return "LoaiSanDTO{" + "ID=" + ID + ", Ten_Loai=" + Ten_Loai + ", Mo_Ta=" + Mo_Ta + ", Ngay_Tao=" + Ngay_Tao + ", Ngay_Cap_Nhat=" + Ngay_Cap_Nhat + ", status=" + Status + '}';
+    }
+
+    public LoaiSanDTO(int ID, String Ten_Loai, String Mo_Ta, Date Ngay_Tao, Date Ngay_Cap_Nhat, int status) {
+        this.ID = ID;
+        this.Ten_Loai = Ten_Loai;
+        this.Mo_Ta = Mo_Ta;
+        this.Ngay_Tao = Ngay_Tao;
+        this.Ngay_Cap_Nhat = Ngay_Cap_Nhat;
+        this.Status = status;
+    }
 
     public LoaiSanDTO() {
     }
 
-    public LoaiSanDTO(int id, String tenLoaiSan, String moTa, Date createdAt, Date updatedAt, String status) {
-        this.id = id;
-        this.tenLoaiSan = tenLoaiSan;
-        this.moTa = moTa;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-        this.status = status;
+    public int getID() {
+        return ID;
     }
 
-    @Override
-    public String toString() {
-        return "LoaiSanModel{" + "id=" + id + ", tenLoaiSan=" + tenLoaiSan + ", moTa=" + moTa + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + ", status=" + status + '}';
+    public void setID(int ID) {
+        this.ID = ID;
     }
 
-    public int getId() {
-        return id;
+    public String getTen_Loai() {
+        return Ten_Loai;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setTen_Loai(String Ten_Loai) {
+        this.Ten_Loai = Ten_Loai;
     }
 
-    public String getTenLoaiSan() {
-        return tenLoaiSan;
+    public String getMo_Ta() {
+        return Mo_Ta;
     }
 
-    public void setTenLoaiSan(String tenLoaiSan) {
-        this.tenLoaiSan = tenLoaiSan;
+    public void setMo_Ta(String Mo_Ta) {
+        this.Mo_Ta = Mo_Ta;
     }
 
-    public String getMoTa() {
-        return moTa;
+    public Date getNgay_Tao() {
+        return Ngay_Tao;
     }
 
-    public void setMoTa(String moTa) {
-        this.moTa = moTa;
+    public void setNgay_Tao(Date Ngay_Tao) {
+        this.Ngay_Tao = Ngay_Tao;
     }
 
-    public Date getCreatedAt() {
-        return createdAt;
+    public Date getNgay_Cap_Nhat() {
+        return Ngay_Cap_Nhat;
     }
 
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
+    public void setNgay_Cap_Nhat(Date Ngay_Cap_Nhat) {
+        this.Ngay_Cap_Nhat = Ngay_Cap_Nhat;
     }
 
-    public Date getUpdatedAt() {
-        return updatedAt;
+    public int getStatus() {
+        return Status;
     }
 
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
+    public void setStatus(int status) {
+        this.Status = status;
     }
 
 }

@@ -16,7 +16,7 @@ public class JDBCUtil {
         try {
             DriverManager.registerDriver(new com.mysql.cj.jdbc.Driver());
             //Cac thong so
-            String url = "jdbc:mysql://localhost:3306/quan_ly_kho_hang";
+            String url = "jdbc:mysql://localhost:3306/quan_ly_san_cau_long";
             String userName = "root";
             String password = "123456";
             //Tao ket noi

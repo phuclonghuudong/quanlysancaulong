@@ -2,32 +2,30 @@ package DTO;
 
 import java.util.Date;
 
-public class SanCauLongDTO {
+public class LoaiSanPhamDTO {
 
     private int ID;
-    private String Ten_San;
-    private int Loai_San;
+    private String Ten_Loai;
     private String Mo_Ta;
     private Date Ngay_Tao;
     private Date Ngay_Cap_Nhat;
     private int Status;
 
-    public SanCauLongDTO(int ID, String Ten_San, int Loai_San, String Mo_Ta, Date Ngay_Tao, Date Ngay_Cap_Nhat, int Status) {
+    @Override
+    public String toString() {
+        return "LoaiSanPhamDTO{" + "ID=" + ID + ", Ten_Loai=" + Ten_Loai + ", Mo_Ta=" + Mo_Ta + ", Ngay_Tao=" + Ngay_Tao + ", Ngay_Cap_Nhat=" + Ngay_Cap_Nhat + ", status=" + Status + '}';
+    }
+
+    public LoaiSanPhamDTO(int ID, String Ten_Loai, String Mo_Ta, Date Ngay_Tao, Date Ngay_Cap_Nhat, int status) {
         this.ID = ID;
-        this.Ten_San = Ten_San;
-        this.Loai_San = Loai_San;
+        this.Ten_Loai = Ten_Loai;
         this.Mo_Ta = Mo_Ta;
         this.Ngay_Tao = Ngay_Tao;
         this.Ngay_Cap_Nhat = Ngay_Cap_Nhat;
-        this.Status = Status;
+        this.Status = status;
     }
 
-    public SanCauLongDTO() {
-    }
-
-    @Override
-    public String toString() {
-        return "SanCauLongDTO{" + "ID=" + ID + ", Ten_San=" + Ten_San + ", Loai_San=" + Loai_San + ", Mo_Ta=" + Mo_Ta + ", Ngay_Tao=" + Ngay_Tao + ", Ngay_Cap_Nhat=" + Ngay_Cap_Nhat + ", Status=" + Status + '}';
+    public LoaiSanPhamDTO() {
     }
 
     public int getID() {
@@ -38,20 +36,12 @@ public class SanCauLongDTO {
         this.ID = ID;
     }
 
-    public String getTen_San() {
-        return Ten_San;
+    public String getTen_Loai() {
+        return Ten_Loai;
     }
 
-    public void setTen_San(String Ten_San) {
-        this.Ten_San = Ten_San;
-    }
-
-    public int getLoai_San() {
-        return Loai_San;
-    }
-
-    public void setLoai_San(int Loai_San) {
-        this.Loai_San = Loai_San;
+    public void setTen_Loai(String Ten_Loai) {
+        this.Ten_Loai = Ten_Loai;
     }
 
     public String getMo_Ta() {
@@ -82,8 +72,8 @@ public class SanCauLongDTO {
         return Status;
     }
 
-    public void setStatus(int Status) {
-        this.Status = Status;
+    public void setStatus(int status) {
+        this.Status = status;
     }
 
 }

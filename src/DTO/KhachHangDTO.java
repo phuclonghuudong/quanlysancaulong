@@ -1,135 +1,192 @@
 package DTO;
 
 import java.util.Date;
+import java.util.Objects;
 
 public class KhachHangDTO {
 
-    private int id;
-    private String tenKhachHang;
-    private String email;
-    private String soDienThoai;
-    private String MatKhau;
-    private String chucNang;
-    private boolean gioiTinh;
-    private Date createdAt;
-    private Date updatedAt;
-    private String status;
+    private int ID;
+    private String Ten_Khach_hang;
+    private String Email;
+    private Date Ngay_Sinh;
+    private String So_Dien_Thoai;
+    private String Mat_Khau;
+    private String Vai_Tro;
+    private boolean Gioi_Tinh;
+    private Date Ngay_Tao;
+    private Date Ngay_Cap_Nhat;
+    private int Status;
 
-    public KhachHangDTO(int makh, String tenkhachhang, String sdt, String diachi, Date ngaythamgia) {
+    public KhachHangDTO() {
     }
 
-    public KhachHangDTO(int id, String tenKhachHang, String email, String soDienThoai, String MatKhau, String chucNang, boolean gioiTinh, Date createdAt, Date updatedAt, String status) {
-        this.id = id;
-        this.tenKhachHang = tenKhachHang;
-        this.email = email;
-        this.soDienThoai = soDienThoai;
-        this.MatKhau = MatKhau;
-        this.chucNang = chucNang;
-        this.gioiTinh = gioiTinh;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-        this.status = status;
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 29 * hash + this.ID;
+        hash = 29 * hash + Objects.hashCode(this.Ten_Khach_hang);
+        hash = 29 * hash + Objects.hashCode(this.Email);
+        hash = 29 * hash + Objects.hashCode(this.Ngay_Sinh);
+        hash = 29 * hash + Objects.hashCode(this.So_Dien_Thoai);
+        hash = 29 * hash + Objects.hashCode(this.Mat_Khau);
+        hash = 29 * hash + Objects.hashCode(this.Vai_Tro);
+        hash = 29 * hash + (this.Gioi_Tinh ? 1 : 0);
+        hash = 29 * hash + Objects.hashCode(this.Ngay_Tao);
+        hash = 29 * hash + Objects.hashCode(this.Ngay_Cap_Nhat);
+        hash = 29 * hash + this.Status;
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final KhachHangDTO other = (KhachHangDTO) obj;
+        if (this.ID != other.ID) {
+            return false;
+        }
+        if (this.Gioi_Tinh != other.Gioi_Tinh) {
+            return false;
+        }
+        if (this.Status != other.Status) {
+            return false;
+        }
+        if (!Objects.equals(this.Ten_Khach_hang, other.Ten_Khach_hang)) {
+            return false;
+        }
+        if (!Objects.equals(this.Email, other.Email)) {
+            return false;
+        }
+        if (!Objects.equals(this.So_Dien_Thoai, other.So_Dien_Thoai)) {
+            return false;
+        }
+        if (!Objects.equals(this.Mat_Khau, other.Mat_Khau)) {
+            return false;
+        }
+        if (!Objects.equals(this.Vai_Tro, other.Vai_Tro)) {
+            return false;
+        }
+        if (!Objects.equals(this.Ngay_Sinh, other.Ngay_Sinh)) {
+            return false;
+        }
+        if (!Objects.equals(this.Ngay_Tao, other.Ngay_Tao)) {
+            return false;
+        }
+        return Objects.equals(this.Ngay_Cap_Nhat, other.Ngay_Cap_Nhat);
     }
 
     @Override
     public String toString() {
-        return "KhachHangModel{" + "id=" + id + ", tenKhachHang=" + tenKhachHang + ", email=" + email + ", soDienThoai=" + soDienThoai + ", MatKhau=" + MatKhau + ", chucNang=" + chucNang + ", gioiTinh=" + gioiTinh + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + ", status=" + status + '}';
+        return "KhachHangDTO{" + "ID=" + ID + ", Ten_Khach_hang=" + Ten_Khach_hang + ", Email=" + Email + ", Ngay_Sinh=" + Ngay_Sinh + ", So_Dien_Thoai=" + So_Dien_Thoai + ", Mat_Khau=" + Mat_Khau + ", Vai_Tro=" + Vai_Tro + ", Gioi_Tinh=" + Gioi_Tinh + ", Ngay_Tao=" + Ngay_Tao + ", Ngay_Cap_Nhat=" + Ngay_Cap_Nhat + ", Status=" + Status + '}';
     }
 
-    public int getId() {
-        return id;
+    public KhachHangDTO(int ID, String Ten_Khach_hang, String Email, Date Ngay_Sinh, String So_Dien_Thoai, String Mat_Khau, String Vai_Tro, boolean Gioi_Tinh, Date Ngay_Tao, Date Ngay_Cap_Nhat, int Status) {
+        this.ID = ID;
+        this.Ten_Khach_hang = Ten_Khach_hang;
+        this.Email = Email;
+        this.Ngay_Sinh = Ngay_Sinh;
+        this.So_Dien_Thoai = So_Dien_Thoai;
+        this.Mat_Khau = Mat_Khau;
+        this.Vai_Tro = Vai_Tro;
+        this.Gioi_Tinh = Gioi_Tinh;
+        this.Ngay_Tao = Ngay_Tao;
+        this.Ngay_Cap_Nhat = Ngay_Cap_Nhat;
+        this.Status = Status;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public int getID() {
+        return ID;
     }
 
-    public String getTenKhachHang() {
-        return tenKhachHang;
+    public void setID(int ID) {
+        this.ID = ID;
     }
 
-    public void setTenKhachHang(String tenKhachHang) {
-        this.tenKhachHang = tenKhachHang;
+    public String getTen_Khach_hang() {
+        return Ten_Khach_hang;
+    }
+
+    public void setTen_Khach_hang(String Ten_Khach_hang) {
+        this.Ten_Khach_hang = Ten_Khach_hang;
     }
 
     public String getEmail() {
-        return email;
+        return Email;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setEmail(String Email) {
+        this.Email = Email;
     }
 
-    public String getSoDienThoai() {
-        return soDienThoai;
+    public Date getNgay_Sinh() {
+        return Ngay_Sinh;
     }
 
-    public void setSoDienThoai(String soDienThoai) {
-        this.soDienThoai = soDienThoai;
+    public void setNgay_Sinh(Date Ngay_Sinh) {
+        this.Ngay_Sinh = Ngay_Sinh;
     }
 
-    public String getMatKhau() {
-        return MatKhau;
+    public String getSo_Dien_Thoai() {
+        return So_Dien_Thoai;
     }
 
-    public void setMatKhau(String MatKhau) {
-        this.MatKhau = MatKhau;
+    public void setSo_Dien_Thoai(String So_Dien_Thoai) {
+        this.So_Dien_Thoai = So_Dien_Thoai;
     }
 
-    public String getChucNang() {
-        return chucNang;
+    public String getMat_Khau() {
+        return Mat_Khau;
     }
 
-    public void setChucNang(String chucNang) {
-        this.chucNang = chucNang;
+    public void setMat_Khau(String Mat_Khau) {
+        this.Mat_Khau = Mat_Khau;
     }
 
-    public boolean getGioiTinh() {
-        return gioiTinh;
+    public String getVai_Tro() {
+        return Vai_Tro;
     }
 
-    public void setGioiTinh(boolean gioiTinh) {
-        this.gioiTinh = gioiTinh;
+    public void setVai_Tro(String Vai_Tro) {
+        this.Vai_Tro = Vai_Tro;
     }
 
-    public Date getCreatedAt() {
-        return createdAt;
+    public boolean isGioi_Tinh() {
+        return Gioi_Tinh;
     }
 
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
+    public void setGioi_Tinh(boolean Gioi_Tinh) {
+        this.Gioi_Tinh = Gioi_Tinh;
     }
 
-    public Date getUpdatedAt() {
-        return updatedAt;
+    public Date getNgay_Tao() {
+        return Ngay_Tao;
     }
 
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
+    public void setNgay_Tao(Date Ngay_Tao) {
+        this.Ngay_Tao = Ngay_Tao;
     }
 
-    public String getStatus() {
-        return status;
+    public Date getNgay_Cap_Nhat() {
+        return Ngay_Cap_Nhat;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setNgay_Cap_Nhat(Date Ngay_Cap_Nhat) {
+        this.Ngay_Cap_Nhat = Ngay_Cap_Nhat;
     }
 
-    public int getMaKH() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public int getStatus() {
+        return Status;
     }
 
-    public String getHoten() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    public String getDiachi() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    public String getSdt() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public void setStatus(int Status) {
+        this.Status = Status;
     }
 
 }

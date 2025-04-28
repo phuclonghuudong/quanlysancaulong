@@ -4,96 +4,96 @@ import java.util.Date;
 
 public class ChiTietDatSan_SanPhamDTO {
 
-    private int id;
-    private int idDatSan;
-    private int idSanPham;
-    private double tongTien;
-    private int soLuong;
-    private Date createdAt;
-    private Date updatedAt;
-    private String status;
+    private int ID;
+    private int Dat_San_ID;
+    private int San_Pham_ID;
+    private double Tong_Tien;
+    private int So_Luong;
+    private Date Ngay_Tao;
+    private Date Ngay_Cap_Nhat;
+    private int Status;
 
     public ChiTietDatSan_SanPhamDTO() {
     }
 
-    public ChiTietDatSan_SanPhamDTO(int id, int idDatSan, int idSanPham, double tongTien, int soLuong, Date createdAt, Date updatedAt, String status) {
-        this.id = id;
-        this.idDatSan = idDatSan;
-        this.idSanPham = idSanPham;
-        this.tongTien = tongTien;
-        this.soLuong = soLuong;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-        this.status = status;
+    public ChiTietDatSan_SanPhamDTO(int id, int Dat_San_ID, int San_Pham_ID, double Tong_Tien, int So_Luong, Date Ngay_Tao, Date Ngay_Cap_Nhat, int Status) {
+        this.ID = id;
+        this.Dat_San_ID = Dat_San_ID;
+        this.San_Pham_ID = San_Pham_ID;
+        this.Tong_Tien = Tong_Tien;
+        this.So_Luong = So_Luong;
+        this.Ngay_Tao = Ngay_Tao;
+        this.Ngay_Cap_Nhat = Ngay_Cap_Nhat;
+        this.Status = Status;
     }
 
     @Override
     public String toString() {
-        return "ChiTietDatSan_SanPham{" + "id=" + id + ", idDatSan=" + idDatSan + ", idSanPham=" + idSanPham + ", tongTien=" + tongTien + ", soLuong=" + soLuong + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + ", status=" + status + '}';
+        return "ChiTietDatSan_SanPhamDTO{" + "id=" + ID + ", Dat_San_ID=" + Dat_San_ID + ", San_Pham_ID=" + San_Pham_ID + ", Tong_Tien=" + Tong_Tien + ", So_Luong=" + So_Luong + ", Ngay_Tao=" + Ngay_Tao + ", Ngay_Cap_Nhat=" + Ngay_Cap_Nhat + ", Status=" + Status + '}';
     }
 
     public int getId() {
-        return id;
+        return ID;
     }
 
     public void setId(int id) {
-        this.id = id;
+        this.ID = id;
     }
 
-    public int getIdDatSan() {
-        return idDatSan;
+    public int getDat_San_ID() {
+        return Dat_San_ID;
     }
 
-    public void setIdDatSan(int idDatSan) {
-        this.idDatSan = idDatSan;
+    public void setDat_San_ID(int Dat_San_ID) {
+        this.Dat_San_ID = Dat_San_ID;
     }
 
-    public int getIdSanPham() {
-        return idSanPham;
+    public int getSan_Pham_ID() {
+        return San_Pham_ID;
     }
 
-    public void setIdSanPham(int idSanPham) {
-        this.idSanPham = idSanPham;
+    public void setSan_Pham_ID(int San_Pham_ID) {
+        this.San_Pham_ID = San_Pham_ID;
     }
 
-    public double getTongTien() {
-        return tongTien;
+    public double getTong_Tien() {
+        return Tong_Tien;
     }
 
-    public void setTongTien(double tongTien) {
-        this.tongTien = tongTien;
+    public void setTong_Tien(double Tong_Tien) {
+        this.Tong_Tien = Tong_Tien;
     }
 
-    public int getSoLuong() {
-        return soLuong;
+    public int getSo_Luong() {
+        return So_Luong;
     }
 
-    public void setSoLuong(int soLuong) {
-        this.soLuong = soLuong;
+    public void setSo_Luong(int So_Luong) {
+        this.So_Luong = So_Luong;
     }
 
-    public Date getCreatedAt() {
-        return createdAt;
+    public Date getNgay_Tao() {
+        return Ngay_Tao;
     }
 
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
+    public void setNgay_Tao(Date Ngay_Tao) {
+        this.Ngay_Tao = Ngay_Tao;
     }
 
-    public Date getUpdatedAt() {
-        return updatedAt;
+    public Date getNgay_Cap_Nhat() {
+        return Ngay_Cap_Nhat;
     }
 
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
+    public void setNgay_Cap_Nhat(Date Ngay_Cap_Nhat) {
+        this.Ngay_Cap_Nhat = Ngay_Cap_Nhat;
     }
 
-    public String getStatus() {
-        return status;
+    public int getStatus() {
+        return Status;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setStatus(int Status) {
+        this.Status = Status;
     }
 
 }
