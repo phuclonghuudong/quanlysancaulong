@@ -1,7 +1,6 @@
 package GUI.Dialog;
 
 import BUS.NhanVienBUS;
-import DAO.NhanVienDAO;
 import DTO.NhanVienDTO;
 import GUI.Component.ButtonCustome;
 import GUI.Component.FormInput;
@@ -13,7 +12,6 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.text.PlainDocument;
-import utils.Validation;
 
 /**
  *
@@ -150,55 +148,35 @@ public final class MyAccount extends JDialog implements ActionListener {
 
         if (jbr[0].isSelected()) {
             if (e.getSource() == save) {
-                if (Validation.isEmpty(phone.getText()) || phone.getText().length() != 10) {
-                    JOptionPane.showMessageDialog(this, "Số điện thoại không được rỗng và phải có 10 ký tự sô", "Chỉnh sửa số điện thoại", JOptionPane.WARNING_MESSAGE);
-                } else {
-                    String sdt = phone.getText();
-                    NhanVienDTO nv = new NhanVienDTO(nvDTO.getManhanvien(), nvDTO.getHoten(), nvDTO.getEmail(), sdt, nvDTO.isGioitinh(), nvDTO.getNgaysinh(), sdt, nvDTO.getVaitro(), nvDTO.getTrangthai());
-                    NhanVienDAO.getInstance().update(nv);
+                String result = nvBUS.updatePhone(nvDTO, phone.getText());
+                if (result.equals("success")) {
                     JOptionPane.showMessageDialog(this, "Cập nhật thành công");
+                } else {
+                    JOptionPane.showMessageDialog(this, result, "Cảnh báo!", JOptionPane.WARNING_MESSAGE);
                 }
             }
         }
 
         if (jbr[1].isSelected()) {
             if (e.getSource() == save) {
-                if (Validation.isEmpty(email.getText()) || !Validation.isEmail(email.getText())) {
-                    JOptionPane.showMessageDialog(this, "Email không được rỗng và phải đúng định dạng", "Chỉnh sửa email", JOptionPane.WARNING_MESSAGE);
-                } else {
-                    String emailString = email.getText();
-                    NhanVienDTO nvdto = new NhanVienDTO(nvDTO.getManhanvien(), nvDTO.getHoten(), emailString, nvDTO.getSodienthoai(), nvDTO.isGioitinh(), nvDTO.getNgaysinh(), nvDTO.getSodienthoai(), nvDTO.getVaitro(), nvDTO.getTrangthai());
-                    NhanVienDAO.getInstance().update(nvdto);
+                String result = nvBUS.updateEmail(nvDTO, email.getText());
+                if (result.equals("success")) {
                     JOptionPane.showMessageDialog(this, "Cập nhật thành công");
-
+                } else {
+                    JOptionPane.showMessageDialog(this, result, "Cảnh báo!", JOptionPane.WARNING_MESSAGE);
                 }
             }
         }
         if (jbr[2].isSelected()) {
             if (e.getSource() == save) {
-
-                String hashpass = Validation.hashPassword(current_pwd.getPass());
-                NhanVienDTO newNVDTO = nvBUS.getByIndex(nvBUS.getNhanVienByMaNV(nvDTO.getManhanvien()));
-                if (Validation.isEmpty(current_pwd.getPass())) {
-                    JOptionPane.showMessageDialog(this, "Mật khẩu hiện tại không được rỗng", "Cảnh báo!", JOptionPane.WARNING_MESSAGE);
-                } else if (Validation.isEmpty(new_pwd.getPass()) || new_pwd.getPass().length() < 6) {
-                    JOptionPane.showMessageDialog(this, "Mật khẩu mới không được rỗng và có ít nhất 6 ký tự", "Cảnh báo!", JOptionPane.WARNING_MESSAGE);
-                } else if (Validation.isEmpty(confirm.getPass())) {
-                    JOptionPane.showMessageDialog(this, "Mật khẩu nhập lại không được rỗng", "Cảnh báo!", JOptionPane.WARNING_MESSAGE);
-                    return;
-                } else if (new_pwd.getPass().equals(confirm.getPass()) == false) {
-                    JOptionPane.showMessageDialog(this, "Mật khẩu nhập lại không khớp với mật khẩu mới", "Cảnh báo!", JOptionPane.WARNING_MESSAGE);
-                    return;
+                String result = nvBUS.updatePassword(nvDTO, current_pwd.getPass(), new_pwd.getPass(), confirm.getPass());
+                if (result.equals("success")) {
+                    JOptionPane.showMessageDialog(this, "Cập nhật thành công");
+                    current_pwd.setPass("");
+                    new_pwd.setPass("");
+                    confirm.setPass("");
                 } else {
-                    if (hashpass.equals(nvDTO.getMatkhau())) {
-
-                        JOptionPane.showMessageDialog(this, "Cập nhật thành công");
-                        current_pwd.setPass("");
-                        new_pwd.setPass("");
-                        confirm.setPass("");
-                    } else {
-                        JOptionPane.showMessageDialog(this, "Mật khẩu hiện tại không đúng", "Cảnh báo!", JOptionPane.WARNING_MESSAGE);
-                    }
+                    JOptionPane.showMessageDialog(this, result, "Cảnh báo!", JOptionPane.WARNING_MESSAGE);
                 }
             }
         }

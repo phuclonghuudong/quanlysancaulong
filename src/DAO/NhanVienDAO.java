@@ -49,7 +49,7 @@ public class NhanVienDAO implements DAOinterface<NhanVienDTO> {
         int result = 0;
         try {
             Connection con = (Connection) JDBCUtil.getConnection();
-            String sql = "UPDATE `nhanvien` SET`hoten`=?,`gioitinh`=?,`ngaysinh`=?,`sodienthoai`=?, `trangthai`=?, `email`=?, `vaitro`=? WHERE `manhanvien`=?";
+            String sql = "UPDATE `nhanvien` SET`hoten`=?,`gioitinh`=?,`ngaysinh`=?,`sodienthoai`=?, `trangthai`=?, `email`=?, `vaitro`=?,`matkhau`=? WHERE `manhanvien`=?";
             PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
             pst.setString(1, t.getHoten());
             pst.setBoolean(2, t.isGioitinh());
@@ -58,7 +58,8 @@ public class NhanVienDAO implements DAOinterface<NhanVienDTO> {
             pst.setInt(5, t.getTrangthai());
             pst.setString(6, t.getEmail());
             pst.setString(7, t.getVaitro());
-            pst.setInt(8, t.getManhanvien());
+            pst.setString(8, t.getMatkhau());
+            pst.setInt(9, t.getManhanvien());
             result = pst.executeUpdate();
             JDBCUtil.closeConnection(con);
         } catch (SQLException ex) {
@@ -239,4 +240,34 @@ public class NhanVienDAO implements DAOinterface<NhanVienDTO> {
         return false;
     }
 
+    public boolean isEmailUnique(String p, int ID) {
+        try {
+            Connection con = (Connection) JDBCUtil.getConnection();
+            String sql = "SELECT * FROM nhanvien WHERE email=? AND manhanvien<>?";
+            PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
+            pst.setString(1, p);
+            pst.setInt(2, ID);
+            ResultSet rs = (ResultSet) pst.executeQuery();
+            return rs.next();
+
+        } catch (SQLException e) {
+        }
+        return false;
+    }
+
+    public boolean isPhoneNumberUnique(String p, int ID) {
+        try {
+            Connection con = (Connection) JDBCUtil.getConnection();
+            String sql = "SELECT * FROM nhanvien WHERE sodienthoai=? AND manhanvien<> ?";
+            PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
+            pst.setString(1, p);
+            pst.setInt(2, ID);
+            ResultSet rs = (ResultSet) pst.executeQuery();
+
+            return rs.next();
+
+        } catch (SQLException e) {
+        }
+        return false;
+    }
 }

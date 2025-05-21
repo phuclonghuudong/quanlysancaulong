@@ -5,6 +5,7 @@ import DTO.LoaiSanDTO;
 import GUI.Component.MainFunction;
 import GUI.Component.PanelBorderRadius;
 import GUI.Component.TableModel;
+import GUI.Dialog.LoaiSanDialog;
 import GUI.Main;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -23,7 +24,7 @@ import style.StyleTable;
  *
  * @author phucp
  */
-public class LoaiSan extends JPanel implements ActionListener, ItemListener {
+public final class LoaiSan extends JPanel implements ActionListener, ItemListener {
 
     StyleColor colorStyle = new StyleColor();
     StyleTable tableStyle = new StyleTable();
@@ -173,7 +174,43 @@ public class LoaiSan extends JPanel implements ActionListener, ItemListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        if (e.getSource() == mainFunction.btn.get("create")) {
+            LoaiSanDialog lsDialog = new LoaiSanDialog(this, owner, "Thêm loại sân", true, "create");
+        } else if (e.getSource() == mainFunction.btn.get("update")) {
+            int index = getRowSelected();
+            if (index != -1) {
+                LoaiSanDialog lsDialog = new LoaiSanDialog(this, owner, "Chỉnh sửa loại sân", true, "update", listDS.get(index));
+            }
+        } else if (e.getSource() == mainFunction.btn.get("delete")) {
+            int index = getRowSelected();
+            if (index != -1) {
+                int input = JOptionPane.showConfirmDialog(null,
+                        "Bạn có chắc chắn muốn xóa loại sân này?", "Xóa loại sân",
+                        JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
+                if (input == 0) {
+                    boolean deleted = loaiSanBUS.delete(listDS.get(index));
+                    if (deleted) {
+                        listDS = loaiSanBUS.getAll();
+                        loadDataTable(listDS);
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Xóa thất bại!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            }
+        } else if (e.getSource() == mainFunction.btn.get("detail")) {
+            int index = getRowSelected();
+            if (index != -1) {
+                LoaiSanDialog lsDialog = new LoaiSanDialog(this, owner, "Xem loại sân", true, "view", listDS.get(index));
+            }
+        }
+//        else if (e.getSource() == mainFunction.btn.get("export")) {
+//            try {
+//                JTableExporter.exportJTableToExcel(tableContent);
+//            } catch (IOException ex) {
+//                Logger.getLogger(LoaiSan.class.getName()).log(Level.SEVERE, null, ex);
+//            }
+//
+//        }
     }
 
     @Override

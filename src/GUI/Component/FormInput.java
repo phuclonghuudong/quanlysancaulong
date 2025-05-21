@@ -131,10 +131,10 @@ public class FormInput extends JPanel {
     }
 
     public void setDisable() {
+        txtForm.setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
         txtForm.setEditable(false);
-        txtForm.setBackground(StyleColor.backgroundColorGray());
-        txtForm.setForeground(Color.GRAY);
-        txtForm.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+        txtForm.setBackground(StyleColor.mainBackgroundColor());
+        txtForm.setForeground(Color.BLACK);
     }
 
     public void setEditable(boolean value) {

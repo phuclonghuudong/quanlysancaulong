@@ -25,11 +25,12 @@ public class LoaiSanDAO implements DAOinterface<LoaiSanDTO> {
         int result = 0;
         try {
             Connection con = (Connection) JDBCUtil.getConnection();
-            String sql = "INSERT INTO `loaisan`(`tenloaisan`, `ghichu`,`trangthai`) VALUES (?,?,?)";
+            String sql = "INSERT INTO `loaisan`(`maloaisan`,`tenloaisan`,`ghichu`,`trangthai`) VALUES (?,?,?,?)";
             PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
-            pst.setString(1, t.getTenloaisan());
-            pst.setString(2, t.getGhichu());
-            pst.setInt(3, t.getTrangthai());
+            pst.setInt(1, t.getMaloaisan());
+            pst.setString(2, t.getTenloaisan());
+            pst.setString(3, t.getGhichu());
+            pst.setInt(4, t.getTrangthai());
             result = pst.executeUpdate();
             JDBCUtil.closeConnection(con);
         } catch (SQLException ex) {
@@ -78,7 +79,7 @@ public class LoaiSanDAO implements DAOinterface<LoaiSanDTO> {
         ArrayList<LoaiSanDTO> result = new ArrayList<>();
         try {
             Connection con = (Connection) JDBCUtil.getConnection();
-            String sql = "SELECT * FROM loaisan WHERE trangthai = '1'";
+            String sql = "SELECT * FROM loaisan";
             PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
             ResultSet rs = (ResultSet) pst.executeQuery();
             while (rs.next()) {
@@ -122,7 +123,7 @@ public class LoaiSanDAO implements DAOinterface<LoaiSanDTO> {
         int result = -1;
         try {
             Connection con = (Connection) JDBCUtil.getConnection();
-            String sql = "SELECT `AUTO_INCREMENT` FROM  INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'quanlisancaulong' AND   TABLE_NAME   = 'loaisan'";
+            String sql = "SELECT `AUTO_INCREMENT` FROM  INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'quanlysancaulong' AND   TABLE_NAME   = 'loaisan'";
             PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
             ResultSet rs2 = pst.executeQuery(sql);
             if (!rs2.isBeforeFirst()) {
@@ -136,6 +137,21 @@ public class LoaiSanDAO implements DAOinterface<LoaiSanDTO> {
             Logger.getLogger(LoaiSanDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         return result;
+    }
+
+    public boolean isNameUnique(String p, int ID) {
+        try {
+            Connection con = (Connection) JDBCUtil.getConnection();
+            String sql = "SELECT * FROM loaisan WHERE tenloaisan=? AND maloaisan<>?";
+            PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
+            pst.setString(1, p);
+            pst.setInt(2, ID);
+            ResultSet rs = (ResultSet) pst.executeQuery();
+            return rs.next();
+
+        } catch (SQLException e) {
+        }
+        return false;
     }
 
 }

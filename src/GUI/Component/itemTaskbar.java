@@ -42,7 +42,7 @@ public class itemTaskbar extends javax.swing.JPanel implements MouseListener {
         lblIcon.setVerticalAlignment(JLabel.CENTER);
         this.add(lblIcon);
 
-        pnlContent = new JLabel(content.toUpperCase());
+        pnlContent = new JLabel(content);
         pnlContent.setPreferredSize(new Dimension(155, 30));
         pnlContent.setForeground(ColorBlack);
         this.add(pnlContent);

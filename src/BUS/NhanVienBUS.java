@@ -114,4 +114,55 @@ public class NhanVienBUS {
         int inserted = NhanVienDAO.getInstance().insert(user);
         return inserted > 0 ? "Đăng ký thành công! Vui lòng chờ xác nhận từ hệ thống." : "Đăng ký thất bại!";
     }
+
+    public String updatePhone(NhanVienDTO nvDTO, String phone) {
+        if (Validation.isEmpty(phone) || phone.length() != 10) {
+            return "Số điện thoại không được để trống và có đủ 10 số";
+        }
+        if (!Validation.isValidPhone(String.valueOf(phone))) {
+            return "Số điện thoại không đúng định dạng.";
+        }
+        boolean checkPhone = nvDAO.isPhoneNumberUnique(phone, nvDTO.getManhanvien());
+        if (checkPhone) {
+            return "Số điện thoại đã được sử dụng.";
+        }
+        nvDTO.setSodienthoai(phone);
+        int result = NhanVienDAO.getInstance().update(nvDTO);
+        return result > 0 ? "success" : "Cập nhật thất bại";
+    }
+
+    public String updateEmail(NhanVienDTO nvDTO, String email) {
+        if (Validation.isEmpty(email) || !Validation.isEmail(email)) {
+            return "Email không được để trống hoặc không đúng định dạng";
+        }
+        boolean checkEmail = nvDAO.isEmailUnique(email, nvDTO.getManhanvien());
+        if (checkEmail) {
+            return "Email đã được sử dụng.";
+        }
+        nvDTO.setEmail(email);
+        int result = NhanVienDAO.getInstance().update(nvDTO);
+        return result > 0 ? "success" : "Cập nhật thất bại";
+    }
+
+    public String updatePassword(NhanVienDTO nvDTO, String currentPass, String newPass, String confirmPass) {
+        if (Validation.isEmpty(currentPass)) {
+            return "Mật khẩu hiện tại không được rỗng";
+        }
+        if (Validation.isEmpty(newPass) || newPass.length() < 6) {
+            return "Mật khẩu mới không được rỗng và có ít nhất 6 ký tự";
+        }
+        if (Validation.isEmpty(confirmPass)) {
+            return "Mật khẩu nhập lại không được rỗng";
+        }
+        if (!newPass.equals(confirmPass)) {
+            return "Mật khẩu nhập lại không khớp với mật khẩu mới";
+        }
+        if (!Validation.hashPassword(currentPass).equals(nvDTO.getMatkhau())) {
+            return "Mật khẩu hiện tại không đúng";
+        }
+
+        nvDTO.setMatkhau(Validation.hashPassword(newPass));
+        int result = NhanVienDAO.getInstance().update(nvDTO);
+        return result > 0 ? "success" : "Cập nhật thất bại";
+    }
 }
