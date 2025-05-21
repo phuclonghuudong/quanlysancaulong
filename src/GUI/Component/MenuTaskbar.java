@@ -1,5 +1,6 @@
 package GUI.Component;
 
+import DAO.NhanVienDAO;
 import DTO.NhanVienDTO;
 import GUI.Dialog.MyAccount;
 import GUI.Log_In;
@@ -76,7 +77,7 @@ public final class MenuTaskbar extends javax.swing.JPanel {
 
     public MenuTaskbar(Main main) {
         this.main = main;
-        initComponents();
+//        initComponents();
         initComponent();
     }
 
@@ -267,6 +268,10 @@ public final class MenuTaskbar extends javax.swing.JPanel {
         }
     }
 
+    public void resetChange() {
+        this.nhanVienDTO = new NhanVienDAO().selectById(String.valueOf(nhanVienDTO.getManhanvien()));
+    }
+
     public void in4(JPanel info) {
         fontStyle.setUIFont16();
         JPanel pnlIcon = new JPanel(new FlowLayout());
@@ -296,6 +301,13 @@ public final class MenuTaskbar extends javax.swing.JPanel {
         if (nhanVienDTO != null) {
             lblUsername.setText(nhanVienDTO.getHoten());
             lblTenNhomQuyen.setText(nhanVienDTO.getVaitro());
+
+            lblIcon.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mousePressed(MouseEvent evt) {
+                    MyAccount ma = new MyAccount(owner, MenuTaskbar.this, "Chỉnh sửa thông tin tài khoản", true);
+                }
+            });
         } else {
             lblUsername.setText("Chưa đăng nhập");
             lblTenNhomQuyen = new JLabel("Không rõ vai trò");
@@ -303,12 +315,6 @@ public final class MenuTaskbar extends javax.swing.JPanel {
         pnlInfo.add(lblUsername);
         pnlInfo.add(lblTenNhomQuyen);
 
-        lblIcon.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent evt) {
-                MyAccount ma = new MyAccount(owner, MenuTaskbar.this, "Chỉnh sửa thông tin tài khoản", true);
-            }
-        });
     }
 
     /**

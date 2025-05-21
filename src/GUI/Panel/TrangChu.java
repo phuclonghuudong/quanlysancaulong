@@ -42,7 +42,7 @@ public class TrangChu extends javax.swing.JPanel {
         top.add(titleBB);
         TitleHome titleB = new TitleHome("IE303.E22.LT.CNTT - CÔNG NGHỆ JAVA ", 28);
         top.add(titleB);
-        TitleHome titleA = new TitleHome("HỆ THỐNG SÂN CẦU LÔNG", 18);
+        TitleHome titleA = new TitleHome("HỆ THỐNG SÂN CẦU LÔNG", 20);
         top.add(titleA);
         TitleHome titleC = new TitleHome("NHÓM 10", "LỚP LT.K2024.1", 20, 20);
         top.add(titleC);

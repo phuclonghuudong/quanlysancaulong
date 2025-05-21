@@ -114,12 +114,12 @@ public class NhanVienDAO implements DAOinterface<NhanVienDTO> {
         NhanVienDTO result = null;
         try {
             Connection con = (Connection) JDBCUtil.getConnection();
-            String sql = "SELECT * FROM nhanvien WHERE manv=?";
+            String sql = "SELECT * FROM nhanvien WHERE manhanvien=?";
             PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
             pst.setString(1, t);
             ResultSet rs = (ResultSet) pst.executeQuery();
             while (rs.next()) {
-                int manv = rs.getInt("manv");
+                int manv = rs.getInt("manhanvien");
                 String hoten = rs.getString("hoten");
                 boolean gioitinh = rs.getBoolean("gioitinh");
                 Date ngaysinh = rs.getDate("ngaysinh");

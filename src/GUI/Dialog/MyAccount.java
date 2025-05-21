@@ -1,17 +1,25 @@
 package GUI.Dialog;
 
+import BUS.NhanVienBUS;
+import DAO.NhanVienDAO;
+import DTO.NhanVienDTO;
 import GUI.Component.ButtonCustome;
+import GUI.Component.FormInput;
 import GUI.Component.HeaderTitle;
 import GUI.Component.MenuTaskbar;
+import GUI.Component.NumericDocumentFilter;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.text.PlainDocument;
+import utils.Validation;
 
 /**
  *
  * @author phucp
  */
-public class MyAccount extends JDialog implements ActionListener {
+public final class MyAccount extends JDialog implements ActionListener {
 
     CardLayout card;
     ButtonCustome save, cancel;
@@ -20,6 +28,10 @@ public class MyAccount extends JDialog implements ActionListener {
     JPanel top, center, top_center, main_center, bottom;
     JRadioButton[] jbr;
     JPanel[] panel;
+    FormInput current_pwd, phone, email, new_pwd, confirm;
+
+    NhanVienDTO nvDTO;
+    NhanVienBUS nvBUS;
 
     public MyAccount(JFrame owner, MenuTaskbar menutaskbar, String title, boolean modal) {
         super(owner, title, modal);
@@ -28,11 +40,14 @@ public class MyAccount extends JDialog implements ActionListener {
     }
 
     public void initComponent(MenuTaskbar menutaskbar) {
+        nvBUS = new NhanVienBUS();
         this.menuTaskbar = menutaskbar;
         this.setSize(400, 300);
         this.setLayout(new BorderLayout(0, 0));
         this.setBackground(Color.WHITE);
         this.setResizable(false);
+
+        nvDTO = menutaskbar.nhanVienDTO;
 
         top = new JPanel();
         top.setBackground(Color.WHITE);
@@ -41,6 +56,74 @@ public class MyAccount extends JDialog implements ActionListener {
         top.add(title);
         this.add(top, BorderLayout.NORTH);
 
+        top_center = new JPanel(new FlowLayout(1, 40, 0));
+        top_center.setBorder(new EmptyBorder(20, 0, 0, 0));
+        top_center.setBackground(Color.WHITE);
+        main_center = new JPanel();
+        main_center.setBorder(new EmptyBorder(0, 20, 0, 20));
+        main_center.setBackground(Color.WHITE);
+
+        ButtonGroup bg = new ButtonGroup();
+        String opt[] = {"Số điện thoại", "Email", "Mật khẩu"};
+        jbr = new JRadioButton[3];
+        for (int i = 0; i < jbr.length; i++) {
+            jbr[i] = new JRadioButton();
+            jbr[i].addActionListener(this);
+            jbr[i].setText(opt[i]);
+            top_center.add(jbr[i]);
+            bg.add(jbr[i]);
+        }
+        jbr[0].setSelected(true);
+
+        center = new JPanel();
+        center.setLayout(new BorderLayout());
+        center.add(top_center, BorderLayout.NORTH);
+        center.add(main_center, BorderLayout.CENTER);
+
+        panel = new JPanel[3];
+        panel[0] = new JPanel(new GridLayout(1, 1));
+        panel[0].setBackground(Color.WHITE);
+        panel[0].setPreferredSize(new Dimension(400, 100));
+        panel[0].setBorder(new EmptyBorder(10, 10, 10, 10));
+        phone = new FormInput("Số điện thoại");
+        PlainDocument phonex = (PlainDocument) phone.getTxtForm().getDocument();
+        phonex.setDocumentFilter((new NumericDocumentFilter()));
+        phone.setText(nvDTO.getSodienthoai());
+        panel[0].add(phone);
+
+        panel[1] = new JPanel(new GridLayout(1, 1));
+        panel[1].setBackground(Color.WHITE);
+        panel[1].setBorder(new EmptyBorder(10, 10, 10, 10));
+
+        panel[1].setPreferredSize(new Dimension(400, 100));
+        email = new FormInput("Email");
+        email.setText(nvDTO.getEmail());
+        panel[1].add(email);
+        main_center.add(panel[0]);
+
+        panel[2] = new JPanel(new GridLayout(3, 1));
+        panel[2].setBackground(Color.WHITE);
+        panel[2].setPreferredSize(new Dimension(400, 300));
+        panel[2].setBorder(new EmptyBorder(10, 10, 10, 10));
+        current_pwd = new FormInput("Mật khẩu hiện tại", "password");
+        new_pwd = new FormInput("Mật khẩu mới", "password");
+        confirm = new FormInput("Nhập lại mật khẩu mới", "password");
+        panel[2].add(current_pwd);
+        panel[2].add(new_pwd);
+        panel[2].add(confirm);
+
+        this.add(center, BorderLayout.CENTER);
+
+        bottom = new JPanel(new FlowLayout(1, 20, 10));
+        bottom.setBackground(Color.WHITE);
+
+        cancel = new ButtonCustome("Hủy", "danger", 15);
+        cancel.addActionListener(this);
+        bottom.add(cancel);
+        save = new ButtonCustome("Lưu", "success", 15);
+        save.addActionListener(this);
+        bottom.add(save);
+        this.add(bottom, BorderLayout.SOUTH);
         this.setLocationRelativeTo(null);
         this.setVisible(true);
     }
@@ -64,6 +147,62 @@ public class MyAccount extends JDialog implements ActionListener {
                 main_center.validate();
             }
         }
+
+        if (jbr[0].isSelected()) {
+            if (e.getSource() == save) {
+                if (Validation.isEmpty(phone.getText()) || phone.getText().length() != 10) {
+                    JOptionPane.showMessageDialog(this, "Số điện thoại không được rỗng và phải có 10 ký tự sô", "Chỉnh sửa số điện thoại", JOptionPane.WARNING_MESSAGE);
+                } else {
+                    String sdt = phone.getText();
+                    NhanVienDTO nv = new NhanVienDTO(nvDTO.getManhanvien(), nvDTO.getHoten(), nvDTO.getEmail(), sdt, nvDTO.isGioitinh(), nvDTO.getNgaysinh(), sdt, nvDTO.getVaitro(), nvDTO.getTrangthai());
+                    NhanVienDAO.getInstance().update(nv);
+                    JOptionPane.showMessageDialog(this, "Cập nhật thành công");
+                }
+            }
+        }
+
+        if (jbr[1].isSelected()) {
+            if (e.getSource() == save) {
+                if (Validation.isEmpty(email.getText()) || !Validation.isEmail(email.getText())) {
+                    JOptionPane.showMessageDialog(this, "Email không được rỗng và phải đúng định dạng", "Chỉnh sửa email", JOptionPane.WARNING_MESSAGE);
+                } else {
+                    String emailString = email.getText();
+                    NhanVienDTO nvdto = new NhanVienDTO(nvDTO.getManhanvien(), nvDTO.getHoten(), emailString, nvDTO.getSodienthoai(), nvDTO.isGioitinh(), nvDTO.getNgaysinh(), nvDTO.getSodienthoai(), nvDTO.getVaitro(), nvDTO.getTrangthai());
+                    NhanVienDAO.getInstance().update(nvdto);
+                    JOptionPane.showMessageDialog(this, "Cập nhật thành công");
+
+                }
+            }
+        }
+        if (jbr[2].isSelected()) {
+            if (e.getSource() == save) {
+
+                String hashpass = Validation.hashPassword(current_pwd.getPass());
+                NhanVienDTO newNVDTO = nvBUS.getByIndex(nvBUS.getNhanVienByMaNV(nvDTO.getManhanvien()));
+                if (Validation.isEmpty(current_pwd.getPass())) {
+                    JOptionPane.showMessageDialog(this, "Mật khẩu hiện tại không được rỗng", "Cảnh báo!", JOptionPane.WARNING_MESSAGE);
+                } else if (Validation.isEmpty(new_pwd.getPass()) || new_pwd.getPass().length() < 6) {
+                    JOptionPane.showMessageDialog(this, "Mật khẩu mới không được rỗng và có ít nhất 6 ký tự", "Cảnh báo!", JOptionPane.WARNING_MESSAGE);
+                } else if (Validation.isEmpty(confirm.getPass())) {
+                    JOptionPane.showMessageDialog(this, "Mật khẩu nhập lại không được rỗng", "Cảnh báo!", JOptionPane.WARNING_MESSAGE);
+                    return;
+                } else if (new_pwd.getPass().equals(confirm.getPass()) == false) {
+                    JOptionPane.showMessageDialog(this, "Mật khẩu nhập lại không khớp với mật khẩu mới", "Cảnh báo!", JOptionPane.WARNING_MESSAGE);
+                    return;
+                } else {
+                    if (hashpass.equals(nvDTO.getMatkhau())) {
+
+                        JOptionPane.showMessageDialog(this, "Cập nhật thành công");
+                        current_pwd.setPass("");
+                        new_pwd.setPass("");
+                        confirm.setPass("");
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Mật khẩu hiện tại không đúng", "Cảnh báo!", JOptionPane.WARNING_MESSAGE);
+                    }
+                }
+            }
+        }
+        menuTaskbar.resetChange();
     }
 
 }

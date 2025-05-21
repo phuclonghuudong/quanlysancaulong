@@ -57,7 +57,7 @@ public final class ButtonCustome extends JButton {
     }
 
     public ButtonCustome(String text, String type, int fontsize) {
-        initComponent(type, text, fontsize, 190, 40);
+        initComponent(type, text, fontsize, 130, 40);
     }
 
     public ButtonCustome(String text, String type, int fontsize, int w, int h) {

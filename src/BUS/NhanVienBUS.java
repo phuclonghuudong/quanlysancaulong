@@ -29,6 +29,19 @@ public class NhanVienBUS {
         return this.listNhanVien.get(index);
     }
 
+    public int getNhanVienByMaNV(int manv) {
+        int i = 0;
+        int vitri = -1;
+        while (i < this.listNhanVien.size() && vitri == -1) {
+            if (listNhanVien.get(i).getManhanvien() == manv) {
+                vitri = i;
+            } else {
+                i++;
+            }
+        }
+        return vitri;
+    }
+
     public NhanVienDTO loginUser(String email, String password) {
         if (email.isEmpty() || password.isEmpty()) {
 //            return "Vui lòng nhập đầy đủ thông tin bắt buộc.";

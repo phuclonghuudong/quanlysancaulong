@@ -17,7 +17,11 @@ public class StyleColor {
     }
 
     public Color backgroundColorGray() {
-        return new Color(255, 255, 255);
+        return new Color(204, 214, 219);
+    }
+
+    public Color colorForm() {
+        return new Color(255, 248, 230);
     }
 
 }
