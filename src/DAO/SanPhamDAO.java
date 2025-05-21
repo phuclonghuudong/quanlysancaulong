@@ -137,21 +137,34 @@ public class SanPhamDAO implements DAOinterface<SanPhamDTO> {
     public int getAutoIncrement() {
         int result = -1;
         try {
-            Connection con = (Connection) JDBCUtil.getConnection();
-            String sql = "SELECT `AUTO_INCREMENT` FROM  INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'quanlisancaulong' AND   TABLE_NAME   = 'sanpham'";
-            PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
-            ResultSet rs2 = pst.executeQuery(sql);
-            if (!rs2.isBeforeFirst()) {
-                System.out.println("No data");
-            } else {
-                while (rs2.next()) {
-                    result = rs2.getInt("AUTO_INCREMENT");
-                }
+            Connection con = JDBCUtil.getConnection();
+            String sql = "SELECT COUNT(*) AS total FROM sanpham";
+            PreparedStatement pst = con.prepareStatement(sql);
+            ResultSet rs = pst.executeQuery();
+            if (rs.next()) {
+                result = rs.getInt("total");
             }
         } catch (SQLException ex) {
-            Logger.getLogger(SanDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(SanPhamDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return result;
+        return result + 1;
+//        int result = -1;
+//        try {
+//            Connection con = (Connection) JDBCUtil.getConnection();
+//            String sql = "SELECT `AUTO_INCREMENT` FROM  INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'quanlisancaulong' AND   TABLE_NAME   = 'sanpham'";
+//            PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
+//            ResultSet rs2 = pst.executeQuery(sql);
+//            if (!rs2.isBeforeFirst()) {
+//                System.out.println("No data");
+//            } else {
+//                while (rs2.next()) {
+//                    result = rs2.getInt("AUTO_INCREMENT");
+//                }
+//            }
+//        } catch (SQLException ex) {
+//            Logger.getLogger(SanDAO.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//        return result;
     }
 
 }

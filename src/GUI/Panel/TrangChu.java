@@ -23,16 +23,14 @@ public class TrangChu extends javax.swing.JPanel {
     }
 
     public void initComponent() {
-//        this.setSize(new Dimension(1030, 670));
         this.setBounds(0, 200, 300, 1030);
         this.setBackground(colorStyle.backgroundColorGray());
         this.setLayout(new BorderLayout(0, 0));
         this.setOpaque(true);
 
         top = new JPanel(new GridLayout(10, 1, 5, 5));
-        top.setBackground(colorStyle.backgroundColorGray());
+        top.setBackground(colorStyle.mainBackgroundColor());
         top.setPreferredSize(new Dimension(1100, 650));
-//        top.setLayout(new BorderLayout());
         top.setBorder(BorderFactory.createEmptyBorder(20, 10, 10, 10));
 
         TitleHome title = new TitleHome("TRƯỜNG ĐẠI HỌC QUỐC GIA - TRƯỜNG ĐAI HỌC CÔNG NGHỆ THÔNG TIN", 13);
@@ -55,11 +53,6 @@ public class TrangChu extends javax.swing.JPanel {
 
         this.add(top, BorderLayout.NORTH);
 
-//        center = new JPanel();
-//        center.setBackground(colorStyle.mainBackgroundColor());
-//        center.setPreferredSize(new Dimension(1100, 400));
-//        center.setLayout(new FlowLayout(1, 50, 50));
-//        this.add(center, BorderLayout.CENTER);
     }
 
     /**

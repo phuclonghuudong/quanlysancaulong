@@ -27,7 +27,7 @@ public class LoaiHangDTO {
 
     @Override
     public String toString() {
-        return "LoaiHangDTO{" + "mahang=" + mahang + ", tenloaihang=" + tenloaihang + ", ghichu=" + ghichu + ", trangthai=" + trangthai + ", ngaytao=" + ngaytao + '}';
+        return "LoaiHangDTO{" + "maloaihang=" + mahang + ", tenloaihang=" + tenloaihang + ", ghichu=" + ghichu + ", trangthai=" + trangthai + ", ngaytao=" + ngaytao + '}';
     }
 
     @Override
@@ -68,11 +68,11 @@ public class LoaiHangDTO {
         return Objects.equals(this.ngaytao, other.ngaytao);
     }
 
-    public int getMahang() {
+    public int getMaloaihang() {
         return mahang;
     }
 
-    public void setMahang(int mahang) {
+    public void setMaloaihang(int mahang) {
         this.mahang = mahang;
     }
 

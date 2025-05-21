@@ -25,12 +25,13 @@ public class KhachHangDAO implements DAOinterface<KhachHangDTO> {
         int result = 0;
         try {
             Connection con = (Connection) JDBCUtil.getConnection();
-            String sql = "INSERT INTO `nhanvien`(`hoten`, `sodienthoai`,`diachi` ,`trangthai`) VALUES (?,?,?,?)";
+            String sql = "INSERT INTO `khachhang`(`makhachhang`,`hoten`, `sodienthoai`,`diachi` ,`trangthai`) VALUES (?,?,?,?,?)";
             PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
-            pst.setString(1, t.getHoten());
-            pst.setString(2, t.getSodienthoai());
-            pst.setString(3, t.getDiachi());
-            pst.setInt(4, t.getTrangthai());
+            pst.setInt(1, t.getMakhachhang());
+            pst.setString(2, t.getHoten());
+            pst.setString(3, t.getSodienthoai());
+            pst.setString(4, t.getDiachi());
+            pst.setInt(5, t.getTrangthai());
             result = pst.executeUpdate();
             JDBCUtil.closeConnection(con);
         } catch (SQLException ex) {
@@ -64,7 +65,7 @@ public class KhachHangDAO implements DAOinterface<KhachHangDTO> {
         int result = 0;
         try {
             Connection con = (Connection) JDBCUtil.getConnection();
-            String sql = "Update khachhang set `trangthai` = -1 WHERE makhachhang = ?";
+            String sql = "Update khachhang set `trangthai` = 0 WHERE makhachhang = ?";
             PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
             pst.setString(1, t);
             result = pst.executeUpdate();
@@ -80,7 +81,7 @@ public class KhachHangDAO implements DAOinterface<KhachHangDTO> {
         ArrayList<KhachHangDTO> result = new ArrayList<>();
         try {
             Connection con = (Connection) JDBCUtil.getConnection();
-            String sql = "SELECT * FROM khachhang WHERE trangthai = '1'";
+            String sql = "SELECT * FROM khachhang";
             PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
             ResultSet rs = (ResultSet) pst.executeQuery();
             while (rs.next()) {
@@ -125,21 +126,34 @@ public class KhachHangDAO implements DAOinterface<KhachHangDTO> {
     public int getAutoIncrement() {
         int result = -1;
         try {
-            Connection con = (Connection) JDBCUtil.getConnection();
-            String sql = "SELECT `AUTO_INCREMENT` FROM  INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'quanlisancaulong' AND   TABLE_NAME   = 'khachhang'";
-            PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
-            ResultSet rs2 = pst.executeQuery(sql);
-            if (!rs2.isBeforeFirst()) {
-                System.out.println("No data");
-            } else {
-                while (rs2.next()) {
-                    result = rs2.getInt("AUTO_INCREMENT");
-                }
+            Connection con = JDBCUtil.getConnection();
+            String sql = "SELECT COUNT(*) AS total FROM khachhang";
+            PreparedStatement pst = con.prepareStatement(sql);
+            ResultSet rs = pst.executeQuery();
+            if (rs.next()) {
+                result = rs.getInt("total");
             }
         } catch (SQLException ex) {
-            Logger.getLogger(KhachHangDAO.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(LoaiSanDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return result;
+        return result + 1;
+//        int result = -1;
+//        try {
+//            Connection con = (Connection) JDBCUtil.getConnection();
+//            String sql = "SELECT `AUTO_INCREMENT` FROM  INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'quanlisancaulong' AND   TABLE_NAME   = 'khachhang'";
+//            PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
+//            ResultSet rs2 = pst.executeQuery(sql);
+//            if (!rs2.isBeforeFirst()) {
+//                System.out.println("No data");
+//            } else {
+//                while (rs2.next()) {
+//                    result = rs2.getInt("AUTO_INCREMENT");
+//                }
+//            }
+//        } catch (SQLException ex) {
+//            Logger.getLogger(KhachHangDAO.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//        return result;
     }
 
     public boolean selectByPhoneExist(String p) {
@@ -150,6 +164,21 @@ public class KhachHangDAO implements DAOinterface<KhachHangDTO> {
             pst.setString(1, p);
             ResultSet rs = (ResultSet) pst.executeQuery();
 
+            return rs.next();
+
+        } catch (SQLException e) {
+        }
+        return false;
+    }
+
+    public boolean isSoDienThoaiUnique(String p, int ID) {
+        try {
+            Connection con = (Connection) JDBCUtil.getConnection();
+            String sql = "SELECT * FROM khachhang WHERE sodienthoai=? AND makhachhang<>?";
+            PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
+            pst.setString(1, p);
+            pst.setInt(2, ID);
+            ResultSet rs = (ResultSet) pst.executeQuery();
             return rs.next();
 
         } catch (SQLException e) {

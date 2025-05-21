@@ -12,6 +12,7 @@ public class SanDTO {
     private int masan;
     private int loaisan;
     private String tensan;
+    private String tenloaisan;
     private double giasan;
     private String ghichu;
     private int trangthai;
@@ -148,5 +149,13 @@ public class SanDTO {
     public void setNgaytao(Timestamp ngaytao) {
         this.ngaytao = ngaytao;
     }
+// Thêm thông tin
 
+    public String getTenloaisan() {
+        return tenloaisan;
+    }
+
+    public void setTenloaisan(String tenLoai) {
+        this.tenloaisan = tenLoai;
+    }
 }

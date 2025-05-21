@@ -12,6 +12,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -19,6 +22,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import style.StyleColor;
 import style.StyleTable;
+import utils.JTableExporter;
 
 /**
  *
@@ -202,15 +206,14 @@ public final class LoaiSan extends JPanel implements ActionListener, ItemListene
             if (index != -1) {
                 LoaiSanDialog lsDialog = new LoaiSanDialog(this, owner, "Xem loại sân", true, "view", listDS.get(index));
             }
+        } else if (e.getSource() == mainFunction.btn.get("export")) {
+            try {
+                JTableExporter.exportJTableToExcel(tableContent);
+            } catch (IOException ex) {
+                Logger.getLogger(LoaiSan.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
         }
-//        else if (e.getSource() == mainFunction.btn.get("export")) {
-//            try {
-//                JTableExporter.exportJTableToExcel(tableContent);
-//            } catch (IOException ex) {
-//                Logger.getLogger(LoaiSan.class.getName()).log(Level.SEVERE, null, ex);
-//            }
-//
-//        }
     }
 
     @Override

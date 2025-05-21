@@ -63,7 +63,7 @@ public class LoaiSanDAO implements DAOinterface<LoaiSanDTO> {
         int result = 0;
         try {
             Connection con = (Connection) JDBCUtil.getConnection();
-            String sql = "Update loaisan set `trangthai` = -1 WHERE maloaisan = ?";
+            String sql = "Update loaisan set `trangthai` = 0 WHERE maloaisan = ?";
             PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
             pst.setString(1, t);
             result = pst.executeUpdate();
@@ -101,7 +101,7 @@ public class LoaiSanDAO implements DAOinterface<LoaiSanDTO> {
         LoaiSanDTO result = null;
         try {
             Connection con = (Connection) JDBCUtil.getConnection();
-            String sql = "SELECT * FROM loaisan WHERE manv=?";
+            String sql = "SELECT * FROM loaisan WHERE maloaisan=?";
             PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
             pst.setString(1, t);
             ResultSet rs = (ResultSet) pst.executeQuery();
@@ -122,21 +122,34 @@ public class LoaiSanDAO implements DAOinterface<LoaiSanDTO> {
     public int getAutoIncrement() {
         int result = -1;
         try {
-            Connection con = (Connection) JDBCUtil.getConnection();
-            String sql = "SELECT `AUTO_INCREMENT` FROM  INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'quanlysancaulong' AND   TABLE_NAME   = 'loaisan'";
-            PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
-            ResultSet rs2 = pst.executeQuery(sql);
-            if (!rs2.isBeforeFirst()) {
-                System.out.println("No data");
-            } else {
-                while (rs2.next()) {
-                    result = rs2.getInt("AUTO_INCREMENT");
-                }
+            Connection con = JDBCUtil.getConnection();
+            String sql = "SELECT COUNT(*) AS total FROM loaisan";
+            PreparedStatement pst = con.prepareStatement(sql);
+            ResultSet rs = pst.executeQuery();
+            if (rs.next()) {
+                result = rs.getInt("total");
             }
         } catch (SQLException ex) {
             Logger.getLogger(LoaiSanDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return result;
+        return result + 1;
+//        int result = -1;
+//        try {
+//            Connection con = (Connection) JDBCUtil.getConnection();
+//            String sql = "SELECT `AUTO_INCREMENT` FROM  INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'quanlysancaulong' AND   TABLE_NAME   = 'loaisan'";
+//            PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
+//            ResultSet rs2 = pst.executeQuery(sql);
+//            if (!rs2.isBeforeFirst()) {
+//                System.out.println("No data");
+//            } else {
+//                while (rs2.next()) {
+//                    result = rs2.getInt("AUTO_INCREMENT");
+//                }
+//            }
+//        } catch (SQLException ex) {
+//            Logger.getLogger(LoaiSanDAO.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//        return result;
     }
 
     public boolean isNameUnique(String p, int ID) {
@@ -152,6 +165,27 @@ public class LoaiSanDAO implements DAOinterface<LoaiSanDTO> {
         } catch (SQLException e) {
         }
         return false;
+    }
+
+    public ArrayList<LoaiSanDTO> selectAllTrangThai1() {
+        ArrayList<LoaiSanDTO> result = new ArrayList<>();
+        try {
+            Connection con = (Connection) JDBCUtil.getConnection();
+            String sql = "SELECT * FROM loaisan WHERE trangthai=1";
+            PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
+            ResultSet rs = (ResultSet) pst.executeQuery();
+            while (rs.next()) {
+                int ma = rs.getInt("maloaisan");
+                String tenloaihang = rs.getString("tenloaisan");
+                String ghichu = rs.getString("ghichu");
+                int trangthai = rs.getInt("trangthai");
+                LoaiSanDTO nv = new LoaiSanDTO(ma, tenloaihang, ghichu, trangthai);
+                result.add(nv);
+            }
+            JDBCUtil.closeConnection(con);
+        } catch (SQLException e) {
+        }
+        return result;
     }
 
 }

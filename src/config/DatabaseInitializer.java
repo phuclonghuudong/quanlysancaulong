@@ -45,7 +45,7 @@ public class DatabaseInitializer {
                     + ");";
 
             sql += "CREATE TABLE IF NOT EXISTS loaihang ("
-                    + "maloaihang INT PRIMARY KEY AUTO_INCREMENT,"
+                    + "maloaihang INT AUTO_INCREMENT PRIMARY KEY,"
                     + "tenloaihang VARCHAR(255),"
                     + "ghichu VARCHAR(255),"
                     + "trangthai INT,"
@@ -53,7 +53,7 @@ public class DatabaseInitializer {
                     + ");";
 
             sql += "CREATE TABLE IF NOT EXISTS loaisan ("
-                    + "maloaisan INT PRIMARY KEY AUTO_INCREMENT,"
+                    + "maloaisan INT AUTO_INCREMENT PRIMARY KEY,"
                     + "tenloaisan VARCHAR(255),"
                     + "ghichu VARCHAR(255),"
                     + "trangthai INT,"
@@ -61,7 +61,7 @@ public class DatabaseInitializer {
                     + ");";
 
             sql += "CREATE TABLE IF NOT EXISTS san ("
-                    + "masan INT PRIMARY KEY AUTO_INCREMENT,"
+                    + "masan INT AUTO_INCREMENT PRIMARY KEY,"
                     + "loaisan int,"
                     + "tensan VARCHAR(255),"
                     + "giasan DECIMAL(10,2),"
@@ -73,7 +73,7 @@ public class DatabaseInitializer {
                     + ");";
 
             sql += "CREATE TABLE IF NOT EXISTS sanpham ("
-                    + "masanpham INT PRIMARY KEY AUTO_INCREMENT,"
+                    + "masanpham INT AUTO_INCREMENT PRIMARY KEY,"
                     + "loaisanpham INT,"
                     + "tensanpham VARCHAR(255),"
                     + "giaban DECIMAL(10,2),"
@@ -85,9 +85,8 @@ public class DatabaseInitializer {
                     + "ngaycapnhat TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,"
                     + "FOREIGN KEY (loaisanpham) REFERENCES loaihang(maloaihang)"
                     + ");";
-
             sql += "CREATE TABLE IF NOT EXISTS khunggia ("
-                    + "makhunggia INT PRIMARY KEY AUTO_INCREMENT,"
+                    + "makhunggia INT AUTO_INCREMENT PRIMARY KEY,"
                     + "checkin TIME,"
                     + "checkout TIME,"
                     + "thu INT,"
@@ -97,9 +96,8 @@ public class DatabaseInitializer {
                     + "ngaytao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,"
                     + "ngaycapnhat TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"
                     + ");";
-
             sql += "CREATE TABLE IF NOT EXISTS datsan ("
-                    + "madatsan INT PRIMARY KEY AUTO_INCREMENT,"
+                    + "madatsan INT AUTO_INCREMENT PRIMARY KEY,"
                     + "manhanvien INT,"
                     + "masan INT,"
                     + "makhachhang INT,"
@@ -115,9 +113,8 @@ public class DatabaseInitializer {
                     + "FOREIGN KEY (masan) REFERENCES san(masan),"
                     + "FOREIGN KEY (makhachhang) REFERENCES khachhang(makhachhang)"
                     + ");";
-
             sql += "CREATE TABLE IF NOT EXISTS chitietdatsan ("
-                    + "id INT PRIMARY KEY AUTO_INCREMENT,"
+                    + "id INT AUTO_INCREMENT PRIMARY KEY,"
                     + "madatsan INT,"
                     + "masanpham INT,"
                     + "soluong INT,"
@@ -129,23 +126,21 @@ public class DatabaseInitializer {
                     + "FOREIGN KEY (madatsan) REFERENCES datsan(madatsan),"
                     + "FOREIGN KEY (masanpham) REFERENCES sanpham(masanpham)"
                     + ");";
-
             sql += "CREATE TABLE IF NOT EXISTS chitietgiasan ("
-                    + "id INT PRIMARY KEY AUTO_INCREMENT,"
+                    + "id INT AUTO_INCREMENT PRIMARY KEY,"
                     + "masan INT,"
                     + "makhunggia INT,"
                     + "ghichu VARCHAR(255),"
                     + "FOREIGN KEY (masan) REFERENCES san(masan),"
                     + "FOREIGN KEY (makhunggia) REFERENCES khunggia(makhunggia)"
                     + ");";
+            //            Chạy nhiều lệnh SQL (chia nhỏ hoặc dùng batch nếu cần
 
-            // Chạy nhiều lệnh SQL (chia nhỏ hoặc dùng batch nếu cần)
             for (String singleSql : sql.split(";")) {
                 if (!singleSql.trim().isEmpty()) {
                     stmt.executeUpdate(singleSql + ";");
                 }
             }
-
             JOptionPane.showMessageDialog(null, "Tạo tất cả các bảng thành công", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
 
         } catch (SQLException e) {

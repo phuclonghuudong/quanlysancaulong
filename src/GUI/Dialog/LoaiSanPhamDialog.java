@@ -1,13 +1,13 @@
 package GUI.Dialog;
 
-import BUS.LoaiSanBUS;
-import DAO.LoaiSanDAO;
-import DTO.LoaiSanDTO;
+import BUS.LoaiHangBUS;
+import DAO.LoaiHangDAO;
+import DTO.LoaiHangDTO;
 import GUI.Component.ButtonCustome;
 import GUI.Component.FormCheckbox;
 import GUI.Component.FormInput;
 import GUI.Component.HeaderTitle;
-import GUI.Panel.LoaiSan;
+import GUI.Panel.LoaiSanPham;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -15,34 +15,30 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
 /**
  *
  * @author phucp
  */
-public final class LoaiSanDialog extends JDialog implements MouseListener {
+public final class LoaiSanPhamDialog extends JDialog implements MouseListener {
 
-    LoaiSan jPanelLS;
-    LoaiSanDTO loaiSanDTO;
-    LoaiSanBUS loaiSanBUS = new LoaiSanBUS();
+    LoaiSanPham jPanelLSP;
+    LoaiHangDTO loaiHangDTO;
+    LoaiHangBUS loaiHangBUS = new LoaiHangBUS();
 
     private HeaderTitle titlePage;
     private JPanel pnlMain, pnlButtom;
     private FormInput txtTenLoai, txtGhiChu;
     private FormCheckbox txtTrangThai;
     private ButtonCustome btnThem, btnCapNhat, btnHuyBo;
-    private JTextField txtMaLoaiSan;
+    private JTextField txtMaLoaiHang;
 
-    public LoaiSanDialog(LoaiSan jpLS, JFrame owner, String title, boolean modal, String type) {
+    public LoaiSanPhamDialog(LoaiSanPham jpLS, JFrame owner, String title, boolean modal, String type) {
         super(owner, title, modal);
-        this.jPanelLS = jpLS;
-        txtTenLoai = new FormInput("Tên loại sân");
+        this.jPanelLSP = jpLS;
+        txtTenLoai = new FormInput("Tên loại sản phẩm");
         txtGhiChu = new FormInput("Ghi chú");
         String[] listStatus = new String[]{"Hoạt động", "Dừng"};
         txtTrangThai = new FormCheckbox("Trạng thái", listStatus);
@@ -50,22 +46,22 @@ public final class LoaiSanDialog extends JDialog implements MouseListener {
         initComponents(title, type);
     }
 
-    public LoaiSanDialog(LoaiSan jpLS, JFrame owner, String title, boolean modal, String type, DTO.LoaiSanDTO ls) {
+    public LoaiSanPhamDialog(LoaiSanPham jpLS, JFrame owner, String title, boolean modal, String type, DTO.LoaiHangDTO ls) {
         super(owner, title, modal);
-        this.loaiSanDTO = ls;
-        txtMaLoaiSan = new JTextField("");
-        setMaloaisan(Integer.toString(ls.getMaloaisan()));
+        this.loaiHangDTO = ls;
+        txtMaLoaiHang = new JTextField("");
+        setMaloaihang(Integer.toString(ls.getMaloaihang()));
         txtTenLoai = new FormInput("Tên loại sân");
-        setTenLoaiSan(ls.getTenloaisan());
+        setTenLoaiHang(ls.getTenloaihang());
 
-        txtGhiChu = new FormInput("Mô tả");
+        txtGhiChu = new FormInput("Ghi chú");
         setGhiChu(ls.getGhichu());
 
         String[] listStatus = new String[]{"Hoạt động", "Dừng"};
         txtTrangThai = new FormCheckbox("Trạng thái", listStatus);
         setTrangThai(ls.getTrangthai());
 
-        this.jPanelLS = jpLS;
+        this.jPanelLSP = jpLS;
         initComponents(title, type);
     }
 
@@ -114,19 +110,19 @@ public final class LoaiSanDialog extends JDialog implements MouseListener {
         this.setVisible(true);
     }
 
-    public String getMaloaisan() {
-        return txtMaLoaiSan.getText();
+    public String getMaloaihang() {
+        return txtMaLoaiHang.getText();
     }
 
-    public void setMaloaisan(String id) {
-        this.txtMaLoaiSan.setText(id);
+    public void setMaloaihang(String id) {
+        this.txtMaLoaiHang.setText(id);
     }
 
-    public String getTenLoaiSan() {
+    public String getTenLoaiHang() {
         return txtTenLoai.getText();
     }
 
-    public void setTenLoaiSan(String text) {
+    public void setTenLoaiHang(String text) {
         txtTenLoai.setText(text);
     }
 
@@ -156,31 +152,31 @@ public final class LoaiSanDialog extends JDialog implements MouseListener {
 
     @Override
     public void mousePressed(MouseEvent e) {
-        int currentID = (loaiSanDTO != null) ? loaiSanDTO.getMaloaisan() : -1;
-        String validationMsg = jPanelLS.loaiSanBUS.validateLoaiSan(txtTenLoai.getText(), getTrangThai(), currentID);
+        int currentID = (loaiHangDTO != null) ? loaiHangDTO.getMaloaihang() : -1;
+        String validationMsg = jPanelLSP.loaiHangBUS.validateLoaiHang(txtTenLoai.getText(), getTrangThai(), currentID);
 
         if (!validationMsg.equals("valid")) {
             JOptionPane.showMessageDialog(this, validationMsg, "Cảnh báo !", JOptionPane.WARNING_MESSAGE);
             return;
         }
         if (e.getSource() == btnThem) {
-            int id = LoaiSanDAO.getInstance().getAutoIncrement();
-            jPanelLS.loaiSanBUS.add(new DTO.LoaiSanDTO(id,
+            int id = LoaiHangDAO.getInstance().getAutoIncrement();
+            jPanelLSP.loaiHangBUS.add(new DTO.LoaiHangDTO(id,
                     txtTenLoai.getText(),
                     txtGhiChu.getText(),
                     getTrangThai().equals("Hoạt động") ? 1 : 0));
-            jPanelLS.loadDataTable(jPanelLS.listDS);
+            jPanelLSP.loadDataTable(jPanelLSP.listDS);
             dispose();
 
         } else if (e.getSource() == btnHuyBo) {
             dispose();
         } else if (e.getSource() == btnCapNhat) {
-            jPanelLS.loaiSanBUS.update(new LoaiSanDTO(
-                    loaiSanDTO.getMaloaisan(),
+            jPanelLSP.loaiHangBUS.update(new LoaiHangDTO(
+                    loaiHangDTO.getMaloaihang(),
                     txtTenLoai.getText(),
                     txtGhiChu.getText(),
                     getTrangThai().equals("Hoạt động") ? 1 : 0));
-            jPanelLS.loadDataTable(jPanelLS.listDS);
+            jPanelLSP.loadDataTable(jPanelLSP.listDS);
             dispose();
         }
     }

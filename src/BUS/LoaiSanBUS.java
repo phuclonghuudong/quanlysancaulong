@@ -24,6 +24,10 @@ public class LoaiSanBUS {
         return this.listLoaiSan;
     }
 
+    public ArrayList<LoaiSanDTO> getAllStatus() {
+        return loaiSanDAO.selectAllTrangThai1();
+    }
+
     public LoaiSanDTO getByIndex(int index) {
         return this.listLoaiSan.get(index);
     }
