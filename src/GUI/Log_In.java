@@ -56,7 +56,7 @@ public class Log_In extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin.");
             } else if (user == null) {
                 JOptionPane.showMessageDialog(this, "Sai thông tin đăng nhập hoặc tài khoản bị khóa.");
-            } else if (!"ADMIN".equals(user.getVaitro())) {
+            } else if (!"ADMIN".equals(user.getVaitro()) && !"NHANVIEN".equals(user.getVaitro())) {
                 JOptionPane.showMessageDialog(this, "Tài khoản của bạn chưa được xác nhận.");
             } else {
                 JOptionPane.showMessageDialog(this, "Đăng nhập thành công! Xin chào " + user.getHoten());

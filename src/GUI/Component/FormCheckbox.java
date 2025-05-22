@@ -112,11 +112,11 @@ public class FormCheckbox extends JPanel {
 
     public void setDisabled() {
         checkboxPanel.setBackground(StyleColor.mainBackgroundColor());
-        checkboxPanel.setCursor(new Cursor(Cursor.WAIT_CURSOR));
 
         for (JCheckBox checkbox : checkboxes) {
             checkbox.setEnabled(false);
             checkbox.setBackground(StyleColor.mainBackgroundColor());
+            checkbox.setCursor(new Cursor(Cursor.WAIT_CURSOR));
             checkbox.setForeground(Color.BLACK);
 
             checkbox.addItemListener(e -> {
@@ -147,8 +147,8 @@ public class FormCheckbox extends JPanel {
         @Override
         public void paintIcon(Component c, Graphics g, int x, int y) {
             JCheckBox cb = (JCheckBox) c;
-            g.setColor(Color.BLACK);
-            g.drawRect(x, y, size - 1, size - 1);
+            g.setColor(Color.WHITE);
+            g.drawRect(x, y, size - 2, size - 2);
             if (cb.isSelected()) {
                 g.setColor(Color.BLACK);
                 g.fillRect(x + 4, y + 4, size - 8, size - 8);

@@ -42,6 +42,30 @@ public class NhanVienBUS {
         return vitri;
     }
 
+    public Boolean add(NhanVienDTO kh) {
+        boolean check = nvDAO.insert(kh) != 0;
+        if (check) {
+            this.listNhanVien.add(kh);
+        }
+        return check;
+    }
+
+    public Boolean delete(NhanVienDTO kh) {
+        boolean check = nvDAO.delete(Integer.toString(kh.getManhanvien())) != 0;
+        if (check) {
+            this.listNhanVien = nvDAO.selectAll();
+        }
+        return check;
+    }
+
+    public Boolean update(NhanVienDTO kh) {
+        boolean check = nvDAO.update(kh) != 0;
+        if (check) {
+            this.listNhanVien.set(getNhanVienByMaNV(kh.getManhanvien()), kh);
+        }
+        return check;
+    }
+
     public NhanVienDTO loginUser(String email, String password) {
         if (email.isEmpty() || password.isEmpty()) {
 //            return "Vui lòng nhập đầy đủ thông tin bắt buộc.";
@@ -70,8 +94,8 @@ public class NhanVienBUS {
 //            return "Tài khoản của bạn đã bị khóa.";
             return null;
         }
-        if (!"ADMIN".equals(user.getVaitro())) {
-//            return "Tài khoản của bạn đã bị khóa.";
+        if (!"ADMIN".equals(user.getVaitro()) && !"NHANVIEN".equals(user.getVaitro())) {
+            //            return "Tài khoản của bạn đã bị khóa.";
             return null;
         }
 
@@ -144,6 +168,15 @@ public class NhanVienBUS {
         return result > 0 ? "success" : "Cập nhật thất bại";
     }
 
+    public String updateUsername(NhanVienDTO nvDTO, String username) {
+        if (Validation.isEmpty(username)) {
+            return "Họ tên không được để trống";
+        }
+        nvDTO.setHoten(username);
+        int result = NhanVienDAO.getInstance().update(nvDTO);
+        return result > 0 ? "success" : "Cập nhật thất bại";
+    }
+
     public String updatePassword(NhanVienDTO nvDTO, String currentPass, String newPass, String confirmPass) {
         if (Validation.isEmpty(currentPass)) {
             return "Mật khẩu hiện tại không được rỗng";
@@ -164,5 +197,35 @@ public class NhanVienBUS {
         nvDTO.setMatkhau(Validation.hashPassword(newPass));
         int result = NhanVienDAO.getInstance().update(nvDTO);
         return result > 0 ? "success" : "Cập nhật thất bại";
+    }
+
+    public String validateNhanVien(String hoTen, String email, String soDienThoai, String vaiTro, String gioiTinh, Date ngaySinh, String trangThai, int currentID) {
+        if (Validation.isEmpty(hoTen) || Validation.isEmpty(email)
+                || Validation.isEmpty(soDienThoai) || Validation.isEmpty(vaiTro)) {
+            return "Vui lòng điền đầy đủ thông tin";
+        }
+
+        if (trangThai == null || trangThai.isEmpty()) {
+            return "Vui lòng chọn trạng thái";
+        }
+        if (ngaySinh == null) {
+            return "Vui lòng chọn ngày sinh";
+        }
+
+        if (!Validation.isEmail(String.valueOf(email))) {
+            return "Email không đúng định dạng.";
+        }
+        if (!Validation.isValidPhone(String.valueOf(soDienThoai))) {
+            return "Số điện thoại không đúng định dạng.";
+        }
+
+        if (NhanVienDAO.getInstance().isEmailUnique(email, currentID)) {
+            return "Email đã được sử dụng!";
+        }
+        if (NhanVienDAO.getInstance().isPhoneNumberUnique(soDienThoai, currentID)) {
+            return "Số điện thoại đã được sử dụng!";
+        }
+
+        return "valid";
     }
 }

@@ -36,7 +36,19 @@ public class NhanVienDTO {
         this.trangthai = trangthai;
     }
 
-    public NhanVienDTO(int manhanvien, String hoten, String email, String sodienthoai, boolean gioitinh, Date ngaysinh, String matkhau, String vaitro, int trangthai, Timestamp ngaytao, Timestamp ngaycapnhat) {
+    public NhanVienDTO(int manhanvien, String hoten, String email, String sodienthoai, String vaitro, boolean gioitinh, Date ngaysinh, String matkhau, int trangthai) {
+        this.manhanvien = manhanvien;
+        this.hoten = hoten;
+        this.email = email;
+        this.sodienthoai = sodienthoai;
+        this.gioitinh = gioitinh;
+        this.ngaysinh = ngaysinh;
+        this.matkhau = matkhau;
+        this.vaitro = vaitro;
+        this.trangthai = trangthai;
+    }
+
+    public NhanVienDTO(int manhanvien, String hoten, String email, String sodienthoai, String vaitro, boolean gioitinh, Date ngaysinh, String matkhau, int trangthai, Timestamp ngaytao, Timestamp ngaycapnhat) {
         this.manhanvien = manhanvien;
         this.hoten = hoten;
         this.email = email;
@@ -50,14 +62,13 @@ public class NhanVienDTO {
         this.ngaycapnhat = ngaycapnhat;
     }
 
-    public NhanVienDTO(int manhanvien, String hoten, String email, String sodienthoai, boolean gioitinh, Date ngaysinh, String matkhau, String vaitro, int trangthai) {
+    public NhanVienDTO(int manhanvien, String hoten, String email, String sodienthoai, String vaitro, boolean gioitinh, Date ngaysinh, int trangthai) {
         this.manhanvien = manhanvien;
         this.hoten = hoten;
         this.email = email;
         this.sodienthoai = sodienthoai;
         this.gioitinh = gioitinh;
         this.ngaysinh = ngaysinh;
-        this.matkhau = matkhau;
         this.vaitro = vaitro;
         this.trangthai = trangthai;
     }

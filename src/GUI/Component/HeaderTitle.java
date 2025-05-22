@@ -25,11 +25,15 @@ public final class HeaderTitle extends JPanel {
         lblTitle.setForeground(new Color(255, 255, 255));
         lblTitle.setHorizontalAlignment(JLabel.CENTER);
         lblTitle.setText(title);
-        lblTitle.setPreferredSize(new Dimension(400, 50));
+//        lblTitle.setPreferredSize(new Dimension(400, 50));
         this.add(lblTitle, BorderLayout.CENTER);
     }
 
     public HeaderTitle(String title) {
         initComponent(title);
     }
+
+//    public HeaderTitle(String title, int sizeW, int sizeH) {
+//        initComponent(title, sizeW, sizeH);
+//    }
 }

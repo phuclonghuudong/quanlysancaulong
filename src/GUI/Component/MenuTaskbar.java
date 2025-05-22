@@ -29,6 +29,7 @@ import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
+import style.StyleColor;
 import style.StyleFont;
 
 /**
@@ -39,6 +40,7 @@ public final class MenuTaskbar extends javax.swing.JPanel {
 
     JPanel pnlCenter, pnlTop, pnlBottom, bar1, bar2, bar3, bar4;
     JScrollPane scrollPane;
+    StyleColor colorStyle = new StyleColor();
 
     Color FontColor = new Color(96, 125, 139);
     Color DefaultColor = new Color(255, 255, 255);
@@ -75,6 +77,68 @@ public final class MenuTaskbar extends javax.swing.JPanel {
         {"QL sản phẩm", "icons8-product-100.png", "sanpham"},
         {"Đăng xuất", "shutdown-96.png", "dangxuat"},};
 
+    public void handleMenuClick(int index) {
+        switch (getSt[index][2]) {
+            case "trangchu" -> {
+                trangChu = new TrangChu();
+                main.setPanel(trangChu);
+            }
+            case "datsan" -> {
+                datSan = new DatSan(main);
+                main.setPanel(datSan);
+            }
+            case "khachhang" -> {
+                khachHang = new KhachHang(main);
+                main.setPanel(khachHang);
+            }
+            case "nhanvien" -> {
+                nhanVien = new NhanVien(main);
+                main.setPanel(nhanVien);
+            }
+            case "loaisan" -> {
+                loaiSan = new LoaiSan(main);
+                main.setPanel(loaiSan);
+            }
+            case "san" -> {
+                san = new San(main);
+                main.setPanel(san);
+            }
+            case "loaisanpham" -> {
+                loaiSanPham = new LoaiSanPham(main);
+                main.setPanel(loaiSanPham);
+            }
+            case "sanpham" -> {
+                sanPham = new SanPham(main);
+                main.setPanel(sanPham);
+            }
+            case "dangxuat" -> {
+                int input = JOptionPane.showConfirmDialog(null,
+                        "Bạn có chắc chắn muốn đăng xuất?", "Đăng xuất",
+                        JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
+                if (input == 0) {
+                    Log_In login = new Log_In();
+                    main.dispose();
+                    login.setVisible(true);
+                }
+            }
+        }
+    }
+
+    public boolean checkRole(String chucNang) {
+        if (nhanVienDTO == null || nhanVienDTO.getVaitro() == null) {
+            return false;
+        }
+
+        String vaiTro = nhanVienDTO.getVaitro().toLowerCase();
+        return switch (chucNang) {
+            case "nhanvien", "loaisan", "san", "loaisanpham", "sanpham" ->
+                vaiTro.equals("admin");
+            default ->
+                true;
+        };
+
+    }
+
     public MenuTaskbar(Main main) {
         this.main = main;
 //        initComponents();
@@ -84,7 +148,7 @@ public final class MenuTaskbar extends javax.swing.JPanel {
     public MenuTaskbar(Main main, NhanVienDTO user) {
         this.main = main;
         this.nhanVienDTO = user;
-        initComponents();
+//        initComponents();
         initComponent();
     }
 
@@ -118,11 +182,10 @@ public final class MenuTaskbar extends javax.swing.JPanel {
         pnlCenter = new JPanel();
         pnlCenter.setPreferredSize(new Dimension(230, 600));
         pnlCenter.setBackground(DefaultColor);
-//        pnlCenter.setBorder(new EmptyBorder(0,15,0,35));
         pnlCenter.setLayout(new FlowLayout(0, 0, 5));
 
         bar3 = new JPanel();
-        bar3.setBackground(new Color(204, 214, 219));
+        bar3.setBackground(colorStyle.mainBackgroundColor());
         bar3.setPreferredSize(new Dimension(1, 1));
         this.add(bar3, BorderLayout.EAST);
 
@@ -130,6 +193,7 @@ public final class MenuTaskbar extends javax.swing.JPanel {
         scrollPane.setBorder(new EmptyBorder(5, 10, 0, 10));
         scrollPane.setVerticalScrollBar(new CustomScrollBar(JScrollBar.VERTICAL));
         scrollPane.setHorizontalScrollBar(new CustomScrollBar(JScrollBar.HORIZONTAL));
+        scrollPane.setBackground(DefaultColor);
         this.add(scrollPane, BorderLayout.CENTER);
 
         pnlBottom = new JPanel();
@@ -145,116 +209,32 @@ public final class MenuTaskbar extends javax.swing.JPanel {
         this.add(pnlBottom, BorderLayout.SOUTH);
 
         for (int i = 0; i < getSt.length; i++) {
-            if (i + 1 == getSt.length) {
-                listitem[i] = new itemTaskbar(getSt[i][1], getSt[i][0]);
+            listitem[i] = new itemTaskbar(getSt[i][1], getSt[i][0]);
+
+            // Ẩn item nếu không có quyền (trừ Trang chủ & Đăng xuất)
+            if (i != 0 && i != getSt.length - 1 && !checkRole(getSt[i][2])) {
+                continue;
+            }
+
+            if (i == getSt.length - 1) {
                 pnlBottom.add(listitem[i]);
             } else {
-                listitem[i] = new itemTaskbar(getSt[i][1], getSt[i][0]);
                 pnlCenter.add(listitem[i]);
-//                if (i != 0) {
-//                    if (!checkRole(getSt[i][2])) {
-//                listitem[i].setVisible(false);
-//                    }
-//                }
             }
-        }
 
-        listitem[0].setBackground(HowerBackgroundColor);
-        listitem[0].setForeground(HowerFontColor);
-        listitem[0].isSelected = true;
-
-        for (int i = 0; i < getSt.length; i++) {
+            int index = i;
             listitem[i].addMouseListener(new MouseAdapter() {
                 @Override
                 public void mousePressed(MouseEvent evt) {
+                    handleMenuClick(index);
                     pnlMenuTaskbarMousePress(evt);
                 }
             });
         }
 
-        listitem[0].addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent evt) {
-                trangChu = new TrangChu();
-                main.setPanel(trangChu);
-            }
-        });
-        listitem[1].addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent evt) {
-                datSan = new DatSan(main);
-                main.setPanel(datSan);
-
-            }
-        });
-        listitem[2].addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent evt) {
-                khachHang = new KhachHang(main);
-                main.setPanel(khachHang);
-
-            }
-        });
-        listitem[3].addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent evt) {
-                nhanVien = new NhanVien(main);
-                main.setPanel(nhanVien);
-
-            }
-        });
-
-        listitem[4].addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent evt) {
-                loaiSan = new LoaiSan(main);
-                main.setPanel(loaiSan);
-
-            }
-        });
-        listitem[5].addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent evt) {
-                san = new San(main);
-                main.setPanel(san);
-
-            }
-        });
-        listitem[6].addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent evt) {
-                loaiSanPham = new LoaiSanPham(main);
-                main.setPanel(loaiSanPham);
-
-            }
-        });
-        listitem[7].addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent evt) {
-                sanPham = new SanPham(main);
-                main.setPanel(sanPham);
-
-            }
-        });
-
-        listitem[getSt.length - 1].addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent evt) {
-
-                int input = JOptionPane.showConfirmDialog(null,
-                        "Bạn có chắc chắn muốn đăng xuất?", "Đăng xuất",
-                        JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
-                if (input == 0) {
-                    Log_In login = new Log_In();
-                    main.dispose();
-                    login.setVisible(true);
-                }
-            }
-        });
     }
 
     public void pnlMenuTaskbarMousePress(MouseEvent evt) {
-
         for (int i = 0; i < getSt.length; i++) {
             if (evt.getSource() == listitem[i]) {
                 listitem[i].isSelected = true;

@@ -14,7 +14,7 @@ import style.StyleFont;
  *
  * @author phucp
  */
-public class Main extends javax.swing.JFrame {
+public final class Main extends javax.swing.JFrame {
 
     StyleColor colorStyle = new StyleColor();
     StyleFont fontStyle = new StyleFont();
@@ -37,6 +37,7 @@ public class Main extends javax.swing.JFrame {
     public void initComponent() {
         fontStyle.setUIFont14();
         this.setSize(new Dimension(1280, 670));
+        this.setBackground(colorStyle.mainBackgroundColor());
         this.setLocationRelativeTo(null);
         this.setLayout(new BorderLayout(0, 0));
         this.setTitle("Hệ thống sân cầu lông - Trường Đại học Quốc gia - Đại học Công nghệ Thông tin");

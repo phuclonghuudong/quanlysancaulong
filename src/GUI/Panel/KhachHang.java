@@ -111,7 +111,7 @@ public final class KhachHang extends JPanel implements ActionListener, ItemListe
         functionBar.setBorder(new EmptyBorder(10, 10, 10, 10));
 
         String[] action = {"create", "update", "delete", "detail", "export"};
-        mainFunction = new MainFunction("loaisan", action);
+        mainFunction = new MainFunction("khachhang", action);
         for (String ac : action) {
             mainFunction.btn.get(ac).addActionListener(this);
         }

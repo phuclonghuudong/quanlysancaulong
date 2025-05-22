@@ -21,7 +21,6 @@ public class TableModel<T> extends AbstractTableModel {
         this.columnNames = new Vector<>(List.of(columnNames));
         this.methodNames = new Vector<>(List.of(methodNames));
 
-        // Kiểm tra số lượng tên cột và tên phương thức
         if (this.columnNames.size() != this.methodNames.size()) {
             throw new IllegalArgumentException("Số lượng tên cột và tên phương thức không khớp.");
         }
@@ -55,9 +54,10 @@ public class TableModel<T> extends AbstractTableModel {
             if (methodName.equals("isGioitinh") && value instanceof Boolean) {
                 return ((Boolean) value) ? "Nữ" : "Nam";
             }
-            if (methodName.equals("getTrangthai") && value instanceof Integer) {
-                return ((Integer) value) == 1 ? "Hoạt động" : "Dừng";
-            }
+//            if (methodName.equals("getTrangthai") && value instanceof Integer) {
+//                return ((Integer) value) == 1 ? "Hoạt động"
+//                        : ((Integer) value) == 2 ? "Bảo trì" : "Dừng";
+//            }
             return value;
         } catch (NoSuchMethodException | java.lang.reflect.InvocationTargetException | IllegalAccessException e) {
             return null;
