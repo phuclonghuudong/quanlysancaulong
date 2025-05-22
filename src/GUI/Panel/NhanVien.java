@@ -2,6 +2,7 @@ package GUI.Panel;
 
 import BUS.NhanVienBUS;
 import DTO.NhanVienDTO;
+import GUI.Component.IntegratedSearch;
 import GUI.Component.MainFunction;
 import GUI.Component.PanelBorderRadius;
 import GUI.Component.TableModel;
@@ -15,6 +16,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -54,10 +57,11 @@ public final class NhanVien extends JPanel implements ActionListener, ItemListen
     public ArrayList<NhanVienDTO> listDS = nvBUS.getAll();
     private TableModel<NhanVienDTO> tableModel;
     JFrame owner = (JFrame) SwingUtilities.getWindowAncestor(this);
-//    IntegratedSearch search;
+    IntegratedSearch search;
     DefaultTableModel tblModel;
 
     String[] header = new String[]{"Mã NV", "Họ tên", "Email", "Số điện thoại", "Vai trò", "Giới tính", "Ngày sinh", "Trạng thái"};
+    String[] headerSearch = new String[]{"Tất cả", "Mã nhân viên", "Họ tên", "Email", "Số điện thoại", "Vai trò", "Trạng thái"};
 
     public NhanVien(Main main) {
         this.m = main;
@@ -98,16 +102,6 @@ public final class NhanVien extends JPanel implements ActionListener, ItemListen
 
         tableContent.setAutoCreateRowSorter(true);
 
-//        tableContent.addMouseListener(new MouseAdapter() {
-//            @Override
-//            public void mousePressed(MouseEvent e) {
-//                int index = tableContent.getSelectedRow();
-//                if (index != -1) {
-//                    ArrayList<SanDTO> listSP = sanBUS.getByMaLoaiSan(listDS.get(index).getMaloaisan());
-//                    ListCustomersInDePot(listSP);
-//                }
-//            }
-//        });
         contentCenter = new JPanel();
         contentCenter.setPreferredSize(new Dimension(1100, 600));
         contentCenter.setBackground(new Color(240, 247, 250));
@@ -125,6 +119,25 @@ public final class NhanVien extends JPanel implements ActionListener, ItemListen
             mainFunction.btn.get(ac).addActionListener(this);
         }
         functionBar.add(mainFunction);
+
+        search = new IntegratedSearch(headerSearch);
+        search.cbxChoose.addItemListener(this);
+        search.txtSearchForm.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                String type = (String) search.cbxChoose.getSelectedItem();
+                String txt = search.txtSearchForm.getText();
+                listDS = nvBUS.search(txt, type);
+                loadDataTable(listDS);
+            }
+        });
+
+        search.btnReset.addActionListener((ActionEvent e) -> {
+            search.txtSearchForm.setText("");
+            listDS = nvBUS.getAll();
+            loadDataTable(listDS);
+        });
+        functionBar.add(search);
 
         contentCenter.add(functionBar, BorderLayout.NORTH);
 
@@ -144,7 +157,7 @@ public final class NhanVien extends JPanel implements ActionListener, ItemListen
         for (int i = 0; i < size; i++) {
             String trangThai = result.get(i).getTrangthai() == 1 ? "Hoạt động"
                     : result.get(i).getTrangthai() == 2 ? "Chờ xác nhận" : "Dừng";
-            String gioiTinh = result.get(i).isGioitinh() ? "Nam" : "Nữ";
+            String gioiTinh = result.get(i).isGioitinh() ? "Nữ" : "Nam";
             tblModel.addRow(new Object[]{
                 //                i + 1,
                 result.get(i).getManhanvien(),
@@ -233,7 +246,10 @@ public final class NhanVien extends JPanel implements ActionListener, ItemListen
 
     @Override
     public void itemStateChanged(ItemEvent e) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        String type = (String) search.cbxChoose.getSelectedItem();
+        String txt = search.txtSearchForm.getText();
+        listDS = nvBUS.search(txt, type);
+        loadDataTable(listDS);
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

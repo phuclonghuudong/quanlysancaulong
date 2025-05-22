@@ -20,7 +20,7 @@ import java.util.logging.Logger;
  *
  * @author phucp
  */
-public class Sign_Up extends javax.swing.JFrame {
+public final class Sign_Up extends javax.swing.JFrame {
 
     StyleFont fontStyle = new StyleFont();
     StyleColor colorStyle = new StyleColor();

@@ -24,6 +24,10 @@ public class LoaiHangBUS {
         return this.listLoaiHang;
     }
 
+    public ArrayList<LoaiHangDTO> getAllStatus() {
+        return loaiHangDAO.selectAllTrangThai1();
+    }
+
     public LoaiHangDTO getByIndex(int index) {
         return this.listLoaiHang.get(index);
     }
@@ -79,7 +83,8 @@ public class LoaiHangBUS {
         switch (type) {
             case "Tất cả" -> {
                 for (LoaiHangDTO i : this.listLoaiHang) {
-                    if (Integer.toString(i.getMaloaihang()).toLowerCase().contains(text) || i.getTenloaihang().toLowerCase().contains(text) || i.getGhichu().toLowerCase().contains(text)) {
+                    if (Integer.toString(i.getMaloaihang()).toLowerCase().contains(text)
+                            || i.getTenloaihang().toLowerCase().contains(text)) {
                         result.add(i);
                     }
                 }

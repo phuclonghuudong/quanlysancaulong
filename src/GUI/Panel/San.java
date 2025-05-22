@@ -2,6 +2,7 @@ package GUI.Panel;
 
 import BUS.SanBUS;
 import DTO.SanDTO;
+import GUI.Component.IntegratedSearch;
 import GUI.Component.MainFunction;
 import GUI.Component.PanelBorderRadius;
 import GUI.Component.TableModel;
@@ -15,6 +16,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -59,10 +62,11 @@ public final class San extends JPanel implements ActionListener, ItemListener {
 
     private TableModel<SanDTO> tableModel;
     JFrame owner = (JFrame) SwingUtilities.getWindowAncestor(this);
-//    IntegratedSearch search;
+    IntegratedSearch search;
     DefaultTableModel tblModel;
 
     String[] header = new String[]{"Mã sân", "Tên sân", "Loại sân", "Giá sân", "Ghi chú", "Trạng thái"};
+    String[] headerSearch = new String[]{"Tất cả", "Mã sân", "Tên sân", "Loại sân", "Trạng thái"};
 
     public San(Main m) {
         this.m = m;
@@ -101,16 +105,6 @@ public final class San extends JPanel implements ActionListener, ItemListener {
 
         tableContent.setAutoCreateRowSorter(true);
 
-//        tableContent.addMouseListener(new MouseAdapter() {
-//            @Override
-//            public void mousePressed(MouseEvent e) {
-//                int index = tableContent.getSelectedRow();
-//                if (index != -1) {
-//                    ArrayList<SanDTO> listSP = sanBUS.getByMaLoaiSan(listDS.get(index).getMaloaisan());
-//                    ListCustomersInDePot(listSP);
-//                }
-//            }
-//        });
         contentCenter = new JPanel();
         contentCenter.setPreferredSize(new Dimension(1100, 600));
         contentCenter.setBackground(new Color(240, 247, 250));
@@ -123,11 +117,30 @@ public final class San extends JPanel implements ActionListener, ItemListener {
         functionBar.setBorder(new EmptyBorder(10, 10, 10, 10));
 
         String[] action = {"create", "update", "delete", "detail", "export"};
-        mainFunction = new MainFunction("loaisan", action);
+        mainFunction = new MainFunction("san", action);
         for (String ac : action) {
             mainFunction.btn.get(ac).addActionListener(this);
         }
         functionBar.add(mainFunction);
+
+        search = new IntegratedSearch(headerSearch);
+        search.cbxChoose.addItemListener(this);
+        search.txtSearchForm.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                String type = (String) search.cbxChoose.getSelectedItem();
+                String txt = search.txtSearchForm.getText();
+                listDS = sanBUS.search(txt, type);
+                loadDataTable(listDS);
+            }
+        });
+
+        search.btnReset.addActionListener((ActionEvent e) -> {
+            search.txtSearchForm.setText("");
+            listDS = sanBUS.getAllLoaiSan();
+            loadDataTable(listDS);
+        });
+        functionBar.add(search);
 
         contentCenter.add(functionBar, BorderLayout.NORTH);
 
@@ -233,7 +246,10 @@ public final class San extends JPanel implements ActionListener, ItemListener {
 
     @Override
     public void itemStateChanged(ItemEvent e) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        String type = (String) search.cbxChoose.getSelectedItem();
+        String txt = search.txtSearchForm.getText();
+        listDS = sanBUS.search(txt, type);
+        loadDataTable(listDS);
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

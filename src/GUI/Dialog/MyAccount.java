@@ -12,6 +12,7 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.text.PlainDocument;
+import style.StyleColor;
 
 /**
  *
@@ -26,6 +27,7 @@ public final class MyAccount extends JDialog implements ActionListener {
     JRadioButton[] jbr;
     JPanel[] panel;
     FormInput current_pwd, phone, email, new_pwd, confirm, username;
+    StyleColor colorStyle = new StyleColor();
 
     NhanVienDTO nvDTO;
     NhanVienBUS nvBUS;
@@ -39,7 +41,7 @@ public final class MyAccount extends JDialog implements ActionListener {
     public void initComponent(MenuTaskbar menutaskbar) {
         nvBUS = new NhanVienBUS();
         this.menuTaskbar = menutaskbar;
-        this.setSize(500, 400);
+        this.setSize(520, 400);
         this.setLayout(new BorderLayout(0, 0));
         this.setBackground(Color.WHITE);
         this.setResizable(false);
@@ -66,6 +68,9 @@ public final class MyAccount extends JDialog implements ActionListener {
             jbr[i] = new JRadioButton();
             jbr[i].addActionListener(this);
             jbr[i].setText(opt[i]);
+            jbr[i].setBackground(Color.WHITE);
+            jbr[i].setBorder(new EmptyBorder(10, 10, 10, 10));
+
             top_center.add(jbr[i]);
             bg.add(jbr[i]);
         }
@@ -82,7 +87,6 @@ public final class MyAccount extends JDialog implements ActionListener {
         panel[0] = new JPanel(new GridLayout(1, 1));
         panel[0].setBackground(Color.WHITE);
         panel[0].setPreferredSize(new Dimension(500, 150));
-//        panel[0].setBorder(new EmptyBorder(10, 10, 10, 10));
         phone = new FormInput("Số điện thoại");
         PlainDocument phonex = (PlainDocument) phone.getTxtForm().getDocument();
         phonex.setDocumentFilter((new NumericDocumentFilter()));

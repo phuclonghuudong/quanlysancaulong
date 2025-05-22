@@ -19,6 +19,7 @@ public class SanPhamDTO {
     private int trangthai;
     private Timestamp ngaytao;
     private Timestamp ngaycapnhat;
+    private String tenloaisanpham;
 
     public SanPhamDTO() {
     }
@@ -112,6 +113,15 @@ public class SanPhamDTO {
 
     public void setNgaytao(Timestamp ngaytao) {
         this.ngaytao = ngaytao;
+    }
+    // Thêm thông tin
+
+    public String getTenloaisanpham() {
+        return tenloaisanpham;
+    }
+
+    public void setTenloaisanpham(String text) {
+        this.tenloaisanpham = text;
     }
 
     @Override

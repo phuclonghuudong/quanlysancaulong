@@ -83,7 +83,8 @@ public class LoaiSanBUS {
         switch (type) {
             case "Tất cả" -> {
                 for (LoaiSanDTO i : this.listLoaiSan) {
-                    if (Integer.toString(i.getMaloaisan()).toLowerCase().contains(text) || i.getTenloaisan().toLowerCase().contains(text) || i.getGhichu().toLowerCase().contains(text)) {
+                    if (Integer.toString(i.getMaloaisan()).toLowerCase().contains(text)
+                            || i.getTenloaisan().toLowerCase().contains(text)) {
                         result.add(i);
                     }
                 }
@@ -102,13 +103,7 @@ public class LoaiSanBUS {
                     }
                 }
             }
-            case "Mô tả" -> {
-                for (LoaiSanDTO i : this.listLoaiSan) {
-                    if (i.getGhichu().toLowerCase().contains(text)) {
-                        result.add(i);
-                    }
-                }
-            }
+
             case "Trạng thái" -> {
                 for (LoaiSanDTO i : this.listLoaiSan) {
                     String trangThai = i.getTrangthai() == 1 ? "Hoạt động" : "Dừng";

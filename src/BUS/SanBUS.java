@@ -1,8 +1,12 @@
 package BUS;
 
 import DAO.SanDAO;
+import DTO.LoaiSanDTO;
 import DTO.SanDTO;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import utils.Validation;
 
 /**
@@ -13,6 +17,7 @@ public class SanBUS {
 
     private final SanDAO sanDAO = new SanDAO();
     public ArrayList<SanDTO> listSan = new ArrayList<>();
+    LoaiSanBUS loaiSanBUS = new LoaiSanBUS();
 
     public SanBUS() {
         listSan = sanDAO.selectAll();
@@ -67,15 +72,40 @@ public class SanBUS {
         return check;
     }
 
+    public ArrayList<SanDTO> getByMaLoaiSan(int makv) {
+        ArrayList<SanDTO> result = new ArrayList<>();
+        for (SanDTO i : this.listSan) {
+            if (i.getLoaisan() == makv) {
+                result.add(i);
+            }
+        }
+        return result;
+    }
+
     public ArrayList<SanDTO> search(String text, String type) {
         ArrayList<SanDTO> result = new ArrayList<>();
+
+        Map<Integer, String> loaiSanMap = new HashMap<>();
+        List<LoaiSanDTO> dsLoai = loaiSanBUS.getAll();
+        if (dsLoai != null) {
+            dsLoai.forEach((LoaiSanDTO loai) -> {
+                loaiSanMap.put(loai.getMaloaisan(), loai.getTenloaisan());
+            });
+        }
+
         text = text.toLowerCase();
         switch (type) {
             case "Tất cả" -> {
                 for (SanDTO i : this.listSan) {
-                    if (Integer.toString(i.getMasan()).toLowerCase().contains(text) || i.getTensan().toLowerCase().contains(text) || i.getGhichu().toLowerCase().contains(text)) {
+                    String tenLoai = loaiSanMap.get(i.getLoaisan());
+                    boolean match = Integer.toString(i.getMasan()).toLowerCase().contains(text)
+                            || i.getTensan().toLowerCase().contains(text)
+                            || (tenLoai != null && tenLoai.toLowerCase().contains(text));
+                    if (match) {
+                        i.setTenloaisan(tenLoai);
                         result.add(i);
                     }
+
                 }
             }
             case "Mã sân" -> {
@@ -88,6 +118,15 @@ public class SanBUS {
             case "Tên sân" -> {
                 for (SanDTO i : this.listSan) {
                     if (i.getTensan().toLowerCase().contains(text)) {
+                        result.add(i);
+                    }
+                }
+            }
+            case "Loại sân" -> {
+                for (SanDTO i : this.listSan) {
+                    String tenLoai = loaiSanMap.get(i.getLoaisan());
+                    if (tenLoai != null && tenLoai.toLowerCase().contains(text)) {
+                        i.setTenloaisan(tenLoai);
                         result.add(i);
                     }
                 }

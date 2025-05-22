@@ -1,20 +1,31 @@
 package GUI.Panel;
 
 import BUS.LoaiHangBUS;
+import BUS.SanPhamBUS;
 import DTO.LoaiHangDTO;
+import DTO.SanPhamDTO;
+import GUI.Component.CustomScrollBar;
+import GUI.Component.IntegratedSearch;
 import GUI.Component.MainFunction;
 import GUI.Component.PanelBorderRadius;
 import GUI.Component.TableModel;
+import GUI.Component.itemTaskbar;
 import GUI.Dialog.LoaiSanPhamDialog;
 import GUI.Main;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -43,17 +54,18 @@ public class LoaiSanPham extends JPanel implements ActionListener, ItemListener 
     JScrollPane scrollPane;
 
     public LoaiHangBUS loaiHangBUS = new LoaiHangBUS();
-//    public SanBUS sanBUS = new SanBUS();
+    public SanPhamBUS sanphamBUS = new SanPhamBUS();
 
     public ArrayList<LoaiHangDTO> listDS = loaiHangBUS.getAll();
-//    public ArrayList<SanDTO> listSan = sanBUS.getAll();
+    public ArrayList<SanPhamDTO> listSanPham = sanphamBUS.getAll();
 
     private TableModel<LoaiHangDTO> tableModel;
     JFrame owner = (JFrame) SwingUtilities.getWindowAncestor(this);
-//    IntegratedSearch search;
+    IntegratedSearch search;
     DefaultTableModel tblModel;
 
     String[] header = new String[]{"Mã loại", "Tên loại hàng", "Ghi chú", "Trạng thái"};
+    String[] headerSearch = new String[]{"Tất cả", "Mã loại", "Tên loại hàng", "Trạng thái"};
 
     public LoaiSanPham(Main m) {
         this.m = m;
@@ -90,16 +102,16 @@ public class LoaiSanPham extends JPanel implements ActionListener, ItemListener 
 
         tableContent.setAutoCreateRowSorter(true);
 
-//        tableContent.addMouseListener(new MouseAdapter() {
-//            @Override
-//            public void mousePressed(MouseEvent e) {
-//                int index = tableContent.getSelectedRow();
-//                if (index != -1) {
-//                    ArrayList<SanDTO> listSP = sanBUS.getByMaLoaiSan(listDS.get(index).getMaloaisan());
-//                    ListCustomersInDePot(listSP);
-//                }
-//            }
-//        });
+        tableContent.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                int index = tableContent.getSelectedRow();
+                if (index != -1) {
+                    ArrayList<SanPhamDTO> listSP = sanphamBUS.getByMaLoaiSanPham(listDS.get(index).getMaloaihang());
+                    ListCustomersInDePot(listSP);
+                }
+            }
+        });
         contentCenter = new JPanel();
         contentCenter.setPreferredSize(new Dimension(1100, 600));
         contentCenter.setBackground(new Color(240, 247, 250));
@@ -118,6 +130,25 @@ public class LoaiSanPham extends JPanel implements ActionListener, ItemListener 
         }
         functionBar.add(mainFunction);
 
+        search = new IntegratedSearch(headerSearch);
+        search.cbxChoose.addItemListener(this);
+        search.txtSearchForm.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                String type = (String) search.cbxChoose.getSelectedItem();
+                String txt = search.txtSearchForm.getText();
+                listDS = loaiHangBUS.search(txt, type);
+                loadDataTable(listDS);
+            }
+        });
+
+        search.btnReset.addActionListener((ActionEvent e) -> {
+            search.txtSearchForm.setText("");
+            listDS = loaiHangBUS.getAll();
+            loadDataTable(listDS);
+        });
+        functionBar.add(search);
+
         contentCenter.add(functionBar, BorderLayout.NORTH);
 
         main = new PanelBorderRadius();
@@ -126,6 +157,49 @@ public class LoaiSanPham extends JPanel implements ActionListener, ItemListener 
         contentCenter.add(main, BorderLayout.CENTER);
 
         main.add(scrollTable);
+
+        right = new JPanel();
+        right.setBackground(Color.WHITE);
+        right.setBackground(colorStyle.mainBackgroundColor());
+        right.setLayout(new FlowLayout(0, 0, 10));
+        right.setBorder(new EmptyBorder(0, 10, 0, 0));
+        right.setPreferredSize(new Dimension(300, 800));
+        JLabel tit = new JLabel("Danh sách sản phẩm thuộc loại:");
+        tit.setFont(new Font("Tahoma", Font.BOLD, 14));
+        right.add(tit);
+        scrollPane = new JScrollPane(right, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.setBorder(new EmptyBorder(0, 0, 0, 0));
+        scrollPane.setVerticalScrollBar(new CustomScrollBar(JScrollBar.VERTICAL));
+        scrollPane.setHorizontalScrollBar(new CustomScrollBar(JScrollBar.HORIZONTAL));
+        contentCenter.add(scrollPane, BorderLayout.EAST);
+    }
+
+    public void ListCustomersInDePot(ArrayList<SanPhamDTO> result) {
+        right.removeAll();
+        JLabel tit = new JLabel("Danh sách sản phẩm thuộc loại:");
+        tit.setFont(new Font("Tahoma", Font.BOLD, 14));
+        right.add(tit);
+        itemTaskbar listItem[] = new itemTaskbar[result.size()];
+        int i = 0;
+        for (SanPhamDTO sp : result) {
+            listItem[i] = new itemTaskbar(sp.getTensanpham(), sp.getGiaban(), sp.getSoluong());
+            right.add(listItem[i]);
+            i++;
+        }
+
+        if (i == 0) {
+            if (result.isEmpty()) {
+                JLabel lblIcon = new JLabel("Không có sản phẩm");
+                lblIcon.setPreferredSize(new Dimension(380, 100));
+                lblIcon.setFont(new Font("Tahoma", Font.BOLD, 12));
+                lblIcon.setIcon(new ImageIcon("./src/image/field-50-gray.png"));
+                lblIcon.setHorizontalTextPosition(SwingConstants.CENTER);
+                lblIcon.setVerticalTextPosition(SwingConstants.TOP);
+                right.add(lblIcon);
+            }
+        }
+        right.repaint();
+        right.validate();
     }
 
     @SuppressWarnings("empty-statement")
@@ -219,7 +293,10 @@ public class LoaiSanPham extends JPanel implements ActionListener, ItemListener 
 
     @Override
     public void itemStateChanged(ItemEvent e) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        String type = (String) search.cbxChoose.getSelectedItem();
+        String txt = search.txtSearchForm.getText();
+        listDS = loaiHangBUS.search(txt, type);
+        loadDataTable(listDS);
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

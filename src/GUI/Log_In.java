@@ -15,7 +15,7 @@ import style.StyleFont;
  *
  * @author phucp
  */
-public class Log_In extends javax.swing.JFrame {
+public final class Log_In extends javax.swing.JFrame {
 
     StyleFont fontStyle = new StyleFont();
     StyleColor colorStyle = new StyleColor();

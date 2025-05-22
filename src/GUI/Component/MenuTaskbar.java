@@ -71,10 +71,10 @@ public final class MenuTaskbar extends javax.swing.JPanel {
         {"Đặt sân", "icons8-basketball-court-100.png", "datsan"},
         {"Khách hàng", "user1-100.png", "khachhang"},
         {"Nhân viên", "user2-100.png", "nhanvien"},
-        {"QL loại sân", "category-100.png", "loaisan"},
-        {"QL sân", "court-100.png", "san"},
         {"QL loại sản phẩm", "icons8-opened-folder-100.png", "loaisanpham"},
+        {"QL loại sân", "category-100.png", "loaisan"},
         {"QL sản phẩm", "icons8-product-100.png", "sanpham"},
+        {"QL sân", "court-100.png", "san"},
         {"Đăng xuất", "shutdown-96.png", "dangxuat"},};
 
     public void handleMenuClick(int index) {
@@ -211,10 +211,12 @@ public final class MenuTaskbar extends javax.swing.JPanel {
         for (int i = 0; i < getSt.length; i++) {
             listitem[i] = new itemTaskbar(getSt[i][1], getSt[i][0]);
 
-            // Ẩn item nếu không có quyền (trừ Trang chủ & Đăng xuất)
-            if (i != 0 && i != getSt.length - 1 && !checkRole(getSt[i][2])) {
+//            CHECK ROLE
+            boolean enableRoleCheck = false;
+            if (enableRoleCheck && i != 0 && i != getSt.length - 1 && !checkRole(getSt[i][2])) {
                 continue;
             }
+//            CHECK ROLE
 
             if (i == getSt.length - 1) {
                 pnlBottom.add(listitem[i]);

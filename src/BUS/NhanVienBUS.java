@@ -68,38 +68,26 @@ public class NhanVienBUS {
 
     public NhanVienDTO loginUser(String email, String password) {
         if (email.isEmpty() || password.isEmpty()) {
-//            return "Vui lòng nhập đầy đủ thông tin bắt buộc.";
             return null;
         }
-
         if (!Validation.isEmail(email)) {
-//            return "Email không hợp lệ - không đúng định dạng.";
             return null;
         }
-
         if (!NhanVienDAO.getInstance().selectByEmailExist(email)) {
-//            return "Email không tồn tại.";
             return null;
         }
-
         String hashedPassword = Validation.hashPassword(password);
 
         NhanVienDTO user = NhanVienDAO.getInstance().getUserByEmailAndPassword(email, hashedPassword);
         if (user == null) {
-//            return "Sai email hoặc mật khẩu.";
             return null;
         }
-
         if (user.getTrangthai() == 0) {
-//            return "Tài khoản của bạn đã bị khóa.";
             return null;
         }
         if (!"ADMIN".equals(user.getVaitro()) && !"NHANVIEN".equals(user.getVaitro())) {
-            //            return "Tài khoản của bạn đã bị khóa.";
             return null;
         }
-
-//        return "Đăng nhập thành công! Xin chào " + user.getHoten();
         return user;
     }
 
@@ -228,4 +216,69 @@ public class NhanVienBUS {
 
         return "valid";
     }
+
+    public ArrayList<NhanVienDTO> search(String text, String type) {
+        ArrayList<NhanVienDTO> result = new ArrayList<>();
+        text = text.toLowerCase();
+        switch (type) {
+            case "Tất cả" -> {
+                for (NhanVienDTO i : this.listNhanVien) {
+                    if (Integer.toString(i.getManhanvien()).toLowerCase().contains(text)
+                            || i.getHoten().toLowerCase().contains(text)
+                            || i.getEmail().toLowerCase().contains(text)
+                            || i.getVaitro().toLowerCase().contains(text)
+                            || i.getSodienthoai().toLowerCase().contains(text)) {
+                        result.add(i);
+                    }
+                }
+            }
+            case "Mã nhân viên" -> {
+                for (NhanVienDTO i : this.listNhanVien) {
+                    if (Integer.toString(i.getManhanvien()).toLowerCase().contains(text)) {
+                        result.add(i);
+                    }
+                }
+            }
+            case "Họ tên" -> {
+                for (NhanVienDTO i : this.listNhanVien) {
+                    if (i.getHoten().toLowerCase().contains(text)) {
+                        result.add(i);
+                    }
+                }
+            }
+            case "Email" -> {
+                for (NhanVienDTO i : this.listNhanVien) {
+                    if (i.getEmail().toLowerCase().contains(text)) {
+                        result.add(i);
+                    }
+                }
+            }
+            case "Số điện thoại" -> {
+                for (NhanVienDTO i : this.listNhanVien) {
+                    if (i.getSodienthoai().toLowerCase().contains(text)) {
+                        result.add(i);
+                    }
+                }
+            }
+            case "Vai trò" -> {
+                for (NhanVienDTO i : this.listNhanVien) {
+                    if (i.getVaitro().toLowerCase().contains(text)) {
+                        result.add(i);
+                    }
+                }
+            }
+            case "Trạng thái" -> {
+                for (NhanVienDTO i : this.listNhanVien) {
+                    String trangThai = i.getTrangthai() == 1 ? "Hoạt động" : "Dừng";
+                    if (trangThai.toLowerCase().contains(text.toLowerCase())) {
+                        result.add(i);
+                    }
+                }
+            }
+
+        }
+
+        return result;
+    }
+
 }

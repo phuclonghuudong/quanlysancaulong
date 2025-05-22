@@ -25,15 +25,16 @@ public class SanPhamDAO implements DAOinterface<SanPhamDTO> {
         int result = 0;
         try {
             Connection con = (Connection) JDBCUtil.getConnection();
-            String sql = "INSERT INTO `sanpham`(`loaisanpham`,`tensanpham`,`giaban`,`soluong`,`donvi`,`ghichu`,`trangthai`) VALUES (?,?,?,?,?,?,?)";
+            String sql = "INSERT INTO `sanpham`(`masanpham`,`loaisanpham`,`tensanpham`,`giaban`,`soluong`,`donvi`,`ghichu`,`trangthai`) VALUES (?,?,?,?,?,?,?,?)";
             PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
-            pst.setInt(1, t.getLoaisanpham());
-            pst.setString(2, t.getTensanpham());
-            pst.setDouble(3, t.getGiaban());
-            pst.setInt(4, t.getSoluong());
-            pst.setString(5, t.getDonvi());
-            pst.setString(6, t.getGhichu());
-            pst.setInt(7, t.getTrangthai());
+            pst.setInt(1, t.getMasanpham());
+            pst.setInt(2, t.getLoaisanpham());
+            pst.setString(3, t.getTensanpham());
+            pst.setDouble(4, t.getGiaban());
+            pst.setInt(5, t.getSoluong());
+            pst.setString(6, t.getDonvi());
+            pst.setString(7, t.getGhichu());
+            pst.setInt(8, t.getTrangthai());
             result = pst.executeUpdate();
             JDBCUtil.closeConnection(con);
         } catch (SQLException ex) {
@@ -47,13 +48,13 @@ public class SanPhamDAO implements DAOinterface<SanPhamDTO> {
         int result = 0;
         try {
             Connection con = (Connection) JDBCUtil.getConnection();
-            String sql = "UPDATE `san` SET`loaisanpham`=?, `tensanpham`=?, `soluong`=?, `donvi`=?, `giaban`=?, `ghichu`=?, `trangthai`=? WHERE `masanpham`=?";
+            String sql = "UPDATE `sanpham` SET`loaisanpham`=?, `tensanpham`=?, `soluong`=?, `donvi`=?, `giaban`=?, `ghichu`=?, `trangthai`=? WHERE `masanpham`=?";
             PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
             pst.setInt(1, t.getLoaisanpham());
             pst.setString(2, t.getTensanpham());
-            pst.setDouble(3, t.getGiaban());
-            pst.setInt(4, t.getSoluong());
-            pst.setString(5, t.getDonvi());
+            pst.setInt(3, t.getSoluong());
+            pst.setString(4, t.getDonvi());
+            pst.setDouble(5, t.getGiaban());
             pst.setString(6, t.getGhichu());
             pst.setInt(7, t.getTrangthai());
             pst.setInt(8, t.getMasanpham());
@@ -70,7 +71,7 @@ public class SanPhamDAO implements DAOinterface<SanPhamDTO> {
         int result = 0;
         try {
             Connection con = (Connection) JDBCUtil.getConnection();
-            String sql = "Update sanpham set `trangthai` = -1 WHERE masanpham = ?";
+            String sql = "Update sanpham set `trangthai` = 0 WHERE masanpham = ?";
             PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
             pst.setString(1, t);
             result = pst.executeUpdate();
@@ -86,7 +87,7 @@ public class SanPhamDAO implements DAOinterface<SanPhamDTO> {
         ArrayList<SanPhamDTO> result = new ArrayList<>();
         try {
             Connection con = (Connection) JDBCUtil.getConnection();
-            String sql = "SELECT * FROM sanpham WHERE trangthai = '1'";
+            String sql = "SELECT * FROM sanpham";
             PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
             ResultSet rs = (ResultSet) pst.executeQuery();
             while (rs.next()) {
@@ -95,10 +96,10 @@ public class SanPhamDAO implements DAOinterface<SanPhamDTO> {
                 String tensanpham = rs.getString("tensanpham");
                 Double giaban = rs.getDouble("giaban");
                 int soluong = rs.getInt("soluong");
-                String dongia = rs.getString("dongia");
+                String donvi = rs.getString("donvi");
                 String ghichu = rs.getString("ghichu");
                 int trangthai = rs.getInt("trangthai");
-                SanPhamDTO nv = new SanPhamDTO(ma, loaisanpham, tensanpham, giaban, soluong, dongia, ghichu, trangthai);
+                SanPhamDTO nv = new SanPhamDTO(ma, loaisanpham, tensanpham, giaban, soluong, donvi, ghichu, trangthai);
                 result.add(nv);
             }
             JDBCUtil.closeConnection(con);
@@ -112,7 +113,7 @@ public class SanPhamDAO implements DAOinterface<SanPhamDTO> {
         SanPhamDTO result = null;
         try {
             Connection con = (Connection) JDBCUtil.getConnection();
-            String sql = "SELECT * FROM san WHERE masan=?";
+            String sql = "SELECT * FROM sanpham WHERE masanpham=?";
             PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
             pst.setString(1, t);
             ResultSet rs = (ResultSet) pst.executeQuery();
@@ -122,14 +123,48 @@ public class SanPhamDAO implements DAOinterface<SanPhamDTO> {
                 String tensanpham = rs.getString("tensanpham");
                 Double giaban = rs.getDouble("giaban");
                 int soluong = rs.getInt("soluong");
-                String dongia = rs.getString("dongia");
+                String donvi = rs.getString("donvi");
                 String ghichu = rs.getString("ghichu");
                 int trangthai = rs.getInt("trangthai");
-                result = new SanPhamDTO(ma, loaisanpham, tensanpham, giaban, soluong, dongia, ghichu, trangthai);
+                result = new SanPhamDTO(ma, loaisanpham, tensanpham, giaban, soluong, donvi, ghichu, trangthai);
             }
             JDBCUtil.closeConnection(con);
         } catch (SQLException e) {
         }
+        return result;
+    }
+
+    public ArrayList<SanPhamDTO> selectSanPhamJoinLoaiSanPham() {
+        ArrayList<SanPhamDTO> result = new ArrayList<>();
+        try {
+            Connection conn = JDBCUtil.getConnection();
+            String sql = "SELECT s.masanpham as masanpham, s.tensanpham as tensanpham, s.giaban AS giaban, s.ghichu as ghichu,"
+                    + " s.trangthai as trangthai, ls.tenloaihang as tenloaihang, s.loaisanpham as loaisanpham, s.soluong as soluong,s.donvi as donvi"
+                    + " FROM sanpham AS s JOIN loaihang AS ls on ls.maloaihang=s.loaisanpham";
+            PreparedStatement pst = (PreparedStatement) conn.prepareStatement(sql);
+            ResultSet rs = (ResultSet) pst.executeQuery();
+            while (rs.next()) {
+                int ID = rs.getInt("masanpham");
+                int loaisanpham = rs.getInt("loaisanpham");
+                String tensanpham = rs.getString("tensanpham");
+                Double giaban = rs.getDouble("giaban");
+                int soluong = rs.getInt("soluong");
+                String donvi = rs.getString("donvi");
+                String ghichu = rs.getString("ghichu");
+                int trangthai = rs.getInt("trangthai");
+                String tenloaisanpham = rs.getString("tenloaihang");
+
+                SanPhamDTO sanpham = new SanPhamDTO(ID, loaisanpham, tensanpham, giaban, soluong, donvi, ghichu, trangthai);
+                sanpham.setTenloaisanpham(tenloaisanpham);
+
+                result.add(sanpham);
+            }
+
+            JDBCUtil.closeConnection(conn);
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+
         return result;
     }
 
@@ -167,4 +202,18 @@ public class SanPhamDAO implements DAOinterface<SanPhamDTO> {
 //        return result;
     }
 
+    public boolean isNameUnique(String p, int ID) {
+        try {
+            Connection con = (Connection) JDBCUtil.getConnection();
+            String sql = "SELECT * FROM sanpham WHERE tensanpham=? AND masanpham<>?";
+            PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
+            pst.setString(1, p);
+            pst.setInt(2, ID);
+            ResultSet rs = (ResultSet) pst.executeQuery();
+            return rs.next();
+
+        } catch (SQLException e) {
+        }
+        return false;
+    }
 }

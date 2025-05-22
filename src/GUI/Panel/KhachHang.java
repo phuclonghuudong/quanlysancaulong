@@ -2,6 +2,7 @@ package GUI.Panel;
 
 import BUS.KhachHangBUS;
 import DTO.KhachHangDTO;
+import GUI.Component.IntegratedSearch;
 import GUI.Component.MainFunction;
 import GUI.Component.PanelBorderRadius;
 import GUI.Component.TableModel;
@@ -15,6 +16,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -48,10 +51,11 @@ public final class KhachHang extends JPanel implements ActionListener, ItemListe
     public ArrayList<KhachHangDTO> listDS = khBUS.getAll();
     private TableModel<KhachHangDTO> tableModel;
     JFrame owner = (JFrame) SwingUtilities.getWindowAncestor(this);
-//    IntegratedSearch search;
+    IntegratedSearch search;
     DefaultTableModel tblModel;
 
     String[] header = new String[]{"Mã KH", "Họ tên", "Số điện thoại", "Địa chỉ", "Trạng thái"};
+    String[] headerSearch = new String[]{"Tất cả", "Mã khách hàng", "Họ tên", "Số điện thoại", "Địa chỉ", "Trạng thái"};
 
     public KhachHang(Main main) {
         this.m = main;
@@ -89,16 +93,6 @@ public final class KhachHang extends JPanel implements ActionListener, ItemListe
 
         tableContent.setAutoCreateRowSorter(true);
 
-//        tableContent.addMouseListener(new MouseAdapter() {
-//            @Override
-//            public void mousePressed(MouseEvent e) {
-//                int index = tableContent.getSelectedRow();
-//                if (index != -1) {
-//                    ArrayList<SanDTO> listSP = sanBUS.getByMaLoaiSan(listDS.get(index).getMaloaisan());
-//                    ListCustomersInDePot(listSP);
-//                }
-//            }
-//        });
         contentCenter = new JPanel();
         contentCenter.setPreferredSize(new Dimension(1100, 600));
         contentCenter.setBackground(new Color(240, 247, 250));
@@ -116,6 +110,25 @@ public final class KhachHang extends JPanel implements ActionListener, ItemListe
             mainFunction.btn.get(ac).addActionListener(this);
         }
         functionBar.add(mainFunction);
+
+        search = new IntegratedSearch(headerSearch);
+        search.cbxChoose.addItemListener(this);
+        search.txtSearchForm.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                String type = (String) search.cbxChoose.getSelectedItem();
+                String txt = search.txtSearchForm.getText();
+                listDS = khBUS.search(txt, type);
+                loadDataTable(listDS);
+            }
+        });
+
+        search.btnReset.addActionListener((ActionEvent e) -> {
+            search.txtSearchForm.setText("");
+            listDS = khBUS.getAll();
+            loadDataTable(listDS);
+        });
+        functionBar.add(search);
 
         contentCenter.add(functionBar, BorderLayout.NORTH);
 
@@ -219,7 +232,10 @@ public final class KhachHang extends JPanel implements ActionListener, ItemListe
 
     @Override
     public void itemStateChanged(ItemEvent e) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        String type = (String) search.cbxChoose.getSelectedItem();
+        String txt = search.txtSearchForm.getText();
+        listDS = khBUS.search(txt, type);
+        loadDataTable(listDS);
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

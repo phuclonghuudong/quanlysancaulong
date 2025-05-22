@@ -1,15 +1,20 @@
 package GUI.Component;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import style.StyleFont;
+import utils.Formater;
 
 /**
  *
@@ -22,7 +27,7 @@ public class itemTaskbar extends javax.swing.JPanel implements MouseListener {
     Color FontColor = new Color(96, 125, 139);
     Color ColorBlack = new Color(26, 26, 26);
     Color DefaultColor = new Color(255, 255, 255);
-    JLabel lblIcon, pnlContent, pnlSoLuong, pnlContent1;
+    JLabel lblIcon, pnlContent, pnlSoLuong, pnlGia;
     JPanel right;
     JLabel img;
     public boolean isSelected;
@@ -46,6 +51,80 @@ public class itemTaskbar extends javax.swing.JPanel implements MouseListener {
         pnlContent.setPreferredSize(new Dimension(155, 30));
         pnlContent.setForeground(ColorBlack);
         this.add(pnlContent);
+    }
+
+    public itemTaskbar(String tenSP, double giaSan) {
+        this.setLayout(new BorderLayout(0, 0));
+        this.setPreferredSize(new Dimension(380, 60));
+        this.setBackground(Color.white);
+
+        img = new JLabel("");
+        img.setBorder(new EmptyBorder(2, 2, 2, 2));
+        img.setIcon(new ImageIcon("./src/image/field-50-green.png"));
+        this.add(img, BorderLayout.WEST);
+
+        right = new JPanel();
+        right.setLayout(new FlowLayout(0, 0, 0));
+        right.setBorder(new EmptyBorder(10, 10, 0, 0));
+        right.setOpaque(false);
+        this.add(right, BorderLayout.CENTER);
+
+        pnlContent = new JLabel("Tên: " + tenSP);
+        pnlContent.setFont(new Font("Tahoma", Font.BOLD, 12));
+        pnlContent.setForeground(Color.BLACK);
+        right.add(pnlContent);
+
+        String giaFormat = Formater.FormatVND(giaSan);
+        pnlGia = new JLabel("Giá: " + giaFormat);
+        pnlGia.setPreferredSize(new Dimension(350, 25));
+        pnlGia.setFont(new Font("Tahoma", Font.BOLD, 11));
+        pnlGia.setForeground(Color.GRAY);
+        right.add(pnlGia);
+    }
+
+    public itemTaskbar(String tenSP, double giaSan, int soLuong) {
+        this.setLayout(new BorderLayout(0, 0));
+        this.setPreferredSize(new Dimension(380, 60));
+        this.setBackground(Color.white);
+
+        img = new JLabel("");
+        img.setBorder(new EmptyBorder(2, 2, 2, 2));
+        img.setIcon(new ImageIcon("./src/image/field-50-green.png"));
+        this.add(img, BorderLayout.WEST);
+
+        right = new JPanel();
+        right.setLayout(new BoxLayout(right, BoxLayout.Y_AXIS));
+        right.setLayout(new FlowLayout(0, 0, 0));
+        right.setBorder(new EmptyBorder(10, 10, 0, 0));
+        right.setOpaque(false);
+        this.add(right, BorderLayout.CENTER);
+
+        JPanel topRowPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
+        topRowPanel.setOpaque(false);
+
+        pnlContent = new JLabel("Tên: " + tenSP);
+        pnlContent.setFont(new Font("Tahoma", Font.BOLD, 12));
+        pnlContent.setForeground(Color.BLACK);
+        topRowPanel.add(pnlContent);
+
+        pnlSoLuong = new JLabel("Số lượng: " + soLuong);
+        pnlSoLuong.setFont(new Font("Tahoma", Font.BOLD, 12));
+        pnlSoLuong.setForeground(Color.GRAY);
+        topRowPanel.add(pnlSoLuong);
+
+        right.add(topRowPanel);
+
+        JPanel bottomRowPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
+        bottomRowPanel.setOpaque(false);
+
+        String giaFormat = Formater.FormatVND(giaSan);
+        pnlGia = new JLabel("Giá: " + giaFormat);
+        pnlGia.setPreferredSize(new Dimension(350, 25));
+        pnlGia.setFont(new Font("Tahoma", Font.BOLD, 11));
+        pnlGia.setForeground(Color.GRAY);
+        bottomRowPanel.add(pnlGia);
+
+        right.add(bottomRowPanel);
     }
 
     /**

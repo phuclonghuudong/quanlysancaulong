@@ -95,6 +95,13 @@ public class KhachHangBUS {
                     }
                 }
             }
+            case "Địa chỉ" -> {
+                for (KhachHangDTO i : this.listDS) {
+                    if (i.getDiachi().toLowerCase().contains(text)) {
+                        result.add(i);
+                    }
+                }
+            }
             case "Trạng thái" -> {
                 for (KhachHangDTO i : this.listDS) {
                     String trangThai = i.getTrangthai() == 1 ? "Hoạt động" : "Dừng";

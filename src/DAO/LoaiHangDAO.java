@@ -167,4 +167,24 @@ public class LoaiHangDAO implements DAOinterface<LoaiHangDTO> {
         return false;
     }
 
+    public ArrayList<LoaiHangDTO> selectAllTrangThai1() {
+        ArrayList<LoaiHangDTO> result = new ArrayList<>();
+        try {
+            Connection con = (Connection) JDBCUtil.getConnection();
+            String sql = "SELECT * FROM loaihang WHERE trangthai=1";
+            PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
+            ResultSet rs = (ResultSet) pst.executeQuery();
+            while (rs.next()) {
+                int ma = rs.getInt("maloaihang");
+                String tenloaihang = rs.getString("tenloaihang");
+                String ghichu = rs.getString("ghichu");
+                int trangthai = rs.getInt("trangthai");
+                LoaiHangDTO nv = new LoaiHangDTO(ma, tenloaihang, ghichu, trangthai);
+                result.add(nv);
+            }
+            JDBCUtil.closeConnection(con);
+        } catch (SQLException e) {
+        }
+        return result;
+    }
 }
