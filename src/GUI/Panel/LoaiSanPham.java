@@ -42,7 +42,7 @@ import utils.JTableExporter;
  *
  * @author phucp
  */
-public class LoaiSanPham extends JPanel implements ActionListener, ItemListener {
+public final class LoaiSanPham extends JPanel implements ActionListener, ItemListener {
 
     StyleColor colorStyle = new StyleColor();
     StyleTable tableStyle = new StyleTable();

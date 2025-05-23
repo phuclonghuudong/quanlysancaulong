@@ -24,6 +24,13 @@ public class SanPhamDTO {
     public SanPhamDTO() {
     }
 
+    public SanPhamDTO(int masanpham, String tensanpham, double giaban, int soluong) {
+        this.masanpham = masanpham;
+        this.tensanpham = tensanpham;
+        this.giaban = giaban;
+        this.soluong = soluong;
+    }
+
     public SanPhamDTO(int masanpham, int loaisanpham, String tensanpham, double giaban, int soluong, String donvi, String ghichu, int trangthai) {
         this.masanpham = masanpham;
         this.loaisanpham = loaisanpham;

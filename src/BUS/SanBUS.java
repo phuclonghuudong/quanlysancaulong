@@ -48,6 +48,17 @@ public class SanBUS {
         return vitri;
     }
 
+    public ArrayList<SanDTO> getByLoaiSan(String tenLoaiSan) {
+        ArrayList<SanDTO> all = getAllLoaiSan(); // hoặc getAll()
+        ArrayList<SanDTO> filtered = new ArrayList<>();
+        for (SanDTO san : all) {
+            if (san.getTenloaisan().equalsIgnoreCase(tenLoaiSan)) {
+                filtered.add(san);
+            }
+        }
+        return filtered;
+    }
+
     public Boolean add(SanDTO kh) {
         boolean check = sanDAO.insert(kh) != 0;
         if (check) {
