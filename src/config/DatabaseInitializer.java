@@ -103,6 +103,7 @@ public class DatabaseInitializer {
                     + "makhachhang INT,"
                     + "checkin DATETIME,"
                     + "checkout DATETIME,"
+                    + "giasan DECIMAL(10,2),"
                     + "tongtien DECIMAL(10,2),"
                     + "thanhtoan BOOLEAN,"
                     + "ghichu VARCHAR(255),"

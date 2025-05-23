@@ -31,6 +31,10 @@ public class SanPhamBUS {
         return spDAO.selectSanPhamJoinLoaiSanPham();
     }
 
+    public ArrayList<SanPhamDTO> getAllLoaiSanPhamHoatDong() {
+        return spDAO.selectSanPhamJoinLoaiSanPhamHoatDong();
+    }
+
     public SanPhamDTO getByIndex(int index) {
         return this.listDS.get(index);
     }
@@ -163,7 +167,7 @@ public class SanPhamBUS {
         }
 
         if (SanPhamDAO.getInstance().isNameUnique(tenSP, currentID)) {
-            return "Tên sân đã được sử dụng!";
+            return "Tên sản phẩm đã được sử dụng!";
         }
 
         return "valid";

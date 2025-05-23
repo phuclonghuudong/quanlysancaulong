@@ -39,6 +39,24 @@ public class FormInput extends JPanel {
         this.add(txtForm);
     }
 
+    public FormInput(String title, String check, String check1) {
+        this.setLayout(new GridLayout(2, 1));
+        this.setBorder(new EmptyBorder(0, 10, 2, 10));
+        this.setBackground(Color.white);
+
+        lblTitle = new JLabel(title);
+        lblTitle.setFont(new Font("Arial", Font.PLAIN, 14));
+
+        txtForm = new JTextField();
+//        txtForm.setBorder(new EmptyBorder(2, 10, 2, 10));
+        txtForm.setBackground(StyleColor.colorForm());
+        txtForm.setOpaque(true);
+        txtForm.setSize(50, 37);
+        txtForm.setFont(new Font("Arial", Font.PLAIN, 13));
+        this.add(lblTitle);
+        this.add(txtForm);
+    }
+
     public FormInput(String title, String style) {
         this.setLayout(new GridLayout(2, 1));
         this.setBackground(Color.white);

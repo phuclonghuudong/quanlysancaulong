@@ -8,7 +8,7 @@ import javax.swing.*;
  *
  * @author phucp
  */
-public class MainFunction extends JToolBar {
+public final class MainFunction extends JToolBar {
 
     public ButtonToolBar btnAdd, btnDelete, btnEdit, btnDetail, btnNhapExcel, btnXuatExcel, btnHuyPhieu;
     public JSeparator separator1;

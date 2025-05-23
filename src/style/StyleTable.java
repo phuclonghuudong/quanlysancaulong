@@ -18,7 +18,7 @@ public class StyleTable {
 
     public void customizeTable(JTable table) {
         table.setFont(new Font("Tahoma", Font.PLAIN, 14));
-        table.setRowHeight(32);
+        table.setRowHeight(30);
         table.setShowGrid(false);
         table.setBorder(null);
         table.getColumnModel().getColumn(0).setPreferredWidth(10);
@@ -52,7 +52,7 @@ public class StyleTable {
                 label.setHorizontalAlignment(JLabel.CENTER);
                 label.setBackground(new Color(255, 204, 153));
                 label.setForeground(Color.BLACK);
-                label.setFont(new Font("Tahoma", Font.BOLD, 14));
+                label.setFont(new Font("Tahoma", Font.BOLD, 13));
                 label.setOpaque(true);
                 return label;
             }

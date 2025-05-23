@@ -12,7 +12,7 @@ import javax.swing.plaf.FontUIResource;
 public class StyleFont {
 
     public void setUIFont16() {
-        Font font = new Font("Tahoma", Font.PLAIN, 16);
+        Font font = new Font("Arial", Font.PLAIN, 16);
         Enumeration<Object> keys = UIManager.getDefaults().keys();
         while (keys.hasMoreElements()) {
             Object key = keys.nextElement();
@@ -24,7 +24,19 @@ public class StyleFont {
     }
 
     public void setUIFont14() {
-        Font font = new Font("Tahoma", Font.PLAIN, 14);
+        Font font = new Font("Arial", Font.PLAIN, 14);
+        Enumeration<Object> keys = UIManager.getDefaults().keys();
+        while (keys.hasMoreElements()) {
+            Object key = keys.nextElement();
+            Object value = UIManager.get(key);
+            if (value instanceof FontUIResource) {
+                UIManager.put(key, new FontUIResource(font));
+            }
+        }
+    }
+
+    public void setUIFont13() {
+        Font font = new Font("Arial", Font.PLAIN, 13);
         Enumeration<Object> keys = UIManager.getDefaults().keys();
         while (keys.hasMoreElements()) {
             Object key = keys.nextElement();

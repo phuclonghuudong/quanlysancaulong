@@ -9,6 +9,7 @@ import javax.swing.table.AbstractTableModel;
 /**
  *
  * @author phucp
+ * @param <T>
  */
 public class TableModel<T> extends AbstractTableModel {
 

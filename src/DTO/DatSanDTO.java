@@ -13,8 +13,10 @@ public class DatSanDTO {
     private int madatsan;
     private int makhachhang;
     private int masan;
+    private int manhanvien;
     private LocalTime checkin;
     private LocalTime checkout;
+    private double giasan;
     private double tongtien;
     private String thanhtoan;
     private String ghichu;
@@ -25,37 +27,57 @@ public class DatSanDTO {
     public DatSanDTO() {
     }
 
-    public DatSanDTO(int madatsan, int makhachhang, int masan, LocalTime checkin, LocalTime checkout, double tongtien, String thanhtoan, String ghichu, int trangthai) {
+    public DatSanDTO(int madatsan, int makhachhang, int masan, int manhanvien, LocalTime checkin, LocalTime checkout, double giasan, double tongtien, String thanhtoan, String ghichu, int trangthai) {
         this.madatsan = madatsan;
         this.makhachhang = makhachhang;
         this.masan = masan;
+        this.manhanvien = manhanvien;
         this.checkin = checkin;
         this.checkout = checkout;
+        this.giasan = giasan;
         this.tongtien = tongtien;
         this.thanhtoan = thanhtoan;
         this.ghichu = ghichu;
         this.trangthai = trangthai;
     }
 
+    public DatSanDTO(int madatsan, int makhachhang, int masan, int manhanvien, LocalTime checkin, LocalTime checkout, double giasan, double tongtien, String thanhtoan, String ghichu, int trangthai, Timestamp ngaytao, Timestamp ngaycapnhat) {
+        this.madatsan = madatsan;
+        this.makhachhang = makhachhang;
+        this.masan = masan;
+        this.manhanvien = manhanvien;
+        this.checkin = checkin;
+        this.checkout = checkout;
+        this.giasan = giasan;
+        this.tongtien = tongtien;
+        this.thanhtoan = thanhtoan;
+        this.ghichu = ghichu;
+        this.trangthai = trangthai;
+        this.ngaytao = ngaytao;
+        this.ngaycapnhat = ngaycapnhat;
+    }
+
     @Override
     public String toString() {
-        return "DatSanDTO{" + "madatsan=" + madatsan + ", makhachhang=" + makhachhang + ", masan=" + masan + ", checkin=" + checkin + ", checkout=" + checkout + ", tongtien=" + tongtien + ", thanhtoan=" + thanhtoan + ", ghichu=" + ghichu + ", trangthai=" + trangthai + ", ngaytao=" + ngaytao + ", ngaycapnhat=" + ngaycapnhat + '}';
+        return "DatSanDTO{" + "madatsan=" + madatsan + ", makhachhang=" + makhachhang + ", masan=" + masan + ", manhanvien=" + manhanvien + ", checkin=" + checkin + ", checkout=" + checkout + ", giasan=" + giasan + ", tongtien=" + tongtien + ", thanhtoan=" + thanhtoan + ", ghichu=" + ghichu + ", trangthai=" + trangthai + ", ngaytao=" + ngaytao + ", ngaycapnhat=" + ngaycapnhat + '}';
     }
 
     @Override
     public int hashCode() {
         int hash = 5;
-        hash = 41 * hash + this.madatsan;
-        hash = 41 * hash + this.makhachhang;
-        hash = 41 * hash + this.masan;
-        hash = 41 * hash + Objects.hashCode(this.checkin);
-        hash = 41 * hash + Objects.hashCode(this.checkout);
-        hash = 41 * hash + (int) (Double.doubleToLongBits(this.tongtien) ^ (Double.doubleToLongBits(this.tongtien) >>> 32));
-        hash = 41 * hash + Objects.hashCode(this.thanhtoan);
-        hash = 41 * hash + Objects.hashCode(this.ghichu);
-        hash = 41 * hash + this.trangthai;
-        hash = 41 * hash + Objects.hashCode(this.ngaytao);
-        hash = 41 * hash + Objects.hashCode(this.ngaycapnhat);
+        hash = 97 * hash + this.madatsan;
+        hash = 97 * hash + this.makhachhang;
+        hash = 97 * hash + this.masan;
+        hash = 97 * hash + this.manhanvien;
+        hash = 97 * hash + Objects.hashCode(this.checkin);
+        hash = 97 * hash + Objects.hashCode(this.checkout);
+        hash = 97 * hash + (int) (Double.doubleToLongBits(this.giasan) ^ (Double.doubleToLongBits(this.giasan) >>> 32));
+        hash = 97 * hash + (int) (Double.doubleToLongBits(this.tongtien) ^ (Double.doubleToLongBits(this.tongtien) >>> 32));
+        hash = 97 * hash + Objects.hashCode(this.thanhtoan);
+        hash = 97 * hash + Objects.hashCode(this.ghichu);
+        hash = 97 * hash + this.trangthai;
+        hash = 97 * hash + Objects.hashCode(this.ngaytao);
+        hash = 97 * hash + Objects.hashCode(this.ngaycapnhat);
         return hash;
     }
 
@@ -80,6 +102,12 @@ public class DatSanDTO {
         if (this.masan != other.masan) {
             return false;
         }
+        if (this.manhanvien != other.manhanvien) {
+            return false;
+        }
+        if (Double.doubleToLongBits(this.giasan) != Double.doubleToLongBits(other.giasan)) {
+            return false;
+        }
         if (Double.doubleToLongBits(this.tongtien) != Double.doubleToLongBits(other.tongtien)) {
             return false;
         }
@@ -102,6 +130,14 @@ public class DatSanDTO {
             return false;
         }
         return Objects.equals(this.ngaycapnhat, other.ngaycapnhat);
+    }
+
+    public double getGiasan() {
+        return giasan;
+    }
+
+    public void setGiasan(double giasan) {
+        this.giasan = giasan;
     }
 
     public Timestamp getNgaycapnhat() {
@@ -134,6 +170,14 @@ public class DatSanDTO {
 
     public void setMasan(int masan) {
         this.masan = masan;
+    }
+
+    public int getManhanvien() {
+        return manhanvien;
+    }
+
+    public void setManhanvien(int manhanvien) {
+        this.manhanvien = manhanvien;
     }
 
     public LocalTime getCheckin() {

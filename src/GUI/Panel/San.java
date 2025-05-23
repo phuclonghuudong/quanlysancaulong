@@ -60,10 +60,10 @@ public final class San extends JPanel implements ActionListener, ItemListener {
 
     public ArrayList<SanDTO> listDS = sanBUS.getAllLoaiSan();
 
+    DefaultTableModel tblModel;
     private TableModel<SanDTO> tableModel;
     JFrame owner = (JFrame) SwingUtilities.getWindowAncestor(this);
     IntegratedSearch search;
-    DefaultTableModel tblModel;
 
     String[] header = new String[]{"Mã sân", "Tên sân", "Loại sân", "Giá sân", "Ghi chú", "Trạng thái"};
     String[] headerSearch = new String[]{"Tất cả", "Mã sân", "Tên sân", "Loại sân", "Trạng thái"};

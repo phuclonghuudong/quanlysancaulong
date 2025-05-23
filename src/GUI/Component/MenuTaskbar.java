@@ -212,7 +212,7 @@ public final class MenuTaskbar extends javax.swing.JPanel {
             listitem[i] = new itemTaskbar(getSt[i][1], getSt[i][0]);
 
 //            CHECK ROLE
-            boolean enableRoleCheck = false;
+            boolean enableRoleCheck = true;
             if (enableRoleCheck && i != 0 && i != getSt.length - 1 && !checkRole(getSt[i][2])) {
                 continue;
             }

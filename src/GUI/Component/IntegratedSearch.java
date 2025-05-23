@@ -27,11 +27,11 @@ public class IntegratedSearch extends JPanel {
 
         JPanel jpSearch = new JPanel(new BorderLayout(5, 10));
         jpSearch.setBorder(new EmptyBorder(20, 15, 20, 15));
-        jpSearch.setBackground(Color.white);
+        jpSearch.setBackground(Color.WHITE);
         cbxChoose = new JComboBox();
         cbxChoose.setModel(new DefaultComboBoxModel<>(str));
         cbxChoose.setPreferredSize(new Dimension(120, 20));
-        cbxChoose.setFont(new Font("Tahoma", Font.PLAIN, 13));
+        cbxChoose.setFont(new Font("Tahoma", Font.BOLD, 13));
         cbxChoose.setBackground(new Color(255, 204, 153));
         cbxChoose.setForeground(new Color(50, 50, 50));
         cbxChoose.setBorder(BorderFactory.createEmptyBorder());
@@ -77,7 +77,7 @@ public class IntegratedSearch extends JPanel {
         txtSearchForm.setBorder(new EmptyBorder(2, 10, 2, 10));
         txtSearchForm.setBackground(new Color(238, 241, 218));
         txtSearchForm.putClientProperty("JTextField.placeholderText", "Nhập nội dung tìm kiếm...");
-        txtSearchForm.putClientProperty("JTextField.showClearButton", true);
+//        txtSearchForm.putClientProperty("JTextField.showClearButton", true);
         jpSearch.add(txtSearchForm);
 
         btnReset = new JButton("Làm mới");
@@ -91,7 +91,7 @@ public class IntegratedSearch extends JPanel {
         btnReset.setOpaque(true);
         btnReset.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
 
-        btnReset.setIcon(imgCustom.loadAndResizeImage("./src/icon/refresh.png", 40, 40));
+        btnReset.setIcon(imgCustom.loadAndResizeImage("./src/icon/refresh.png", 30, 30));
 
         btnReset.addMouseListener(new MouseAdapter() {
             @Override

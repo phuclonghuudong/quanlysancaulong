@@ -168,6 +168,40 @@ public class SanPhamDAO implements DAOinterface<SanPhamDTO> {
         return result;
     }
 
+    public ArrayList<SanPhamDTO> selectSanPhamJoinLoaiSanPhamHoatDong() {
+        ArrayList<SanPhamDTO> result = new ArrayList<>();
+        try {
+            Connection conn = JDBCUtil.getConnection();
+            String sql = "SELECT s.masanpham as masanpham, s.tensanpham as tensanpham, s.giaban AS giaban, s.ghichu as ghichu,"
+                    + " s.trangthai as trangthai, ls.tenloaihang as tenloaihang, s.loaisanpham as loaisanpham, s.soluong as soluong,s.donvi as donvi"
+                    + " FROM sanpham AS s JOIN loaihang AS ls on ls.maloaihang=s.loaisanpham WHERE s.trangthai = 1";
+            PreparedStatement pst = (PreparedStatement) conn.prepareStatement(sql);
+            ResultSet rs = (ResultSet) pst.executeQuery();
+            while (rs.next()) {
+                int ID = rs.getInt("masanpham");
+                int loaisanpham = rs.getInt("loaisanpham");
+                String tensanpham = rs.getString("tensanpham");
+                Double giaban = rs.getDouble("giaban");
+                int soluong = rs.getInt("soluong");
+                String donvi = rs.getString("donvi");
+                String ghichu = rs.getString("ghichu");
+                int trangthai = rs.getInt("trangthai");
+                String tenloaisanpham = rs.getString("tenloaihang");
+
+                SanPhamDTO sanpham = new SanPhamDTO(ID, loaisanpham, tensanpham, giaban, soluong, donvi, ghichu, trangthai);
+                sanpham.setTenloaisanpham(tenloaisanpham);
+
+                result.add(sanpham);
+            }
+
+            JDBCUtil.closeConnection(conn);
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+
+        return result;
+    }
+
     @Override
     public int getAutoIncrement() {
         int result = -1;
