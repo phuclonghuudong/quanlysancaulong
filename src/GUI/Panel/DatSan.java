@@ -28,7 +28,6 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import style.StyleButton;
 import style.StyleColor;
-import style.StyleFont;
 import style.StyleTable;
 import utils.Formater;
 
@@ -38,7 +37,6 @@ import utils.Formater;
  */
 public final class DatSan extends JPanel implements ActionListener, KeyListener, PropertyChangeListener, ItemListener {
 
-    StyleFont fontStyle = new StyleFont();
     StyleColor colorStyle = new StyleColor();
     StyleTable tableStyle = new StyleTable();
     StyleButton buttonStyle = new StyleButton();
@@ -57,6 +55,8 @@ public final class DatSan extends JPanel implements ActionListener, KeyListener,
     private ArrayList<SanPhamDTO> listSanPham = sanphamBUS.getAllLoaiSanPhamHoatDong();
     private TableModel<SanPhamDTO> tableModelSanPham;
 
+    private ArrayList<JPanel> danhSachPanelSanPham = new ArrayList<>();
+
     private SanBUS sanBUS = new SanBUS();
     private LoaiSanBUS loaiSanBUS = new LoaiSanBUS();
     private ArrayList<LoaiSanDTO> listLoaiSan;
@@ -67,11 +67,9 @@ public final class DatSan extends JPanel implements ActionListener, KeyListener,
     private ArrayList<SanPhamDTO> listSanPhamDaChon = new ArrayList<>();
 
     String[] headerSanPham = new String[]{"Mã SP", "Tên sản phẩm", "Loại sản phẩm", "Giá", "Số lượng"};
-    String[] headerSan = new String[]{"Mã Sân", "Tên sân", "Giá", "Số lượng"};
 
     public DatSan(Main m) {
         this.listDatSan = datsanBUS.getAll();
-//        this.loaiSanBUS = new LoaiSanBUS();
         this.m = m;
         initComponents();
         initComponent();
@@ -121,7 +119,6 @@ public final class DatSan extends JPanel implements ActionListener, KeyListener,
         txtUsernameKH.setBorder(new EmptyBorder(2, 10, 2, 10));
         txtPhoneKH.setBorder(new EmptyBorder(2, 10, 2, 10));
         txtDiaChiKH.setBorder(new EmptyBorder(2, 10, 2, 10));
-        txtTenSan.setBorder(new EmptyBorder(2, 10, 2, 10));
 
 //        DANH SÁCH LOẠI SÂN
         listLoaiSan = loaiSanBUS.getAllStatus();
@@ -156,7 +153,7 @@ public final class DatSan extends JPanel implements ActionListener, KeyListener,
     }
 
     private void panelDanhSachSan() {
-        ArrayList<SanDTO> listSan = sanBUS.getAllLoaiSan();
+        ArrayList<SanDTO> listSan = sanBUS.getAllLoaiSanHoatDong();
 
         jPanelDanhSachSan.removeAll();
         jPanelDanhSachSan.setLayout(new GridLayout(0, 3, 10, 10));
@@ -270,7 +267,8 @@ public final class DatSan extends JPanel implements ActionListener, KeyListener,
         for (SanDTO sp : listSan) {
             itemTaskbar item = new itemTaskbar(sp);
             item.setOnSanSelectedListener(san -> {
-                hienThiSanLenPanel(san);
+                sanDuocChon = san;
+                hienThiVaoPanelHoaDon(sanDuocChon, listSanPhamDaChon);
             });
             jPanelDanhSachSan.add(item);
         }
@@ -298,7 +296,7 @@ public final class DatSan extends JPanel implements ActionListener, KeyListener,
         pnlS.add(lblTenSan);
         pnlS.add(Box.createVerticalStrut(30));
         pnlS.add(lblGiaSan);
-        pnlS.setAlignmentX(LEFT_ALIGNMENT);
+        pnlS.setAlignmentX(CENTER_ALIGNMENT);
 
         jPanelHoaDon.add(pnlS);
         jPanelHoaDon.add(Box.createVerticalStrut(10));
@@ -306,6 +304,7 @@ public final class DatSan extends JPanel implements ActionListener, KeyListener,
 
 // Hiển thị 1 sản phẩm lên panel
     private void hienThiSanPhamLenPanel(SanPhamDTO sp) {
+
         JLabel lblTenSP = new JLabel(sp.getTensanpham());
         JLabel lblSoLuong = new JLabel("SL: " + sp.getSoluong());
         JLabel lblGiaSP = new JLabel(" x " + Formater.FormatVND(sp.getGiaban()));
@@ -344,9 +343,30 @@ public final class DatSan extends JPanel implements ActionListener, KeyListener,
         pnlSP.add(panelTen);
         pnlSP.add(panelSoLuongGia);
         pnlSP.add(panelThanhTien);
-        pnlSP.setAlignmentX(LEFT_ALIGNMENT);
+        pnlSP.setAlignmentX(CENTER_ALIGNMENT);
         pnlSP.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
+        danhSachPanelSanPham.add(pnlSP);
+
+        pnlSP.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                tableSanPham.clearSelection();
+                for (int i = 0; i < tableSanPham.getRowCount(); i++) {
+                    if (tableSanPham.getValueAt(i, 0).equals(sp.getMasanpham())) {
+                        tableSanPham.setRowSelectionInterval(i, i);
+                        break;
+                    }
+                }
+//                btnThemSoLuong.doClick();
+//                btnTruSoLuong.doClick();
+//                btnXoaSanPham.doClick();
+                for (JPanel panel : danhSachPanelSanPham) {
+                    panel.setBackground(colorStyle.colorForm());
+                }
+                pnlSP.setBackground(new Color(200, 230, 255));
+            }
+        });
         jPanelHoaDon.add(pnlSP);
         jPanelHoaDon.add(Box.createVerticalStrut(5));
     }
@@ -425,8 +445,6 @@ public final class DatSan extends JPanel implements ActionListener, KeyListener,
         jLabel4 = new javax.swing.JLabel();
         txtDiaChiKH = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
-        txtTenSan = new javax.swing.JTextField();
-        jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         txtLoaiSan = new javax.swing.JComboBox<>();
         txtLoaiSanPham = new javax.swing.JComboBox<>();
@@ -529,32 +547,6 @@ public final class DatSan extends JPanel implements ActionListener, KeyListener,
         jLabel5.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
         jLabel5.setText("Địa chỉ:");
 
-        txtTenSan.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
-        txtTenSan.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                txtTenSanFocusGained(evt);
-            }
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                txtTenSanFocusLost(evt);
-            }
-        });
-        txtTenSan.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtTenSanActionPerformed(evt);
-            }
-        });
-        txtTenSan.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                txtTenSanKeyPressed(evt);
-            }
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                txtTenSanKeyReleased(evt);
-            }
-        });
-
-        jLabel6.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
-        jLabel6.setText("Tên sân:");
-
         jLabel7.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
         jLabel7.setText("Loại sân:");
 
@@ -597,15 +589,8 @@ public final class DatSan extends JPanel implements ActionListener, KeyListener,
                         .addGroup(jPanelHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanelHeaderLayout.createSequentialGroup()
                                 .addGap(4, 4, 4)
-                                .addComponent(jLabel6))
-                            .addComponent(txtTenSan, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGroup(jPanelHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanelHeaderLayout.createSequentialGroup()
-                                .addGap(22, 22, 22)
                                 .addComponent(jLabel7))
-                            .addGroup(jPanelHeaderLayout.createSequentialGroup()
-                                .addGap(18, 18, 18)
-                                .addComponent(txtLoaiSan, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(txtLoaiSan, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGroup(jPanelHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanelHeaderLayout.createSequentialGroup()
                                 .addGap(22, 22, 22)
@@ -613,7 +598,7 @@ public final class DatSan extends JPanel implements ActionListener, KeyListener,
                             .addGroup(jPanelHeaderLayout.createSequentialGroup()
                                 .addGap(18, 18, 18)
                                 .addComponent(txtLoaiSanPham, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                .addGap(5, 5, 5))
+                .addContainerGap())
         );
         jPanelHeaderLayout.setVerticalGroup(
             jPanelHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -632,25 +617,21 @@ public final class DatSan extends JPanel implements ActionListener, KeyListener,
                         .addComponent(jLabel5)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txtDiaChiKH, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(10, 10, 10)
                 .addGroup(jPanelHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanelHeaderLayout.createSequentialGroup()
-                        .addGroup(jPanelHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabel7, javax.swing.GroupLayout.Alignment.TRAILING))
+                        .addComponent(jLabel7)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanelHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(txtTenSan, javax.swing.GroupLayout.DEFAULT_SIZE, 37, Short.MAX_VALUE)
-                            .addGroup(jPanelHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(txtLoaiSan, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(txtLoaiSanPham, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addGroup(jPanelHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(txtLoaiSan, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(txtLoaiSanPham, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(jPanelHeaderLayout.createSequentialGroup()
                         .addComponent(jLabel4)
                         .addGap(43, 43, 43)))
-                .addContainerGap(16, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
-        jPanelHeaderLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {txtDiaChiKH, txtLoaiSan, txtPhoneKH, txtTenSan, txtUsernameKH});
+        jPanelHeaderLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {txtDiaChiKH, txtLoaiSan, txtPhoneKH, txtUsernameKH});
 
         jPanelHoaDon.setBackground(new java.awt.Color(204, 255, 255));
         jPanelHoaDon.setMaximumSize(new java.awt.Dimension(339, 51));
@@ -677,7 +658,7 @@ public final class DatSan extends JPanel implements ActionListener, KeyListener,
         );
         jPanelDanhSachSanLayout.setVerticalGroup(
             jPanelDanhSachSanLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 204, Short.MAX_VALUE)
+            .addGap(0, 210, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout jPanelMainDanhSachSanLayout = new javax.swing.GroupLayout(jPanelMainDanhSachSan);
@@ -944,26 +925,6 @@ public final class DatSan extends JPanel implements ActionListener, KeyListener,
         // TODO add your handling code here:
     }//GEN-LAST:event_txtCheckinActionPerformed
 
-    private void txtTenSanKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtTenSanKeyReleased
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtTenSanKeyReleased
-
-    private void txtTenSanKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtTenSanKeyPressed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtTenSanKeyPressed
-
-    private void txtTenSanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtTenSanActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtTenSanActionPerformed
-
-    private void txtTenSanFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtTenSanFocusLost
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtTenSanFocusLost
-
-    private void txtTenSanFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtTenSanFocusGained
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtTenSanFocusGained
-
     @Override
     public void actionPerformed(ActionEvent e) {
         int selectedRow = tableSanPham.getSelectedRow();
@@ -1089,7 +1050,6 @@ public final class DatSan extends JPanel implements ActionListener, KeyListener,
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
@@ -1107,7 +1067,6 @@ public final class DatSan extends JPanel implements ActionListener, KeyListener,
     private javax.swing.JComboBox<String> txtLoaiSan;
     private javax.swing.JComboBox<String> txtLoaiSanPham;
     private javax.swing.JTextField txtPhoneKH;
-    private javax.swing.JTextField txtTenSan;
     private javax.swing.JTextField txtUsernameKH;
     // End of variables declaration//GEN-END:variables
 }

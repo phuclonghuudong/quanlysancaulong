@@ -205,4 +205,36 @@ public class SanDAO implements DAOinterface<SanDTO> {
         }
         return false;
     }
+
+    public ArrayList<SanDTO> selectSanJoinLoaiSanHoatDong() {
+        ArrayList<SanDTO> result = new ArrayList<>();
+        try {
+            Connection conn = JDBCUtil.getConnection();
+            String sql = "SELECT s.masan as masan, s.tensan as tensan, s.giasan AS giasan, s.ghichu as ghichu, s.trangthai as trangthai, ls.tenloaisan as tenloaisan, s.loaisan as loaisan"
+                    + " FROM san AS s JOIN loaisan AS ls on ls.maloaisan=s.loaisan "
+                    + " WHERE s.trangthai=1 ";
+            PreparedStatement pst = (PreparedStatement) conn.prepareStatement(sql);
+            ResultSet rs = (ResultSet) pst.executeQuery();
+            while (rs.next()) {
+                int ID = rs.getInt("masan");
+                String tenSan = rs.getString("tensan");
+                int loaiSan = rs.getInt("loaisan");
+                double giaSan = rs.getDouble("giasan");
+                String moTa = rs.getString("ghichu");
+                int status = rs.getInt("trangthai");
+                String tenLoai = rs.getString("tenloaisan");
+
+                SanDTO san = new SanDTO(ID, loaiSan, tenSan, giaSan, moTa, status);
+                san.setTenloaisan(tenLoai);
+
+                result.add(san);
+            }
+
+            JDBCUtil.closeConnection(conn);
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+
+        return result;
+    }
 }

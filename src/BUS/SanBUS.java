@@ -31,6 +31,10 @@ public class SanBUS {
         return sanDAO.selectSanJoinLoaiSan();
     }
 
+    public ArrayList<SanDTO> getAllLoaiSanHoatDong() {
+        return sanDAO.selectSanJoinLoaiSanHoatDong();
+    }
+
     public SanDTO getByIndex(int index) {
         return this.listSan.get(index);
     }
