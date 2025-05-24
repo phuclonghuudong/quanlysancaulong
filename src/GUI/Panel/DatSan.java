@@ -1,11 +1,14 @@
 package GUI.Panel;
 
 import BUS.DatSanBUS;
+import BUS.KhachHangBUS;
 import BUS.LoaiHangBUS;
 import BUS.LoaiSanBUS;
 import BUS.SanBUS;
 import BUS.SanPhamBUS;
+import DAO.KhachHangDAO;
 import DTO.DatSanDTO;
+import DTO.KhachHangDTO;
 import DTO.LoaiHangDTO;
 import DTO.LoaiSanDTO;
 import DTO.NhanVienDTO;
@@ -19,12 +22,19 @@ import java.awt.*;
 import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.text.ParseException;
+import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import style.StyleButton;
 import style.StyleColor;
@@ -46,6 +56,7 @@ public final class DatSan extends JPanel implements ActionListener, KeyListener,
     NhanVienDTO nvDTO;
 
     private DatSanBUS datsanBUS = new DatSanBUS();
+    private KhachHangBUS khBUS = new KhachHangBUS();
     private ArrayList<DatSanDTO> listDatSan;
     private TableModel<DatSanDTO> tableModelDatSan;
 
@@ -66,7 +77,20 @@ public final class DatSan extends JPanel implements ActionListener, KeyListener,
     private SanDTO sanDuocChon;  // sân hiện tại đang chọn
     private ArrayList<SanPhamDTO> listSanPhamDaChon = new ArrayList<>();
 
+    int soGioChoi = 0;
+    double thanhtien = 0;
+
     String[] headerSanPham = new String[]{"Mã SP", "Tên sản phẩm", "Loại sản phẩm", "Giá", "Số lượng"};
+
+    public DatSan(Main m, NhanVienDTO nvDTO) {
+        this.listDatSan = datsanBUS.getAll();
+        this.nvDTO = nvDTO;
+        this.m = m;
+
+        initComponents();
+        initComponent();
+        loadDataTableSanPham(listSanPham);
+    }
 
     public DatSan(Main m) {
         this.listDatSan = datsanBUS.getAll();
@@ -75,7 +99,6 @@ public final class DatSan extends JPanel implements ActionListener, KeyListener,
         initComponent();
 
         loadDataTableSanPham(listSanPham);
-
     }
 
     private void initComponent() {
@@ -85,6 +108,7 @@ public final class DatSan extends JPanel implements ActionListener, KeyListener,
         this.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         jPanelHeader.setBackground(colorStyle.colorForm());
+        jPanelThanhToan.setBackground(colorStyle.colorForm());
         jPanelMainDanhSachSan.setBackground(Color.WHITE);
         jPanelDanhSachSanPham.setBackground(Color.LIGHT_GRAY);
         jPanelButtonSan.setBackground(Color.WHITE);
@@ -107,6 +131,9 @@ public final class DatSan extends JPanel implements ActionListener, KeyListener,
         buttonStyle.customizeButton(btnThemSoLuong, "");
         buttonStyle.customizeButton(btnXoaSanPham, "");
         buttonStyle.customizeButton(btnTruSoLuong, "");
+        buttonStyle.customizeButton(btnDatSan, "excel");
+        buttonStyle.customizeButton(btnThanhToan, "success");
+        buttonStyle.customizeButton(btnHuySan, "danger");
 
         btnThemSoLuong.addActionListener(this);
         btnTruSoLuong.addActionListener(this);
@@ -117,8 +144,35 @@ public final class DatSan extends JPanel implements ActionListener, KeyListener,
 
     private void panelHeader() {
         txtUsernameKH.setBorder(new EmptyBorder(2, 10, 2, 10));
-        txtPhoneKH.setBorder(new EmptyBorder(2, 10, 2, 10));
-        txtDiaChiKH.setBorder(new EmptyBorder(2, 10, 2, 10));
+        txtSoDienThoaiKH.setBorder(new EmptyBorder(2, 10, 2, 10));
+        lblSoDienThoai.setText("SĐT: (chưa nhập)");
+        lblSoGioChoi.setText("Giờ chơi: (chưa có)");
+
+        txtSoDienThoaiKH.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                capNhatLabel();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                capNhatLabel();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                capNhatLabel();
+            }
+
+            private void capNhatLabel() {
+                String sdt = txtSoDienThoaiKH.getText();
+                if (sdt.trim().isEmpty()) {
+                    lblSoDienThoai.setText("SĐT: (chưa nhập)");
+                } else {
+                    lblSoDienThoai.setText("SĐT:" + sdt);
+                }
+            }
+        });
 
 //        DANH SÁCH LOẠI SÂN
         listLoaiSan = loaiSanBUS.getAllStatus();
@@ -209,12 +263,13 @@ public final class DatSan extends JPanel implements ActionListener, KeyListener,
     }
 
     private void panelButton() {
-
         txtCheckin.removeAllItems();
         txtCheckout.removeAllItems();
 
         txtCheckin.addItem("Tất cả");
         txtCheckout.addItem("Tất cả");
+        lblCheckin.setText("CheckIn: Tất cả");
+        lblCheckout.setText("CheckOut: Tất cả");
 
         for (int i = 6; i <= 22; i++) {
             LocalTime time = LocalTime.of(i, 0);
@@ -249,6 +304,57 @@ public final class DatSan extends JPanel implements ActionListener, KeyListener,
 
         buttonStyle.applyCustomScrollBar(txtCheckin);
         buttonStyle.applyCustomScrollBar(txtCheckout);
+
+        txtCheckin.addActionListener((ActionEvent e) -> {
+            String gioCheckin = txtCheckin.getSelectedItem().toString();
+            String gioCheckout = txtCheckout.getSelectedItem().toString();
+            lblCheckin.setText("CheckIn: " + gioCheckin);
+
+            if (!gioCheckin.equals("Tất cả") && !gioCheckout.equals("Tất cả")) {
+                try {
+                    LocalTime timeCheckin = LocalTime.parse(gioCheckin);
+                    LocalTime timeCheckout = LocalTime.parse(gioCheckout);
+
+                    if (!timeCheckout.isAfter(timeCheckin)) {
+                        txtCheckout.setSelectedItem("Tất cả");
+                        lblCheckout.setText("CheckOut: Tất cả");
+                    }
+                } catch (Exception ex) {
+                }
+            }
+        });
+
+        txtCheckout.addActionListener((var e) -> {
+            String gioCheckin = txtCheckin.getSelectedItem().toString();
+            String gioCheckout = txtCheckout.getSelectedItem().toString();
+            lblCheckout.setText("CheckOut: " + gioCheckout);
+
+            if (gioCheckin.equals("Tất cả") || gioCheckout.equals("Tất cả")) {
+                return;
+            }
+
+            try {
+                LocalTime timeCheckin = LocalTime.parse(gioCheckin);
+                LocalTime timeCheckout = LocalTime.parse(gioCheckout);
+
+                if (!timeCheckout.isAfter(timeCheckin)) {
+                    JOptionPane.showMessageDialog(null,
+                            "Giờ CheckOut phải lớn hơn giờ CheckIn!", "Lỗi chọn giờ",
+                            JOptionPane.WARNING_MESSAGE);
+
+                    txtCheckout.setSelectedItem("Tất cả");
+                    lblCheckout.setText("CheckOut: Tất cả");
+
+                }
+                long hoursPlayed = Duration.between(timeCheckin, timeCheckout).toHours();
+                lblSoGioChoi.setText("Giờ chơi: " + hoursPlayed + "h");
+                lblSoGioChoi.setFont(new Font("Arial", Font.BOLD, 14));
+                lblSoGioChoi.setForeground(Color.RED);
+                soGioChoi = Integer.parseInt(String.valueOf(hoursPlayed));
+                hienThiVaoPanelHoaDon(sanDuocChon, listSanPhamDaChon);
+            } catch (HeadlessException ex) {
+            }
+        });
     }
 
     private void hienThiDanhSachSanTheoLoai(String tenLoaiSan) {
@@ -276,8 +382,8 @@ public final class DatSan extends JPanel implements ActionListener, KeyListener,
         jPanelDanhSachSan.revalidate();
         jPanelDanhSachSan.repaint();
     }
-// Hiển thị 1 sân lên panel
 
+// Hiển thị 1 sân lên panel
     private void hienThiSanLenPanel(SanDTO san) {
         sanDuocChon = san;
         JLabel lblTenSan = new JLabel("Sân: " + san.getTensan());
@@ -303,12 +409,11 @@ public final class DatSan extends JPanel implements ActionListener, KeyListener,
     }
 
 // Hiển thị 1 sản phẩm lên panel
-    private void hienThiSanPhamLenPanel(SanPhamDTO sp) {
-
+    private void hienThiSanPhamLenPanel(SanPhamDTO sp, JPanel jPanelList) {
         JLabel lblTenSP = new JLabel(sp.getTensanpham());
-        JLabel lblSoLuong = new JLabel("SL: " + sp.getSoluong());
-        JLabel lblGiaSP = new JLabel(" x " + Formater.FormatVND(sp.getGiaban()));
-        JLabel lblThanhTien = new JLabel("Tổng: " + Formater.FormatVND(sp.getGiaban() * sp.getSoluong()));
+        JLabel lblSoLuong = new JLabel(sp.getSoluong() + "");
+        JLabel lblGiaSP = new JLabel("x" + Formater.FormatVND(sp.getGiaban()));
+        JLabel lblThanhTien = new JLabel(" " + Formater.FormatVND(sp.getGiaban() * sp.getSoluong()));
 
         Font fontBold = new Font("Arial", Font.BOLD, 13);
         Font font = new Font("Arial", Font.PLAIN, 13);
@@ -334,12 +439,12 @@ public final class DatSan extends JPanel implements ActionListener, KeyListener,
         panelThanhTien.add(lblThanhTien);
 
         JPanel pnlSP = new JPanel(new GridLayout(1, 3));
-        pnlSP.setBorder(new EmptyBorder(10, 10, 10, 10));
+        pnlSP.setBorder(new EmptyBorder(5, 2, 5, 2));
         pnlSP.setBackground(colorStyle.colorForm());
         pnlSP.setLayout(new BoxLayout(pnlSP, BoxLayout.X_AXIS));
-        pnlSP.setPreferredSize(new Dimension(340, 40));
-        pnlSP.setMaximumSize(new Dimension(340, 40));
-        pnlSP.setMinimumSize(new Dimension(340, 40));
+        pnlSP.setPreferredSize(new Dimension(290, 40));
+        pnlSP.setMaximumSize(new Dimension(290, 40));
+        pnlSP.setMinimumSize(new Dimension(290, 40));
         pnlSP.add(panelTen);
         pnlSP.add(panelSoLuongGia);
         pnlSP.add(panelThanhTien);
@@ -358,17 +463,18 @@ public final class DatSan extends JPanel implements ActionListener, KeyListener,
                         break;
                     }
                 }
-//                btnThemSoLuong.doClick();
-//                btnTruSoLuong.doClick();
-//                btnXoaSanPham.doClick();
+
                 for (JPanel panel : danhSachPanelSanPham) {
                     panel.setBackground(colorStyle.colorForm());
                 }
                 pnlSP.setBackground(new Color(200, 230, 255));
             }
         });
-        jPanelHoaDon.add(pnlSP);
-        jPanelHoaDon.add(Box.createVerticalStrut(5));
+
+        jPanelList.add(pnlSP);
+
+        jPanelList.setLayout(new BoxLayout(jPanelList, BoxLayout.Y_AXIS));
+        jPanelList.add(Box.createVerticalStrut(5));
     }
 
 // Hàm hiển thị tổng thể sân + danh sách sản phẩm
@@ -377,6 +483,16 @@ public final class DatSan extends JPanel implements ActionListener, KeyListener,
         jPanelHoaDon.setLayout(new BoxLayout(jPanelHoaDon, BoxLayout.Y_AXIS));
         jPanelHoaDon.setBorder(new EmptyBorder(10, 10, 10, 10));
 
+        JPanel jpanelDanhSachSanPham = new JPanel();
+        jpanelDanhSachSanPham.setLayout(new BoxLayout(jpanelDanhSachSanPham, BoxLayout.Y_AXIS));
+        jpanelDanhSachSanPham.setBackground(Color.WHITE);
+
+        if (san == null) {
+            JOptionPane.showMessageDialog(this,
+                    "Vui lòng chọn sân",
+                    "Cảnh báo", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
         hienThiSanLenPanel(san);
 
         JLabel lblTieuDeSP = new JLabel("Danh sách sản phẩm:");
@@ -384,9 +500,31 @@ public final class DatSan extends JPanel implements ActionListener, KeyListener,
         jPanelHoaDon.add(lblTieuDeSP);
         jPanelHoaDon.add(Box.createVerticalStrut(5));
 
+        int tongTien = 0;
         for (SanPhamDTO sp : dsSanPham) {
-            hienThiSanPhamLenPanel(sp);
+            hienThiSanPhamLenPanel(sp, jpanelDanhSachSanPham);
+            tongTien += sp.getSoluong() * sp.getGiaban();
         }
+
+        JScrollPane scrollPaneSP = new JScrollPane(jpanelDanhSachSanPham);
+        scrollPaneSP.getViewport().setPreferredSize(new Dimension(380, 300));
+        scrollPaneSP.setBorder(BorderFactory.createLineBorder(Color.WHITE));
+        scrollPaneSP.setVerticalScrollBar(new CustomScrollBar(JScrollBar.VERTICAL));
+        scrollPaneSP.setHorizontalScrollBar(new CustomScrollBar(JScrollBar.HORIZONTAL));
+        jPanelHoaDon.add(scrollPaneSP);
+
+        JPanel panelTongTien = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        panelTongTien.setOpaque(false);
+
+        int gioTinhTien = (soGioChoi == 0) ? 1 : soGioChoi;
+        thanhtien = tongTien + (san.getGiasan() * gioTinhTien);
+
+        JLabel lblTongTien = new JLabel("Tổng tiền: " + Formater.FormatVND(thanhtien));
+        lblTongTien.setFont(new Font("Tahoma", Font.BOLD, 14));
+        lblTongTien.setForeground(Color.RED);
+        panelTongTien.add(lblTongTien);
+
+        jPanelHoaDon.add(panelTongTien);
 
         jPanelHoaDon.revalidate();
         jPanelHoaDon.repaint();
@@ -428,6 +566,66 @@ public final class DatSan extends JPanel implements ActionListener, KeyListener,
         tableStyle.customizeTable(tableSanPham);
     }
 
+    public KhachHangDTO getOrCreateKhachHang(String tenKH, String soDienThoai) {
+        KhachHangDTO khach = khBUS.getBySoDienThoai(soDienThoai);
+
+        if (khach == null) {
+            int id = KhachHangDAO.getInstance().getAutoIncrement();
+            khach = new KhachHangDTO(id, tenKH, soDienThoai, "", 1);
+            khBUS.add(khach);
+        }
+
+        return khBUS.getBySoDienThoai(soDienThoai);
+    }
+
+    private void datSanAction() throws ParseException {
+        if (sanDuocChon == null) {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn sân để đặt!", "Cảnh báo", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        String gioCheckinStr = txtCheckin.getSelectedItem().toString();
+        String gioCheckoutStr = txtCheckout.getSelectedItem().toString();
+        if (gioCheckinStr.equals("Tất cả") || gioCheckoutStr.equals("Tất cả")) {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn giờ CheckIn và CheckOut!", "Cảnh báo", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        LocalTime gioCheckin = LocalTime.parse(gioCheckinStr);
+        LocalTime gioCheckout = LocalTime.parse(gioCheckoutStr);
+
+        if (!gioCheckout.isAfter(gioCheckin)) {
+            JOptionPane.showMessageDialog(this, "Giờ CheckOut phải lớn hơn CheckIn!", "Cảnh báo", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        String sdt = txtSoDienThoaiKH.getText().trim();
+        if (sdt.isEmpty() || !sdt.matches("^0\\d{9}$")) {
+            JOptionPane.showMessageDialog(this, "Số điện thoại không hợp lệ (VD: 0912345678)!", "Cảnh báo", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        if (nvDTO == null) {
+            JOptionPane.showMessageDialog(this, "Lỗi: Nhân viên chưa đăng nhập");
+            return;
+        }
+
+        KhachHangDTO khach = getOrCreateKhachHang(txtUsernameKH.getText(), txtSoDienThoaiKH.getText());
+
+        DatSanDTO datSanMoi = new DatSanDTO();
+        datSanMoi.setMasan(sanDuocChon.getMasan());
+        datSanMoi.setMakhachhang(khach.getMakhachhang());
+        datSanMoi.setManhanvien(nvDTO.getManhanvien());
+        datSanMoi.setGiasan(sanDuocChon.getGiasan());
+        datSanMoi.setTongtien(thanhtien);
+        datSanMoi.setNgaydat(java.sql.Date.valueOf(LocalDate.now()));
+        datSanMoi.setCheckin(gioCheckin);
+        datSanMoi.setCheckout(gioCheckout);
+        datSanMoi.setTrangthai(1);
+
+        String kq = datsanBUS.datSanBUS(datSanMoi);
+        JOptionPane.showMessageDialog(null, kq);
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -441,10 +639,8 @@ public final class DatSan extends JPanel implements ActionListener, KeyListener,
         txtUsernameKH = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        txtPhoneKH = new javax.swing.JTextField();
+        txtSoDienThoaiKH = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
-        txtDiaChiKH = new javax.swing.JTextField();
-        jLabel5 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         txtLoaiSan = new javax.swing.JComboBox<>();
         txtLoaiSanPham = new javax.swing.JComboBox<>();
@@ -463,6 +659,14 @@ public final class DatSan extends JPanel implements ActionListener, KeyListener,
         jLabel8 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
         jPanelTitle = new javax.swing.JPanel();
+        jPanelThanhToan = new javax.swing.JPanel();
+        btnThanhToan = new javax.swing.JButton();
+        btnHuySan = new javax.swing.JButton();
+        btnDatSan = new javax.swing.JButton();
+        lblCheckout = new javax.swing.JLabel();
+        lblCheckin = new javax.swing.JLabel();
+        lblSoDienThoai = new javax.swing.JLabel();
+        lblSoGioChoi = new javax.swing.JLabel();
 
         jPanelHeader.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -495,57 +699,31 @@ public final class DatSan extends JPanel implements ActionListener, KeyListener,
         jLabel3.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
         jLabel3.setText("Số điện thoại:");
 
-        txtPhoneKH.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
-        txtPhoneKH.addFocusListener(new java.awt.event.FocusAdapter() {
+        txtSoDienThoaiKH.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
+        txtSoDienThoaiKH.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
-                txtPhoneKHFocusGained(evt);
+                txtSoDienThoaiKHFocusGained(evt);
             }
             public void focusLost(java.awt.event.FocusEvent evt) {
-                txtPhoneKHFocusLost(evt);
+                txtSoDienThoaiKHFocusLost(evt);
             }
         });
-        txtPhoneKH.addActionListener(new java.awt.event.ActionListener() {
+        txtSoDienThoaiKH.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtPhoneKHActionPerformed(evt);
+                txtSoDienThoaiKHActionPerformed(evt);
             }
         });
-        txtPhoneKH.addKeyListener(new java.awt.event.KeyAdapter() {
+        txtSoDienThoaiKH.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
-                txtPhoneKHKeyPressed(evt);
+                txtSoDienThoaiKHKeyPressed(evt);
             }
             public void keyReleased(java.awt.event.KeyEvent evt) {
-                txtPhoneKHKeyReleased(evt);
+                txtSoDienThoaiKHKeyReleased(evt);
             }
         });
 
         jLabel4.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
         jLabel4.setText("Loại sản phẩm:");
-
-        txtDiaChiKH.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
-        txtDiaChiKH.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                txtDiaChiKHFocusGained(evt);
-            }
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                txtDiaChiKHFocusLost(evt);
-            }
-        });
-        txtDiaChiKH.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtDiaChiKHActionPerformed(evt);
-            }
-        });
-        txtDiaChiKH.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                txtDiaChiKHKeyPressed(evt);
-            }
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                txtDiaChiKHKeyReleased(evt);
-            }
-        });
-
-        jLabel5.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
-        jLabel5.setText("Địa chỉ:");
 
         jLabel7.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
         jLabel7.setText("Loại sân:");
@@ -577,19 +755,11 @@ public final class DatSan extends JPanel implements ActionListener, KeyListener,
                             .addGroup(jPanelHeaderLayout.createSequentialGroup()
                                 .addGap(4, 4, 4)
                                 .addComponent(jLabel3))
-                            .addComponent(txtPhoneKH, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
-                        .addGroup(jPanelHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanelHeaderLayout.createSequentialGroup()
-                                .addGap(4, 4, 4)
-                                .addComponent(jLabel5))
-                            .addComponent(txtDiaChiKH, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(txtSoDienThoaiKH, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(jPanelHeaderLayout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(jPanelHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanelHeaderLayout.createSequentialGroup()
-                                .addGap(4, 4, 4)
-                                .addComponent(jLabel7))
+                            .addComponent(jLabel7)
                             .addComponent(txtLoaiSan, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGroup(jPanelHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanelHeaderLayout.createSequentialGroup()
@@ -598,7 +768,7 @@ public final class DatSan extends JPanel implements ActionListener, KeyListener,
                             .addGroup(jPanelHeaderLayout.createSequentialGroup()
                                 .addGap(18, 18, 18)
                                 .addComponent(txtLoaiSanPham, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                .addContainerGap())
+                .addGap(194, 194, 194))
         );
         jPanelHeaderLayout.setVerticalGroup(
             jPanelHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -608,16 +778,12 @@ public final class DatSan extends JPanel implements ActionListener, KeyListener,
                     .addGroup(jPanelHeaderLayout.createSequentialGroup()
                         .addComponent(jLabel3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtPhoneKH, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(txtSoDienThoaiKH, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanelHeaderLayout.createSequentialGroup()
                         .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtUsernameKH, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanelHeaderLayout.createSequentialGroup()
-                        .addComponent(jLabel5)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtDiaChiKH, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(10, 10, 10)
+                        .addComponent(txtUsernameKH, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanelHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanelHeaderLayout.createSequentialGroup()
                         .addComponent(jLabel7)
@@ -628,24 +794,25 @@ public final class DatSan extends JPanel implements ActionListener, KeyListener,
                     .addGroup(jPanelHeaderLayout.createSequentialGroup()
                         .addComponent(jLabel4)
                         .addGap(43, 43, 43)))
-                .addContainerGap())
+                .addContainerGap(16, Short.MAX_VALUE))
         );
 
-        jPanelHeaderLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {txtDiaChiKH, txtLoaiSan, txtPhoneKH, txtUsernameKH});
+        jPanelHeaderLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {txtLoaiSan, txtSoDienThoaiKH, txtUsernameKH});
 
         jPanelHoaDon.setBackground(new java.awt.Color(204, 255, 255));
         jPanelHoaDon.setMaximumSize(new java.awt.Dimension(339, 51));
         jPanelHoaDon.setMinimumSize(new java.awt.Dimension(339, 51));
+        jPanelHoaDon.setPreferredSize(new java.awt.Dimension(340, 390));
 
         javax.swing.GroupLayout jPanelHoaDonLayout = new javax.swing.GroupLayout(jPanelHoaDon);
         jPanelHoaDon.setLayout(jPanelHoaDonLayout);
         jPanelHoaDonLayout.setHorizontalGroup(
             jPanelHoaDonLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 339, Short.MAX_VALUE)
+            .addGap(0, 0, Short.MAX_VALUE)
         );
         jPanelHoaDonLayout.setVerticalGroup(
             jPanelHoaDonLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 585, Short.MAX_VALUE)
+            .addGap(0, 390, Short.MAX_VALUE)
         );
 
         jPanelMainDanhSachSan.setBackground(new java.awt.Color(204, 255, 204));
@@ -658,7 +825,7 @@ public final class DatSan extends JPanel implements ActionListener, KeyListener,
         );
         jPanelDanhSachSanLayout.setVerticalGroup(
             jPanelDanhSachSanLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 210, Short.MAX_VALUE)
+            .addGap(0, 204, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout jPanelMainDanhSachSanLayout = new javax.swing.GroupLayout(jPanelMainDanhSachSan);
@@ -807,6 +974,90 @@ public final class DatSan extends JPanel implements ActionListener, KeyListener,
             .addGap(0, 36, Short.MAX_VALUE)
         );
 
+        btnThanhToan.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
+        btnThanhToan.setText("THANH TOÁN");
+        btnThanhToan.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnThanhToanActionPerformed(evt);
+            }
+        });
+
+        btnHuySan.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
+        btnHuySan.setText("HỦY SÂN");
+        btnHuySan.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnHuySanActionPerformed(evt);
+            }
+        });
+
+        btnDatSan.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
+        btnDatSan.setText("ĐẶT SÂN");
+        btnDatSan.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnDatSanMouseClicked(evt);
+            }
+        });
+        btnDatSan.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDatSanActionPerformed(evt);
+            }
+        });
+
+        lblCheckout.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
+        lblCheckout.setText("CheckOut:");
+
+        lblCheckin.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
+        lblCheckin.setText("CheckIn:");
+
+        lblSoDienThoai.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
+        lblSoDienThoai.setText("SĐT:");
+
+        lblSoGioChoi.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
+        lblSoGioChoi.setText("TênKH:");
+
+        javax.swing.GroupLayout jPanelThanhToanLayout = new javax.swing.GroupLayout(jPanelThanhToan);
+        jPanelThanhToan.setLayout(jPanelThanhToanLayout);
+        jPanelThanhToanLayout.setHorizontalGroup(
+            jPanelThanhToanLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelThanhToanLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanelThanhToanLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btnDatSan, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanelThanhToanLayout.createSequentialGroup()
+                        .addComponent(btnThanhToan, javax.swing.GroupLayout.PREFERRED_SIZE, 219, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnHuySan, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(jPanelThanhToanLayout.createSequentialGroup()
+                        .addGroup(jPanelThanhToanLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(lblCheckin, javax.swing.GroupLayout.DEFAULT_SIZE, 151, Short.MAX_VALUE)
+                            .addComponent(lblSoDienThoai, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanelThanhToanLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(lblCheckout, javax.swing.GroupLayout.DEFAULT_SIZE, 162, Short.MAX_VALUE)
+                            .addComponent(lblSoGioChoi, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
+        );
+        jPanelThanhToanLayout.setVerticalGroup(
+            jPanelThanhToanLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelThanhToanLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanelThanhToanLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblCheckin)
+                    .addComponent(lblCheckout))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 19, Short.MAX_VALUE)
+                .addGroup(jPanelThanhToanLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblSoDienThoai)
+                    .addComponent(lblSoGioChoi))
+                .addGap(18, 18, 18)
+                .addComponent(btnDatSan, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanelThanhToanLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(btnHuySan, javax.swing.GroupLayout.DEFAULT_SIZE, 48, Short.MAX_VALUE)
+                    .addComponent(btnThanhToan, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -821,9 +1072,13 @@ public final class DatSan extends JPanel implements ActionListener, KeyListener,
                     .addComponent(jPanelButtonSanPham, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanelButtonSan, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jPanelHoaDon, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanelTitle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanelTitle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jPanelHoaDon, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                            .addComponent(jPanelThanhToan, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addContainerGap())))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -841,49 +1096,31 @@ public final class DatSan extends JPanel implements ActionListener, KeyListener,
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanelTitle, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanelHoaDon, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jPanelHoaDon, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanelThanhToan, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void txtDiaChiKHKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtDiaChiKHKeyReleased
+    private void txtSoDienThoaiKHKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSoDienThoaiKHKeyReleased
         // TODO add your handling code here:
-    }//GEN-LAST:event_txtDiaChiKHKeyReleased
+    }//GEN-LAST:event_txtSoDienThoaiKHKeyReleased
 
-    private void txtDiaChiKHKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtDiaChiKHKeyPressed
+    private void txtSoDienThoaiKHKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSoDienThoaiKHKeyPressed
         // TODO add your handling code here:
-    }//GEN-LAST:event_txtDiaChiKHKeyPressed
+    }//GEN-LAST:event_txtSoDienThoaiKHKeyPressed
 
-    private void txtDiaChiKHActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtDiaChiKHActionPerformed
+    private void txtSoDienThoaiKHActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSoDienThoaiKHActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_txtDiaChiKHActionPerformed
+    }//GEN-LAST:event_txtSoDienThoaiKHActionPerformed
 
-    private void txtDiaChiKHFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtDiaChiKHFocusLost
+    private void txtSoDienThoaiKHFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtSoDienThoaiKHFocusLost
         // TODO add your handling code here:
-    }//GEN-LAST:event_txtDiaChiKHFocusLost
+    }//GEN-LAST:event_txtSoDienThoaiKHFocusLost
 
-    private void txtDiaChiKHFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtDiaChiKHFocusGained
+    private void txtSoDienThoaiKHFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtSoDienThoaiKHFocusGained
         // TODO add your handling code here:
-    }//GEN-LAST:event_txtDiaChiKHFocusGained
-
-    private void txtPhoneKHKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtPhoneKHKeyReleased
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtPhoneKHKeyReleased
-
-    private void txtPhoneKHKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtPhoneKHKeyPressed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtPhoneKHKeyPressed
-
-    private void txtPhoneKHActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtPhoneKHActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtPhoneKHActionPerformed
-
-    private void txtPhoneKHFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtPhoneKHFocusLost
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtPhoneKHFocusLost
-
-    private void txtPhoneKHFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtPhoneKHFocusGained
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtPhoneKHFocusGained
+    }//GEN-LAST:event_txtSoDienThoaiKHFocusGained
 
     private void txtUsernameKHKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtUsernameKHKeyReleased
 
@@ -924,6 +1161,26 @@ public final class DatSan extends JPanel implements ActionListener, KeyListener,
     private void txtCheckinActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCheckinActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtCheckinActionPerformed
+
+    private void btnThanhToanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnThanhToanActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnThanhToanActionPerformed
+
+    private void btnHuySanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHuySanActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnHuySanActionPerformed
+
+    private void btnDatSanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDatSanActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnDatSanActionPerformed
+
+    private void btnDatSanMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnDatSanMouseClicked
+        try {
+            datSanAction();
+        } catch (ParseException ex) {
+            Logger.getLogger(DatSan.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btnDatSanMouseClicked
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -1043,13 +1300,15 @@ public final class DatSan extends JPanel implements ActionListener, KeyListener,
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAddSanPham;
+    private javax.swing.JButton btnDatSan;
+    private javax.swing.JButton btnHuySan;
+    private javax.swing.JButton btnThanhToan;
     private javax.swing.JButton btnThemSoLuong;
     private javax.swing.JButton btnTruSoLuong;
     private javax.swing.JButton btnXoaSanPham;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
@@ -1060,13 +1319,17 @@ public final class DatSan extends JPanel implements ActionListener, KeyListener,
     private javax.swing.JPanel jPanelHeader;
     private javax.swing.JPanel jPanelHoaDon;
     private javax.swing.JPanel jPanelMainDanhSachSan;
+    private javax.swing.JPanel jPanelThanhToan;
     private javax.swing.JPanel jPanelTitle;
+    private javax.swing.JLabel lblCheckin;
+    private javax.swing.JLabel lblCheckout;
+    private javax.swing.JLabel lblSoDienThoai;
+    private javax.swing.JLabel lblSoGioChoi;
     private javax.swing.JComboBox<String> txtCheckin;
     private javax.swing.JComboBox<String> txtCheckout;
-    private javax.swing.JTextField txtDiaChiKH;
     private javax.swing.JComboBox<String> txtLoaiSan;
     private javax.swing.JComboBox<String> txtLoaiSanPham;
-    private javax.swing.JTextField txtPhoneKH;
+    private javax.swing.JTextField txtSoDienThoaiKH;
     private javax.swing.JTextField txtUsernameKH;
     // End of variables declaration//GEN-END:variables
 }

@@ -104,7 +104,29 @@ public class KhachHangDAO implements DAOinterface<KhachHangDTO> {
         KhachHangDTO result = null;
         try {
             Connection con = (Connection) JDBCUtil.getConnection();
-            String sql = "SELECT * FROM nhanvien WHERE manv=?";
+            String sql = "SELECT * FROM khachhang WHERE makhachhang=?";
+            PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
+            pst.setString(1, t);
+            ResultSet rs = (ResultSet) pst.executeQuery();
+            while (rs.next()) {
+                int manv = rs.getInt("makhachhang");
+                String hoten = rs.getString("hoten");
+                String sodienthoai = rs.getString("sodienthoai");
+                String diachi = rs.getString("diachi");
+                int trangthai = rs.getInt("trangthai");
+                result = new KhachHangDTO(manv, hoten, sodienthoai, diachi, trangthai);
+            }
+            JDBCUtil.closeConnection(con);
+        } catch (SQLException e) {
+        }
+        return result;
+    }
+
+    public KhachHangDTO selectBySoDienThoai(String t) {
+        KhachHangDTO result = null;
+        try {
+            Connection con = (Connection) JDBCUtil.getConnection();
+            String sql = "SELECT * FROM khachhang WHERE sodienthoai=?";
             PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
             pst.setString(1, t);
             ResultSet rs = (ResultSet) pst.executeQuery();

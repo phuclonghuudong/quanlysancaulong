@@ -85,14 +85,14 @@ public class DatabaseInitializer {
                     + "ngaycapnhat TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,"
                     + "FOREIGN KEY (loaisanpham) REFERENCES loaihang(maloaihang)"
                     + ");";
-
             sql += "CREATE TABLE IF NOT EXISTS datsan ("
                     + "madatsan INT AUTO_INCREMENT PRIMARY KEY,"
                     + "manhanvien INT,"
                     + "masan INT,"
                     + "makhachhang INT,"
-                    + "checkin DATETIME,"
-                    + "checkout DATETIME,"
+                    + "checkin TIME,"
+                    + "checkout TIME,"
+                    + "ngaydat DATE,"
                     + "giasan DECIMAL(10,2),"
                     + "tongtien DECIMAL(10,2),"
                     + "thanhtoan BOOLEAN,"

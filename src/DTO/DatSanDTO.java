@@ -2,6 +2,7 @@ package DTO;
 
 import java.security.Timestamp;
 import java.time.LocalTime;
+import java.util.Date;
 import java.util.Objects;
 
 /**
@@ -16,6 +17,7 @@ public class DatSanDTO {
     private int manhanvien;
     private LocalTime checkin;
     private LocalTime checkout;
+    private Date ngaydat;
     private double giasan;
     private double tongtien;
     private String thanhtoan;
@@ -24,16 +26,34 @@ public class DatSanDTO {
     private Timestamp ngaytao;
     private Timestamp ngaycapnhat;
 
+    private String sodienthoaiKH;
+
     public DatSanDTO() {
     }
 
-    public DatSanDTO(int madatsan, int makhachhang, int masan, int manhanvien, LocalTime checkin, LocalTime checkout, double giasan, double tongtien, String thanhtoan, String ghichu, int trangthai) {
+    public DatSanDTO(int madatsan, String sodienthoaiKH, int masan, int manhanvien, LocalTime checkin, LocalTime checkout, Date ngaydat, double giasan, double tongtien, String thanhtoan, String ghichu, int trangthai) {
+        this.madatsan = madatsan;
+        this.sodienthoaiKH = sodienthoaiKH;
+        this.masan = masan;
+        this.manhanvien = manhanvien;
+        this.checkin = checkin;
+        this.checkout = checkout;
+        this.ngaydat = ngaydat;
+        this.giasan = giasan;
+        this.tongtien = tongtien;
+        this.thanhtoan = thanhtoan;
+        this.ghichu = ghichu;
+        this.trangthai = trangthai;
+    }
+
+    public DatSanDTO(int madatsan, int makhachhang, int masan, int manhanvien, LocalTime checkin, LocalTime checkout, Date ngaydat, double giasan, double tongtien, String thanhtoan, String ghichu, int trangthai) {
         this.madatsan = madatsan;
         this.makhachhang = makhachhang;
         this.masan = masan;
         this.manhanvien = manhanvien;
         this.checkin = checkin;
         this.checkout = checkout;
+        this.ngaydat = ngaydat;
         this.giasan = giasan;
         this.tongtien = tongtien;
         this.thanhtoan = thanhtoan;
@@ -59,25 +79,27 @@ public class DatSanDTO {
 
     @Override
     public String toString() {
-        return "DatSanDTO{" + "madatsan=" + madatsan + ", makhachhang=" + makhachhang + ", masan=" + masan + ", manhanvien=" + manhanvien + ", checkin=" + checkin + ", checkout=" + checkout + ", giasan=" + giasan + ", tongtien=" + tongtien + ", thanhtoan=" + thanhtoan + ", ghichu=" + ghichu + ", trangthai=" + trangthai + ", ngaytao=" + ngaytao + ", ngaycapnhat=" + ngaycapnhat + '}';
+        return "DatSanDTO{" + "madatsan=" + madatsan + ", makhachhang=" + makhachhang + ", masan=" + masan + ", manhanvien=" + manhanvien + ", checkin=" + checkin + ", checkout=" + checkout + ", ngaydat=" + ngaydat + ", giasan=" + giasan + ", tongtien=" + tongtien + ", thanhtoan=" + thanhtoan + ", ghichu=" + ghichu + ", trangthai=" + trangthai + ", ngaytao=" + ngaytao + ", ngaycapnhat=" + ngaycapnhat + ", sodienthoaiKH=" + sodienthoaiKH + '}';
     }
 
     @Override
     public int hashCode() {
-        int hash = 5;
-        hash = 97 * hash + this.madatsan;
-        hash = 97 * hash + this.makhachhang;
-        hash = 97 * hash + this.masan;
-        hash = 97 * hash + this.manhanvien;
-        hash = 97 * hash + Objects.hashCode(this.checkin);
-        hash = 97 * hash + Objects.hashCode(this.checkout);
-        hash = 97 * hash + (int) (Double.doubleToLongBits(this.giasan) ^ (Double.doubleToLongBits(this.giasan) >>> 32));
-        hash = 97 * hash + (int) (Double.doubleToLongBits(this.tongtien) ^ (Double.doubleToLongBits(this.tongtien) >>> 32));
-        hash = 97 * hash + Objects.hashCode(this.thanhtoan);
-        hash = 97 * hash + Objects.hashCode(this.ghichu);
-        hash = 97 * hash + this.trangthai;
-        hash = 97 * hash + Objects.hashCode(this.ngaytao);
-        hash = 97 * hash + Objects.hashCode(this.ngaycapnhat);
+        int hash = 3;
+        hash = 89 * hash + this.madatsan;
+        hash = 89 * hash + this.makhachhang;
+        hash = 89 * hash + this.masan;
+        hash = 89 * hash + this.manhanvien;
+        hash = 89 * hash + Objects.hashCode(this.checkin);
+        hash = 89 * hash + Objects.hashCode(this.checkout);
+        hash = 89 * hash + Objects.hashCode(this.ngaydat);
+        hash = 89 * hash + (int) (Double.doubleToLongBits(this.giasan) ^ (Double.doubleToLongBits(this.giasan) >>> 32));
+        hash = 89 * hash + (int) (Double.doubleToLongBits(this.tongtien) ^ (Double.doubleToLongBits(this.tongtien) >>> 32));
+        hash = 89 * hash + Objects.hashCode(this.thanhtoan);
+        hash = 89 * hash + Objects.hashCode(this.ghichu);
+        hash = 89 * hash + this.trangthai;
+        hash = 89 * hash + Objects.hashCode(this.ngaytao);
+        hash = 89 * hash + Objects.hashCode(this.ngaycapnhat);
+        hash = 89 * hash + Objects.hashCode(this.sodienthoaiKH);
         return hash;
     }
 
@@ -120,16 +142,38 @@ public class DatSanDTO {
         if (!Objects.equals(this.ghichu, other.ghichu)) {
             return false;
         }
+        if (!Objects.equals(this.sodienthoaiKH, other.sodienthoaiKH)) {
+            return false;
+        }
         if (!Objects.equals(this.checkin, other.checkin)) {
             return false;
         }
         if (!Objects.equals(this.checkout, other.checkout)) {
             return false;
         }
+        if (!Objects.equals(this.ngaydat, other.ngaydat)) {
+            return false;
+        }
         if (!Objects.equals(this.ngaytao, other.ngaytao)) {
             return false;
         }
         return Objects.equals(this.ngaycapnhat, other.ngaycapnhat);
+    }
+
+    public Date getNgaydat() {
+        return ngaydat;
+    }
+
+    public void setNgaydat(Date ngaydat) {
+        this.ngaydat = ngaydat;
+    }
+
+    public String getSodienthoaiKH() {
+        return sodienthoaiKH;
+    }
+
+    public void setSodienthoaiKH(String sodienthoaiKH) {
+        this.sodienthoaiKH = sodienthoaiKH;
     }
 
     public double getGiasan() {

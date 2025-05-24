@@ -84,7 +84,7 @@ public final class MenuTaskbar extends javax.swing.JPanel {
                 main.setPanel(trangChu);
             }
             case "datsan" -> {
-                datSan = new DatSan(main);
+                datSan = new DatSan(main, nhanVienDTO);
                 main.setPanel(datSan);
             }
             case "khachhang" -> {

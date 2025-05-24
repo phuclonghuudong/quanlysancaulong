@@ -39,6 +39,19 @@ public class KhachHangBUS {
         return vitri;
     }
 
+    public KhachHangDTO getBySoDienThoai(String sdt) {
+        try {
+//            int ma = Integer.parseInt(maSP);
+            for (KhachHangDTO sp : listDS) {
+                if (sdt == null ? sp.getSodienthoai() == null : sdt.equals(sp.getSodienthoai())) {
+                    return sp;
+                }
+            }
+        } catch (NumberFormatException e) {
+        }
+        return null;
+    }
+
     public Boolean add(KhachHangDTO kh) {
         boolean check = khDAO.insert(kh) != 0;
         if (check) {

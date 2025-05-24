@@ -8,6 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -106,12 +107,13 @@ public class DatSanDAO implements DAOinterface<DatSanDTO> {
                 int maKH = rs.getInt("makhachhang");
                 LocalTime checkin = rs.getTime("checkin").toLocalTime();
                 LocalTime checkout = rs.getTime("checkout").toLocalTime();
+                Date ngaydat = rs.getDate("ngaydat");
                 Double giasan = rs.getDouble("giasan");
                 Double tongtien = rs.getDouble("tongtien");
                 String thanhtoan = rs.getString("thanhtoan");
                 String ghichu = rs.getString("ghichu");
                 int trangthai = rs.getInt("trangthai");
-                DatSanDTO ds = new DatSanDTO(maDS, maNV, maS, maKH, checkin, checkout, giasan, tongtien, thanhtoan, ghichu, trangthai);
+                DatSanDTO ds = new DatSanDTO(maDS, maNV, maS, maKH, checkin, checkout, ngaydat, giasan, tongtien, thanhtoan, ghichu, trangthai);
                 result.add(ds);
             }
             JDBCUtil.closeConnection(con);
@@ -141,7 +143,8 @@ public class DatSanDAO implements DAOinterface<DatSanDTO> {
                 String thanhtoan = rs.getString("thanhtoan");
                 String ghichu = rs.getString("ghichu");
                 int trangthai = rs.getInt("trangthai");
-                result = new DatSanDTO(maDS, maNV, maS, maKH, checkin, checkout, giasan, tongtien, thanhtoan, ghichu, trangthai);
+                Date ngaydat = rs.getDate("ngaydat");
+                result = new DatSanDTO(maDS, maNV, maS, maKH, checkin, checkout, ngaydat, giasan, tongtien, thanhtoan, ghichu, trangthai);
 
             }
             JDBCUtil.closeConnection(con);
@@ -181,6 +184,36 @@ public class DatSanDAO implements DAOinterface<DatSanDTO> {
 //            Logger.getLogger(SanDAO.class.getName()).log(Level.SEVERE, null, ex);
 //        }
 //        return result;
+    }
+
+    public ArrayList<DatSanDTO> getBySan(int masan) {
+        ArrayList<DatSanDTO> result = new ArrayList<>();
+        try {
+            Connection con = (Connection) JDBCUtil.getConnection();
+            String sql = "SELECT * FROM datsan WHERE masan=?";
+            PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
+            pst.setInt(1, masan);
+            ResultSet rs = (ResultSet) pst.executeQuery();
+            while (rs.next()) {
+                int maDS = rs.getInt("madatsan");
+                int maNV = rs.getInt("manhanvien");
+                int maS = rs.getInt("masan");
+                int maKH = rs.getInt("makhachhang");
+                LocalTime checkin = rs.getTime("checkin").toLocalTime();
+                LocalTime checkout = rs.getTime("checkout").toLocalTime();
+                Double giasan = rs.getDouble("giasan");
+                Double tongtien = rs.getDouble("tongtien");
+                Date ngaydat = rs.getDate("ngaydat");
+                String thanhtoan = rs.getString("thanhtoan");
+                String ghichu = rs.getString("ghichu");
+                int trangthai = rs.getInt("trangthai");
+                DatSanDTO ds = new DatSanDTO(maDS, maNV, maS, maKH, checkin, checkout, ngaydat, giasan, tongtien, thanhtoan, ghichu, trangthai);
+                result.add(ds);
+            }
+            JDBCUtil.closeConnection(con);
+        } catch (SQLException e) {
+        }
+        return result;
     }
 
 }
