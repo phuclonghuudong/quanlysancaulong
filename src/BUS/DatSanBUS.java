@@ -64,7 +64,6 @@ public class DatSanBUS {
     }
 
     public String datSanBUS(DatSanDTO dto) throws ParseException {
-
         if (dto.getMakhachhang() <= 0) {
             return "Khách hàng không hợp lệ.";
         }
@@ -101,7 +100,7 @@ public class DatSanBUS {
         }
         ArrayList<DatSanDTO> danhSachDaDat = dsDAO.getBySan(dto.getMasan());
         for (DatSanDTO ds : danhSachDaDat) {
-            if (ds.getTrangthai() == 0 || ds.getTrangthai() == 1) {
+            if ((ds.getTrangthai() == 0 || ds.getTrangthai() == 1) && dto.getNgaydat().equals(ds.getNgaydat())) {
                 if ((dto.getCheckin().isBefore(ds.getCheckout())) && (dto.getCheckout().isAfter(ds.getCheckin()))) {
                     return "Khung giờ bị trùng với lịch đã đặt.";
                 }
@@ -111,5 +110,9 @@ public class DatSanBUS {
         int inserted = dsDAO.insert(dto);
         return inserted > 0 ? "Đặt sân thành công!" : "Đăng sân thất bại!";
 
+    }
+
+    public ArrayList<DatSanDTO> getBySan(int index) {
+        return dsDAO.getBySan(index);
     }
 }

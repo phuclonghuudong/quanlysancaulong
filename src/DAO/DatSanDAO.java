@@ -27,7 +27,7 @@ public class DatSanDAO implements DAOinterface<DatSanDTO> {
         int result = 0;
         try {
             Connection con = (Connection) JDBCUtil.getConnection();
-            String sql = "INSERT INTO `datsan`(`madatsan`,`manhanvien`,`masan`,`makhachhang`,`checkin`,`checkout`,`giasan`,`tongtien`,`thanhtoan`,`ghichu`,`trangthai`) VALUES (?,?,?,?,?,?,?,?,?,?,?)";
+            String sql = "INSERT INTO `datsan`(`madatsan`,`manhanvien`,`masan`,`makhachhang`,`checkin`,`checkout`,`giasan`,`tongtien`,`thanhtoan`,`ghichu`,`trangthai`,`ngaydat`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
             PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
             pst.setInt(1, t.getMadatsan());
             pst.setInt(2, t.getManhanvien());
@@ -40,6 +40,7 @@ public class DatSanDAO implements DAOinterface<DatSanDTO> {
             pst.setString(9, t.getThanhtoan());
             pst.setString(10, t.getGhichu());
             pst.setInt(11, t.getTrangthai());
+            pst.setDate(12, (java.sql.Date) t.getNgaydat());
             result = pst.executeUpdate();
             JDBCUtil.closeConnection(con);
         } catch (SQLException ex) {
@@ -54,7 +55,7 @@ public class DatSanDAO implements DAOinterface<DatSanDTO> {
         try {
             Connection con = (Connection) JDBCUtil.getConnection();
             String sql = "UPDATE `datsan` SET `manhanvien`=?,`masan`=?,`makhachhang`=?,`checkin`=?,`checkout`=?,"
-                    + "`giasan`=?,`tongtien`=?,`thanhtoan`=?,`ghichu`=?,`trangthai`=? WHERE `madatsan`=?";
+                    + "`giasan`=?,`tongtien`=?,`thanhtoan`=?,`ghichu`=?,`trangthai`=?,`ngaydat`=? WHERE `madatsan`=?";
             PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
             pst.setInt(1, t.getManhanvien());
             pst.setInt(2, t.getMasan());
@@ -66,7 +67,8 @@ public class DatSanDAO implements DAOinterface<DatSanDTO> {
             pst.setString(8, t.getThanhtoan());
             pst.setString(9, t.getGhichu());
             pst.setInt(10, t.getTrangthai());
-            pst.setInt(11, t.getMadatsan());
+            pst.setDate(11, (java.sql.Date) t.getNgaydat());
+            pst.setInt(12, t.getMadatsan());
 
             result = pst.executeUpdate();
             JDBCUtil.closeConnection(con);
@@ -186,7 +188,7 @@ public class DatSanDAO implements DAOinterface<DatSanDTO> {
 //        return result;
     }
 
-    public ArrayList<DatSanDTO> getBySan(int masan) {
+    public static ArrayList<DatSanDTO> getBySan(int masan) {
         ArrayList<DatSanDTO> result = new ArrayList<>();
         try {
             Connection con = (Connection) JDBCUtil.getConnection();

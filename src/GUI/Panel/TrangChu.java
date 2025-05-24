@@ -24,12 +24,12 @@ public final class TrangChu extends javax.swing.JPanel {
 
     public void initComponent() {
         this.setBounds(0, 200, 300, 1030);
-        this.setBackground(colorStyle.backgroundColorGray());
+        this.setBackground(colorStyle.colorForm());
         this.setLayout(new BorderLayout(0, 0));
         this.setOpaque(true);
 
         top = new JPanel(new GridLayout(10, 1, 5, 5));
-        top.setBackground(colorStyle.mainBackgroundColor());
+        top.setBackground(colorStyle.colorForm());
         top.setPreferredSize(new Dimension(1100, 650));
         top.setBorder(BorderFactory.createEmptyBorder(20, 10, 10, 10));
 

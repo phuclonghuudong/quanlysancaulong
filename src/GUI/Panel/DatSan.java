@@ -27,6 +27,7 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.logging.Level;
@@ -93,11 +94,9 @@ public final class DatSan extends JPanel implements ActionListener, KeyListener,
     }
 
     public DatSan(Main m) {
-        this.listDatSan = datsanBUS.getAll();
         this.m = m;
         initComponents();
         initComponent();
-
         loadDataTableSanPham(listSanPham);
     }
 
@@ -107,17 +106,7 @@ public final class DatSan extends JPanel implements ActionListener, KeyListener,
         this.setOpaque(true);
         this.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        jPanelHeader.setBackground(colorStyle.colorForm());
-        jPanelThanhToan.setBackground(colorStyle.colorForm());
-        jPanelMainDanhSachSan.setBackground(Color.WHITE);
-        jPanelDanhSachSanPham.setBackground(Color.LIGHT_GRAY);
-        jPanelButtonSan.setBackground(Color.WHITE);
-        jPanelHoaDon.setBackground(Color.WHITE);
-        jPanelTitle.setBackground(new Color(204, 255, 255));
-
-        jPanelMainDanhSachSan.add(jPanelDanhSachSan, BorderLayout.CENTER);
-        jPanelMainDanhSachSan.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-
+        panelTitle();
         panelHeader();
         panelDanhSachSan();
         panelDanhSachSanPham();
@@ -126,23 +115,21 @@ public final class DatSan extends JPanel implements ActionListener, KeyListener,
             hienThiVaoPanelHoaDon(sanDuocChon, listSanPhamDaChon);
         }
 
-        jPanelButtonSanPham.setBackground(Color.WHITE);
-        buttonStyle.customizeButton(btnAddSanPham, "");
-        buttonStyle.customizeButton(btnThemSoLuong, "");
-        buttonStyle.customizeButton(btnXoaSanPham, "");
-        buttonStyle.customizeButton(btnTruSoLuong, "");
-        buttonStyle.customizeButton(btnDatSan, "excel");
-        buttonStyle.customizeButton(btnThanhToan, "success");
-        buttonStyle.customizeButton(btnHuySan, "danger");
+    }
 
-        btnThemSoLuong.addActionListener(this);
-        btnTruSoLuong.addActionListener(this);
-        btnXoaSanPham.addActionListener(this);
-        btnAddSanPham.addActionListener(this);
-        txtLoaiSanPham.addItemListener(this);
+    private void panelTitle() {
+        jPanelTitle.setBackground(new Color(204, 255, 255));
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        String formattedDate = LocalDate.now().format(formatter);
+        JLabel lblTime = new JLabel("Ngày " + formattedDate);
+        lblTime.setFont(new Font("Arial", Font.BOLD, 12));
+        jPanelTitle.add(lblTime);
+        jPanelTitle.setLayout(new FlowLayout(FlowLayout.LEFT));
+        jPanelTitle.setBorder(new EmptyBorder(5, 10, 5, 0));
     }
 
     private void panelHeader() {
+        jPanelHeader.setBackground(colorStyle.colorForm());
         txtUsernameKH.setBorder(new EmptyBorder(2, 10, 2, 10));
         txtSoDienThoaiKH.setBorder(new EmptyBorder(2, 10, 2, 10));
         lblSoDienThoai.setText("SĐT: (chưa nhập)");
@@ -174,7 +161,7 @@ public final class DatSan extends JPanel implements ActionListener, KeyListener,
             }
         });
 
-//        DANH SÁCH LOẠI SÂN
+        //        DANH SÁCH LOẠI SÂN
         listLoaiSan = loaiSanBUS.getAllStatus();
         ArrayList<String> loaiSanNames = new ArrayList<>();
         loaiSanNames.add("Tất cả");
@@ -207,6 +194,9 @@ public final class DatSan extends JPanel implements ActionListener, KeyListener,
     }
 
     private void panelDanhSachSan() {
+        jPanelMainDanhSachSan.setBackground(Color.WHITE);
+        jPanelMainDanhSachSan.add(jPanelDanhSachSan, BorderLayout.CENTER);
+        jPanelMainDanhSachSan.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         ArrayList<SanDTO> listSan = sanBUS.getAllLoaiSanHoatDong();
 
         jPanelDanhSachSan.removeAll();
@@ -215,21 +205,37 @@ public final class DatSan extends JPanel implements ActionListener, KeyListener,
         jPanelDanhSachSan.setBackground(Color.WHITE);
 
         itemTaskbar[] listItem = new itemTaskbar[listSan.size()];
+
+        LocalDate ngaydat = LocalDate.now();
+
+        String selectedCheckin = (String) txtCheckin.getSelectedItem();
+        String selectedCheckout = (String) txtCheckout.getSelectedItem();
+
+        LocalTime checkin = null;
+        LocalTime checkout = null;
+
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+        try {
+            if (!"Tất cả".equals(selectedCheckin)) {
+                checkin = LocalTime.parse(selectedCheckin, timeFormatter);
+            }
+            if (!"Tất cả".equals(selectedCheckout)) {
+                checkout = LocalTime.parse(selectedCheckout, timeFormatter);
+            }
+        } catch (DateTimeParseException ex) {
+        }
         int i = 0;
         for (SanDTO san : listSan) {
             listItem[i] = new itemTaskbar(san);
             listItem[i].setOnSanSelectedListener(s -> {
                 sanDuocChon = s;
                 hienThiVaoPanelHoaDon(sanDuocChon, listSanPhamDaChon);
-
             });
             jPanelDanhSachSan.add(listItem[i]);
             i++;
         }
 
         JScrollPane scrollPane = new JScrollPane(jPanelDanhSachSan);
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
         scrollPane.setBorder(null);
 
@@ -244,7 +250,7 @@ public final class DatSan extends JPanel implements ActionListener, KeyListener,
     }
 
     private void panelDanhSachSanPham() {
-
+        jPanelDanhSachSanPham.setBackground(Color.LIGHT_GRAY);
         String[] methodNames = {"getMasanpham", "getTensanpham", "getTenloaisanpham", "getGiaban", "getSoluong"};
         tableModelSanPham = new TableModel<>(listSanPham, headerSanPham, methodNames);
         tableSanPham = new JTable(tableModelSanPham);
@@ -263,6 +269,21 @@ public final class DatSan extends JPanel implements ActionListener, KeyListener,
     }
 
     private void panelButton() {
+        jPanelButtonSan.setBackground(Color.WHITE);
+        jPanelButtonSanPham.setBackground(Color.WHITE);
+        buttonStyle.customizeButton(btnAddSanPham, "");
+        buttonStyle.customizeButton(btnThemSoLuong, "");
+        buttonStyle.customizeButton(btnXoaSanPham, "");
+        buttonStyle.customizeButton(btnTruSoLuong, "");
+        buttonStyle.customizeButton(btnDatSan, "excel");
+        buttonStyle.customizeButton(btnThanhToan, "success");
+        buttonStyle.customizeButton(btnHuySan, "danger");
+
+        btnThemSoLuong.addActionListener(this);
+        btnTruSoLuong.addActionListener(this);
+        btnXoaSanPham.addActionListener(this);
+        btnAddSanPham.addActionListener(this);
+        txtLoaiSanPham.addItemListener(this);
         txtCheckin.removeAllItems();
         txtCheckout.removeAllItems();
 
@@ -383,7 +404,6 @@ public final class DatSan extends JPanel implements ActionListener, KeyListener,
         jPanelDanhSachSan.repaint();
     }
 
-// Hiển thị 1 sân lên panel
     private void hienThiSanLenPanel(SanDTO san) {
         sanDuocChon = san;
         JLabel lblTenSan = new JLabel("Sân: " + san.getTensan());
@@ -408,7 +428,6 @@ public final class DatSan extends JPanel implements ActionListener, KeyListener,
         jPanelHoaDon.add(Box.createVerticalStrut(10));
     }
 
-// Hiển thị 1 sản phẩm lên panel
     private void hienThiSanPhamLenPanel(SanPhamDTO sp, JPanel jPanelList) {
         JLabel lblTenSP = new JLabel(sp.getTensanpham());
         JLabel lblSoLuong = new JLabel(sp.getSoluong() + "");
@@ -479,6 +498,8 @@ public final class DatSan extends JPanel implements ActionListener, KeyListener,
 
 // Hàm hiển thị tổng thể sân + danh sách sản phẩm
     private void hienThiVaoPanelHoaDon(SanDTO san, ArrayList<SanPhamDTO> dsSanPham) {
+        jPanelThanhToan.setBackground(colorStyle.colorForm());
+        jPanelHoaDon.setBackground(Color.WHITE);
         jPanelHoaDon.removeAll();
         jPanelHoaDon.setLayout(new BoxLayout(jPanelHoaDon, BoxLayout.Y_AXIS));
         jPanelHoaDon.setBorder(new EmptyBorder(10, 10, 10, 10));
@@ -799,7 +820,7 @@ public final class DatSan extends JPanel implements ActionListener, KeyListener,
 
         jPanelHeaderLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {txtLoaiSan, txtSoDienThoaiKH, txtUsernameKH});
 
-        jPanelHoaDon.setBackground(new java.awt.Color(204, 255, 255));
+        jPanelHoaDon.setBackground(new java.awt.Color(255, 255, 255));
         jPanelHoaDon.setMaximumSize(new java.awt.Dimension(339, 51));
         jPanelHoaDon.setMinimumSize(new java.awt.Dimension(339, 51));
         jPanelHoaDon.setPreferredSize(new java.awt.Dimension(340, 390));
@@ -973,6 +994,8 @@ public final class DatSan extends JPanel implements ActionListener, KeyListener,
             jPanelTitleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 36, Short.MAX_VALUE)
         );
+
+        jPanelThanhToan.setBackground(new java.awt.Color(255, 248, 230));
 
         btnThanhToan.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         btnThanhToan.setText("THANH TOÁN");
