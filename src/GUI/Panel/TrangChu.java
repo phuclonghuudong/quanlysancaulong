@@ -12,7 +12,7 @@ import style.StyleColor;
  *
  * @author phucp
  */
-public class TrangChu extends javax.swing.JPanel {
+public final class TrangChu extends javax.swing.JPanel {
 
     StyleColor colorStyle = new StyleColor();
     JPanel top, center, bar1, bar2;
@@ -35,7 +35,6 @@ public class TrangChu extends javax.swing.JPanel {
 
         TitleHome title = new TitleHome("TRƯỜNG ĐẠI HỌC QUỐC GIA - TRƯỜNG ĐAI HỌC CÔNG NGHỆ THÔNG TIN", 13);
         top.add(title);
-
         TitleHome titleBB = new TitleHome("BÁO CÁO ĐỒ ÁN", 30);
         top.add(titleBB);
         TitleHome titleB = new TitleHome("IE303.E22.LT.CNTT - CÔNG NGHỆ JAVA ", 28);
@@ -51,7 +50,7 @@ public class TrangChu extends javax.swing.JPanel {
         TitleHome titleD3 = new TitleHome("Phạm Hồng Phúc", "MSSV: 24410086", 16, 16);
         top.add(titleD3);
 
-        this.add(top, BorderLayout.NORTH);
+        this.add(top, BorderLayout.CENTER);
 
     }
 

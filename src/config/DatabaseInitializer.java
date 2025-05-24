@@ -85,17 +85,7 @@ public class DatabaseInitializer {
                     + "ngaycapnhat TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,"
                     + "FOREIGN KEY (loaisanpham) REFERENCES loaihang(maloaihang)"
                     + ");";
-            sql += "CREATE TABLE IF NOT EXISTS khunggia ("
-                    + "makhunggia INT AUTO_INCREMENT PRIMARY KEY,"
-                    + "checkin TIME,"
-                    + "checkout TIME,"
-                    + "thu INT,"
-                    + "loaingay VARCHAR(50),"
-                    + "dongia DECIMAL(10,2),"
-                    + "trangthai INT,"
-                    + "ngaytao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,"
-                    + "ngaycapnhat TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"
-                    + ");";
+
             sql += "CREATE TABLE IF NOT EXISTS datsan ("
                     + "madatsan INT AUTO_INCREMENT PRIMARY KEY,"
                     + "manhanvien INT,"
@@ -127,15 +117,6 @@ public class DatabaseInitializer {
                     + "FOREIGN KEY (madatsan) REFERENCES datsan(madatsan),"
                     + "FOREIGN KEY (masanpham) REFERENCES sanpham(masanpham)"
                     + ");";
-            sql += "CREATE TABLE IF NOT EXISTS chitietgiasan ("
-                    + "id INT AUTO_INCREMENT PRIMARY KEY,"
-                    + "masan INT,"
-                    + "makhunggia INT,"
-                    + "ghichu VARCHAR(255),"
-                    + "FOREIGN KEY (masan) REFERENCES san(masan),"
-                    + "FOREIGN KEY (makhunggia) REFERENCES khunggia(makhunggia)"
-                    + ");";
-            //            Chạy nhiều lệnh SQL (chia nhỏ hoặc dùng batch nếu cần
 
             for (String singleSql : sql.split(";")) {
                 if (!singleSql.trim().isEmpty()) {

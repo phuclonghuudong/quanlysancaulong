@@ -22,6 +22,7 @@ import java.beans.PropertyChangeListener;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Iterator;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
@@ -80,7 +81,6 @@ public final class DatSan extends JPanel implements ActionListener, KeyListener,
     }
 
     private void initComponent() {
-//        fontStyle.setUIFont14();
         this.setSize(new Dimension(1030, 670));
         this.setBackground(colorStyle.mainBackgroundColor());
         this.setOpaque(true);
@@ -90,7 +90,7 @@ public final class DatSan extends JPanel implements ActionListener, KeyListener,
         jPanelMainDanhSachSan.setBackground(Color.WHITE);
         jPanelDanhSachSanPham.setBackground(Color.LIGHT_GRAY);
         jPanelButtonSan.setBackground(Color.WHITE);
-        jPanelHoaDon.setBackground(new Color(204, 255, 255));
+        jPanelHoaDon.setBackground(Color.WHITE);
         jPanelTitle.setBackground(new Color(204, 255, 255));
 
         jPanelMainDanhSachSan.add(jPanelDanhSachSan, BorderLayout.CENTER);
@@ -168,7 +168,9 @@ public final class DatSan extends JPanel implements ActionListener, KeyListener,
         for (SanDTO san : listSan) {
             listItem[i] = new itemTaskbar(san);
             listItem[i].setOnSanSelectedListener(s -> {
-                hienThiSanLenPanel(s);
+                sanDuocChon = s;
+                hienThiVaoPanelHoaDon(sanDuocChon, listSanPhamDaChon);
+
             });
             jPanelDanhSachSan.add(listItem[i]);
             i++;
@@ -280,35 +282,70 @@ public final class DatSan extends JPanel implements ActionListener, KeyListener,
 
     private void hienThiSanLenPanel(SanDTO san) {
         sanDuocChon = san;
-        JLabel lblTenSan = new JLabel("Tên sân: " + san.getTensan());
-        JLabel lblGiaSan = new JLabel("Giá sân: " + Formater.FormatVND(san.getGiasan()));
+        JLabel lblTenSan = new JLabel("Sân: " + san.getTensan());
+        JLabel lblGiaSan = new JLabel("Giá: " + Formater.FormatVND(san.getGiasan()));
 
-        lblTenSan.setFont(new Font("Tahoma", Font.BOLD, 14));
-        lblGiaSan.setFont(new Font("Tahoma", Font.PLAIN, 13));
-        jPanelHoaDon.add(lblTenSan);
-        jPanelHoaDon.add(lblGiaSan);
+        lblTenSan.setFont(new Font("Arial", Font.BOLD, 18));
+        lblGiaSan.setFont(new Font("Arial", Font.PLAIN, 13));
+
+        JPanel pnlS = new JPanel(new GridLayout(1, 2));
+        pnlS.setBorder(new EmptyBorder(10, 10, 10, 10));
+        pnlS.setBackground(Color.WHITE);
+        pnlS.setLayout(new BoxLayout(pnlS, BoxLayout.X_AXIS));
+        pnlS.setPreferredSize(new Dimension(340, 40));
+        pnlS.setMaximumSize(new Dimension(340, 40));
+        pnlS.setMinimumSize(new Dimension(340, 40));
+        pnlS.add(lblTenSan);
+        pnlS.add(Box.createVerticalStrut(30));
+        pnlS.add(lblGiaSan);
+        pnlS.setAlignmentX(LEFT_ALIGNMENT);
+
+        jPanelHoaDon.add(pnlS);
         jPanelHoaDon.add(Box.createVerticalStrut(10));
-
     }
 
 // Hiển thị 1 sản phẩm lên panel
     private void hienThiSanPhamLenPanel(SanPhamDTO sp) {
-        JLabel lblTenSP = new JLabel("Sản phẩm: " + sp.getTensanpham());
-        JLabel lblSoLuong = new JLabel("Số lượng: " + sp.getSoluong());
-        JLabel lblGiaSP = new JLabel("Giá: " + Formater.FormatVND(sp.getGiaban()));
+        JLabel lblTenSP = new JLabel(sp.getTensanpham());
+        JLabel lblSoLuong = new JLabel("SL: " + sp.getSoluong());
+        JLabel lblGiaSP = new JLabel(" x " + Formater.FormatVND(sp.getGiaban()));
+        JLabel lblThanhTien = new JLabel("Tổng: " + Formater.FormatVND(sp.getGiaban() * sp.getSoluong()));
 
-        lblTenSP.setFont(new Font("Tahoma", Font.PLAIN, 13));
-        lblSoLuong.setFont(new Font("Tahoma", Font.PLAIN, 13));
-        lblGiaSP.setFont(new Font("Tahoma", Font.PLAIN, 13));
+        Font fontBold = new Font("Arial", Font.BOLD, 13);
+        Font font = new Font("Arial", Font.PLAIN, 13);
+        lblTenSP.setFont(fontBold);
+        lblSoLuong.setFont(font);
+        lblGiaSP.setFont(font);
+        lblThanhTien.setFont(fontBold);
 
-        JPanel pnlSP = new JPanel();
+        JPanel panelTen = new JPanel();
+        panelTen.setLayout(new FlowLayout(FlowLayout.LEFT));
+        panelTen.setOpaque(false);
+        panelTen.add(lblTenSP);
+
+        JPanel panelSoLuongGia = new JPanel();
+        panelSoLuongGia.setLayout(new FlowLayout(FlowLayout.CENTER));
+        panelSoLuongGia.setOpaque(false);
+        panelSoLuongGia.add(lblSoLuong);
+        panelSoLuongGia.add(lblGiaSP);
+
+        JPanel panelThanhTien = new JPanel();
+        panelThanhTien.setLayout(new FlowLayout(FlowLayout.RIGHT));
+        panelThanhTien.setOpaque(false);
+        panelThanhTien.add(lblThanhTien);
+
+        JPanel pnlSP = new JPanel(new GridLayout(1, 3));
+        pnlSP.setBorder(new EmptyBorder(10, 10, 10, 10));
+        pnlSP.setBackground(colorStyle.colorForm());
         pnlSP.setLayout(new BoxLayout(pnlSP, BoxLayout.X_AXIS));
-        pnlSP.add(lblTenSP);
-        pnlSP.add(Box.createHorizontalStrut(15));
-        pnlSP.add(lblSoLuong);
-        pnlSP.add(Box.createHorizontalStrut(15));
-        pnlSP.add(lblGiaSP);
+        pnlSP.setPreferredSize(new Dimension(340, 40));
+        pnlSP.setMaximumSize(new Dimension(340, 40));
+        pnlSP.setMinimumSize(new Dimension(340, 40));
+        pnlSP.add(panelTen);
+        pnlSP.add(panelSoLuongGia);
+        pnlSP.add(panelThanhTien);
         pnlSP.setAlignmentX(LEFT_ALIGNMENT);
+        pnlSP.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
         jPanelHoaDon.add(pnlSP);
         jPanelHoaDon.add(Box.createVerticalStrut(5));
@@ -318,11 +355,12 @@ public final class DatSan extends JPanel implements ActionListener, KeyListener,
     private void hienThiVaoPanelHoaDon(SanDTO san, ArrayList<SanPhamDTO> dsSanPham) {
         jPanelHoaDon.removeAll();
         jPanelHoaDon.setLayout(new BoxLayout(jPanelHoaDon, BoxLayout.Y_AXIS));
+        jPanelHoaDon.setBorder(new EmptyBorder(10, 10, 10, 10));
 
         hienThiSanLenPanel(san);
 
         JLabel lblTieuDeSP = new JLabel("Danh sách sản phẩm:");
-        lblTieuDeSP.setFont(new Font("Tahoma", Font.BOLD, 14));
+        lblTieuDeSP.setFont(new Font("Tahoma", Font.BOLD, 13));
         jPanelHoaDon.add(lblTieuDeSP);
         jPanelHoaDon.add(Box.createVerticalStrut(5));
 
@@ -332,6 +370,21 @@ public final class DatSan extends JPanel implements ActionListener, KeyListener,
 
         jPanelHoaDon.revalidate();
         jPanelHoaDon.repaint();
+    }
+
+    private SanPhamDTO cloneSanPhamWithSoLuong(SanPhamDTO sp, int soLuong) {
+        SanPhamDTO clone = new SanPhamDTO();
+        clone.setMasanpham(sp.getMasanpham());
+        clone.setLoaisanpham(sp.getLoaisanpham());
+        clone.setTensanpham(sp.getTensanpham());
+        clone.setGiaban(sp.getGiaban());
+        clone.setDonvi(sp.getDonvi());
+        clone.setGhichu(sp.getGhichu());
+        clone.setTrangthai(sp.getTrangthai());
+        clone.setNgaytao(sp.getNgaytao());
+        clone.setNgaycapnhat(sp.getNgaycapnhat());
+        clone.setSoluong(soLuong);
+        return clone;
     }
 
     @SuppressWarnings("empty-statement")
@@ -378,7 +431,6 @@ public final class DatSan extends JPanel implements ActionListener, KeyListener,
         txtLoaiSan = new javax.swing.JComboBox<>();
         txtLoaiSanPham = new javax.swing.JComboBox<>();
         jPanelHoaDon = new javax.swing.JPanel();
-        btnThanhToan = new javax.swing.JButton();
         jPanelMainDanhSachSan = new javax.swing.JPanel();
         jPanelDanhSachSan = new javax.swing.JPanel();
         jPanelDanhSachSanPham = new javax.swing.JPanel();
@@ -604,23 +656,15 @@ public final class DatSan extends JPanel implements ActionListener, KeyListener,
         jPanelHoaDon.setMaximumSize(new java.awt.Dimension(339, 51));
         jPanelHoaDon.setMinimumSize(new java.awt.Dimension(339, 51));
 
-        btnThanhToan.setText("jButton1");
-
         javax.swing.GroupLayout jPanelHoaDonLayout = new javax.swing.GroupLayout(jPanelHoaDon);
         jPanelHoaDon.setLayout(jPanelHoaDonLayout);
         jPanelHoaDonLayout.setHorizontalGroup(
             jPanelHoaDonLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanelHoaDonLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(btnThanhToan, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(200, Short.MAX_VALUE))
+            .addGap(0, 339, Short.MAX_VALUE)
         );
         jPanelHoaDonLayout.setVerticalGroup(
             jPanelHoaDonLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelHoaDonLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnThanhToan, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+            .addGap(0, 585, Short.MAX_VALUE)
         );
 
         jPanelMainDanhSachSan.setBackground(new java.awt.Color(204, 255, 204));
@@ -880,26 +924,6 @@ public final class DatSan extends JPanel implements ActionListener, KeyListener,
 
     }//GEN-LAST:event_txtUsernameKHFocusGained
 
-    private void txtTenSanKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtTenSanKeyReleased
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtTenSanKeyReleased
-
-    private void txtTenSanKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtTenSanKeyPressed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtTenSanKeyPressed
-
-    private void txtTenSanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtTenSanActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtTenSanActionPerformed
-
-    private void txtTenSanFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtTenSanFocusLost
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtTenSanFocusLost
-
-    private void txtTenSanFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtTenSanFocusGained
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtTenSanFocusGained
-
     private void btnThemSoLuongActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnThemSoLuongActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_btnThemSoLuongActionPerformed
@@ -920,66 +944,97 @@ public final class DatSan extends JPanel implements ActionListener, KeyListener,
         // TODO add your handling code here:
     }//GEN-LAST:event_txtCheckinActionPerformed
 
+    private void txtTenSanKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtTenSanKeyReleased
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtTenSanKeyReleased
+
+    private void txtTenSanKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtTenSanKeyPressed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtTenSanKeyPressed
+
+    private void txtTenSanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtTenSanActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtTenSanActionPerformed
+
+    private void txtTenSanFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtTenSanFocusLost
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtTenSanFocusLost
+
+    private void txtTenSanFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtTenSanFocusGained
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtTenSanFocusGained
+
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == btnAddSanPham) {
-            int selectedRow = tableSanPham.getSelectedRow();
+        int selectedRow = tableSanPham.getSelectedRow();
 
-            if (selectedRow == -1) {
-                JOptionPane.showMessageDialog(this, "Vui lòng chọn sản phẩm để thêm!", "Thông báo", JOptionPane.WARNING_MESSAGE);
-                return;
-            }
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn sản phẩm để thực hiện thao tác!", "Thông báo", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
 
-            int maSP = Integer.parseInt(tableSanPham.getValueAt(selectedRow, 0).toString());
-            sanphamBUS.getByIndex(maSP);
-            SanPhamDTO sp = sanphamBUS.getByIndex(maSP);
-            if (sp != null) {
-                // Kiểm tra xem sản phẩm đã có trong list chưa, nếu có thì tăng số lượng
-                boolean found = false;
-                for (SanPhamDTO sanPhamDaChon : listSanPhamDaChon) {
-                    if (sanPhamDaChon.getMasanpham() == sp.getMasanpham()) {
-                        sanPhamDaChon.setSoluong(sanPhamDaChon.getSoluong() + 1);
-                        found = true;
-                        break;
+        String maSP = String.valueOf(tableSanPham.getValueAt(selectedRow, 0));
+        SanPhamDTO sp = sanphamBUS.getByMaSP(maSP);
+
+        if (sp == null) {
+            JOptionPane.showMessageDialog(this, "Không tìm thấy sản phẩm!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        int soLuongTonKho = sp.getSoluong();
+        boolean found = false;
+
+        if (e.getSource() == btnAddSanPham || e.getSource() == btnThemSoLuong) {
+            for (SanPhamDTO sanPhamDaChon : listSanPhamDaChon) {
+                if (sanPhamDaChon.getMasanpham() == sp.getMasanpham()) {
+                    int soLuongHienCo = sanPhamDaChon.getSoluong();
+                    if (soLuongHienCo + 1 > soLuongTonKho) {
+                        JOptionPane.showMessageDialog(this,
+                                "Số lượng trong hóa đơn vượt quá số lượng tồn kho!",
+                                "Cảnh báo", JOptionPane.WARNING_MESSAGE);
+                        return;
                     }
+                    sanPhamDaChon.setSoluong(soLuongHienCo + 1);
+                    found = true;
+                    break;
                 }
-
-                // Nếu chưa có trong danh sách thì thêm mới với số lượng = 1
-                if (!found) {
-                    sp.setSoluong(1);
-                    listSanPhamDaChon.add(sp);
-                }
-
-                // Cập nhật lại panel hóa đơn hiển thị sân và danh sách sản phẩm
-                hienThiVaoPanelHoaDon(sanDuocChon, listSanPhamDaChon);
-            } else {
-                JOptionPane.showMessageDialog(this, "Không tìm thấy sản phẩm!", "Lỗi", JOptionPane.ERROR_MESSAGE);
             }
+
+            if (!found) {
+                SanPhamDTO spClone = cloneSanPhamWithSoLuong(sp, 1);
+                listSanPhamDaChon.add(spClone);
+            }
+
+            hienThiVaoPanelHoaDon(sanDuocChon, listSanPhamDaChon);
         }
 
-        if (e.getSource() == btnThemSoLuong) {
-            int selectedRow = tableSanPham.getSelectedRow();
-
-            if (selectedRow == -1) {
-                JOptionPane.showMessageDialog(this, "Vui lòng chọn sản phẩm để thực hiện thao tác!", "Thông báo", JOptionPane.WARNING_MESSAGE);
-                return;
-            }
-        }
         if (e.getSource() == btnTruSoLuong) {
-            int selectedRow = tableSanPham.getSelectedRow();
-
-            if (selectedRow == -1) {
-                JOptionPane.showMessageDialog(this, "Vui lòng chọn sản phẩm để thực hiện thao tác!", "Thông báo", JOptionPane.WARNING_MESSAGE);
-                return;
+            for (Iterator<SanPhamDTO> iterator = listSanPhamDaChon.iterator(); iterator.hasNext();) {
+                SanPhamDTO sanPhamDaChon = iterator.next();
+                if (sanPhamDaChon.getMasanpham() == sp.getMasanpham()) {
+                    int soLuongHienCo = sanPhamDaChon.getSoluong();
+                    if (soLuongHienCo <= 1) {
+                        iterator.remove(); // Xóa khỏi danh sách nếu còn 1 và người dùng bấm giảm
+                    } else {
+                        sanPhamDaChon.setSoluong(soLuongHienCo - 1);
+                    }
+                    found = true;
+                    break;
+                }
             }
+
+            if (!found) {
+                JOptionPane.showMessageDialog(this,
+                        "Sản phẩm chưa có trong hóa đơn!",
+                        "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            }
+
+            hienThiVaoPanelHoaDon(sanDuocChon, listSanPhamDaChon);
         }
-        if (e.getSource() == btnXoaSanPham) {
-            int selectedRow = tableSanPham.getSelectedRow();
 
-            if (selectedRow == -1) {
-                JOptionPane.showMessageDialog(this, "Vui lòng chọn sản phẩm để thực hiện thao tác!", "Thông báo", JOptionPane.WARNING_MESSAGE);
-                return;
-            }
+        if (e.getSource() == btnXoaSanPham) {
+            listSanPhamDaChon.removeIf(spInList -> spInList.getMasanpham() == sp.getMasanpham());
+            hienThiVaoPanelHoaDon(sanDuocChon, listSanPhamDaChon);
         }
     }
 
@@ -1027,7 +1082,6 @@ public final class DatSan extends JPanel implements ActionListener, KeyListener,
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAddSanPham;
-    private javax.swing.JButton btnThanhToan;
     private javax.swing.JButton btnThemSoLuong;
     private javax.swing.JButton btnTruSoLuong;
     private javax.swing.JButton btnXoaSanPham;

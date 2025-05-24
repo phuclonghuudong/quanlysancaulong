@@ -140,7 +140,7 @@ public class SanPhamDAO implements DAOinterface<SanPhamDTO> {
             Connection conn = JDBCUtil.getConnection();
             String sql = "SELECT s.masanpham as masanpham, s.tensanpham as tensanpham, s.giaban AS giaban, s.ghichu as ghichu,"
                     + " s.trangthai as trangthai, ls.tenloaihang as tenloaihang, s.loaisanpham as loaisanpham, s.soluong as soluong,s.donvi as donvi"
-                    + " FROM sanpham AS s JOIN loaihang AS ls on ls.maloaihang=s.loaisanpham";
+                    + " FROM sanpham AS s JOIN loaihang AS ls on ls.maloaihang=s.loaisanpham ORDER BY s.masanpham ASC";
             PreparedStatement pst = (PreparedStatement) conn.prepareStatement(sql);
             ResultSet rs = (ResultSet) pst.executeQuery();
             while (rs.next()) {
@@ -174,7 +174,7 @@ public class SanPhamDAO implements DAOinterface<SanPhamDTO> {
             Connection conn = JDBCUtil.getConnection();
             String sql = "SELECT s.masanpham as masanpham, s.tensanpham as tensanpham, s.giaban AS giaban, s.ghichu as ghichu,"
                     + " s.trangthai as trangthai, ls.tenloaihang as tenloaihang, s.loaisanpham as loaisanpham, s.soluong as soluong,s.donvi as donvi"
-                    + " FROM sanpham AS s JOIN loaihang AS ls on ls.maloaihang=s.loaisanpham WHERE s.trangthai = 1";
+                    + " FROM sanpham AS s JOIN loaihang AS ls on ls.maloaihang=s.loaisanpham WHERE s.trangthai = 1 ORDER BY s.masanpham ASC";
             PreparedStatement pst = (PreparedStatement) conn.prepareStatement(sql);
             ResultSet rs = (ResultSet) pst.executeQuery();
             while (rs.next()) {

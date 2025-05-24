@@ -39,6 +39,20 @@ public class SanPhamBUS {
         return this.listDS.get(index);
     }
 
+    public SanPhamDTO getByMaSP(String maSP) {
+        try {
+            int ma = Integer.parseInt(maSP);
+            for (SanPhamDTO sp : listDS) {
+                if (sp.getMasanpham() == ma) {
+                    return sp;
+                }
+            }
+        } catch (NumberFormatException e) {
+            System.err.println("Lỗi: mã sản phẩm không hợp lệ -> " + maSP);
+        }
+        return null;
+    }
+
     public int getIndexByMaDV(int ID) {
         int i = 0;
         int vitri = -1;
