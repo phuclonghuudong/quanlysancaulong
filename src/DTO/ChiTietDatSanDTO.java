@@ -9,6 +9,7 @@ import java.util.Objects;
  */
 public class ChiTietDatSanDTO {
 
+    private int ID;
     private int madatsan;
     private int masanpham;
     private int soluong;
@@ -21,7 +22,8 @@ public class ChiTietDatSanDTO {
     public ChiTietDatSanDTO() {
     }
 
-    public ChiTietDatSanDTO(int madatsan, int masanpham, int soluong, double giatien, String ghichu, int trangthai) {
+    public ChiTietDatSanDTO(int ID, int madatsan, int masanpham, int soluong, double giatien, String ghichu, int trangthai) {
+        this.ID = ID;
         this.madatsan = madatsan;
         this.masanpham = masanpham;
         this.soluong = soluong;
@@ -30,17 +32,83 @@ public class ChiTietDatSanDTO {
         this.trangthai = trangthai;
     }
 
+    public ChiTietDatSanDTO(int ID, int madatsan, int masanpham, int soluong, double giatien, String ghichu, int trangthai, Timestamp ngaytao, Timestamp ngaycapnhat) {
+        this.ID = ID;
+        this.madatsan = madatsan;
+        this.masanpham = masanpham;
+        this.soluong = soluong;
+        this.giatien = giatien;
+        this.ghichu = ghichu;
+        this.trangthai = trangthai;
+        this.ngaytao = ngaytao;
+        this.ngaycapnhat = ngaycapnhat;
+    }
+
     @Override
     public String toString() {
-        return "ChiTietDatSanDTO{" + "madatsan=" + madatsan + ", masanpham=" + masanpham + ", soluong=" + soluong + ", giatien=" + giatien + ", ghichu=" + ghichu + ", trangthai=" + trangthai + ", ngaytao=" + ngaytao + ", ngaycapnhat=" + ngaycapnhat + '}';
+        return "ChiTietDatSanDTO{" + "ID=" + ID + ", madatsan=" + madatsan + ", masanpham=" + masanpham + ", soluong=" + soluong + ", giatien=" + giatien + ", ghichu=" + ghichu + ", trangthai=" + trangthai + ", ngaytao=" + ngaytao + ", ngaycapnhat=" + ngaycapnhat + '}';
     }
 
-    public Timestamp getNgaycapnhat() {
-        return ngaycapnhat;
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 59 * hash + this.ID;
+        hash = 59 * hash + this.madatsan;
+        hash = 59 * hash + this.masanpham;
+        hash = 59 * hash + this.soluong;
+        hash = 59 * hash + (int) (Double.doubleToLongBits(this.giatien) ^ (Double.doubleToLongBits(this.giatien) >>> 32));
+        hash = 59 * hash + Objects.hashCode(this.ghichu);
+        hash = 59 * hash + this.trangthai;
+        hash = 59 * hash + Objects.hashCode(this.ngaytao);
+        hash = 59 * hash + Objects.hashCode(this.ngaycapnhat);
+        return hash;
     }
 
-    public void setNgaycapnhat(Timestamp ngaycapnhat) {
-        this.ngaycapnhat = ngaycapnhat;
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final ChiTietDatSanDTO other = (ChiTietDatSanDTO) obj;
+        if (this.ID != other.ID) {
+            return false;
+        }
+        if (this.madatsan != other.madatsan) {
+            return false;
+        }
+        if (this.masanpham != other.masanpham) {
+            return false;
+        }
+        if (this.soluong != other.soluong) {
+            return false;
+        }
+        if (Double.doubleToLongBits(this.giatien) != Double.doubleToLongBits(other.giatien)) {
+            return false;
+        }
+        if (this.trangthai != other.trangthai) {
+            return false;
+        }
+        if (!Objects.equals(this.ghichu, other.ghichu)) {
+            return false;
+        }
+        if (!Objects.equals(this.ngaytao, other.ngaytao)) {
+            return false;
+        }
+        return Objects.equals(this.ngaycapnhat, other.ngaycapnhat);
+    }
+
+    public int getID() {
+        return ID;
+    }
+
+    public void setID(int ID) {
+        this.ID = ID;
     }
 
     public int getMadatsan() {
@@ -99,54 +167,12 @@ public class ChiTietDatSanDTO {
         this.ngaytao = ngaytao;
     }
 
-    @Override
-    public int hashCode() {
-        int hash = 3;
-        hash = 79 * hash + this.madatsan;
-        hash = 79 * hash + this.masanpham;
-        hash = 79 * hash + this.soluong;
-        hash = 79 * hash + (int) (Double.doubleToLongBits(this.giatien) ^ (Double.doubleToLongBits(this.giatien) >>> 32));
-        hash = 79 * hash + Objects.hashCode(this.ghichu);
-        hash = 79 * hash + this.trangthai;
-        hash = 79 * hash + Objects.hashCode(this.ngaytao);
-        hash = 79 * hash + Objects.hashCode(this.ngaycapnhat);
-        return hash;
+    public Timestamp getNgaycapnhat() {
+        return ngaycapnhat;
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final ChiTietDatSanDTO other = (ChiTietDatSanDTO) obj;
-        if (this.madatsan != other.madatsan) {
-            return false;
-        }
-        if (this.masanpham != other.masanpham) {
-            return false;
-        }
-        if (this.soluong != other.soluong) {
-            return false;
-        }
-        if (Double.doubleToLongBits(this.giatien) != Double.doubleToLongBits(other.giatien)) {
-            return false;
-        }
-        if (this.trangthai != other.trangthai) {
-            return false;
-        }
-        if (!Objects.equals(this.ghichu, other.ghichu)) {
-            return false;
-        }
-        if (!Objects.equals(this.ngaytao, other.ngaytao)) {
-            return false;
-        }
-        return Objects.equals(this.ngaycapnhat, other.ngaycapnhat);
+    public void setNgaycapnhat(Timestamp ngaycapnhat) {
+        this.ngaycapnhat = ngaycapnhat;
     }
 
 }

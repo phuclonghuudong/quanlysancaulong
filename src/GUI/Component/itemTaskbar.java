@@ -1,12 +1,13 @@
 package GUI.Component;
 
-import DTO.SanDTO;
+import DTO.DatSanDTO;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.GridLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -38,7 +39,7 @@ public class itemTaskbar extends javax.swing.JPanel implements MouseListener {
 
     public interface OnSanSelectedListener {
 
-        void sanSelected(SanDTO san);
+        void sanSelected(DatSanDTO san);
     }
 
     public void setOnSanSelectedListener(OnSanSelectedListener listener) {
@@ -140,7 +141,7 @@ public class itemTaskbar extends javax.swing.JPanel implements MouseListener {
         right.add(bottomRowPanel);
     }
 
-    public itemTaskbar(SanDTO san) {
+    public itemTaskbar(DatSanDTO san, int type) {
         this.setLayout(new BorderLayout(0, 0));
         this.setPreferredSize(new Dimension(100, 60));
         this.setBackground(new Color(255, 248, 230));
@@ -156,8 +157,13 @@ public class itemTaskbar extends javax.swing.JPanel implements MouseListener {
         });
 
         img = new JLabel("");
+        img = new JLabel("");
         img.setBorder(new EmptyBorder(2, 2, 2, 2));
-        img.setIcon(new ImageIcon("./src/image/field-50-green.png"));
+        String imageIcon = san.getTrangthai() == 5 ? "./src/image/field-50-blue.png"
+                : san.getTrangthai() == 4 ? "./src/image/field-50-gray.png"
+                : san.getTrangthai() == 3 ? "./src/image/field-50-green.png"
+                : "./src/image/field-50-yellow.png";
+        img.setIcon(new ImageIcon(imageIcon));
         img.setPreferredSize(new Dimension(45, 60));
         this.add(img, BorderLayout.WEST);
 
@@ -170,28 +176,100 @@ public class itemTaskbar extends javax.swing.JPanel implements MouseListener {
         JPanel topRowPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
         topRowPanel.setOpaque(false);
 
-        pnlContent = new JLabel(san.getTensan());
+        String giaFormat = Formater.FormatVND(san.getGiasan());
+        pnlContent = new JLabel(san.getTensan() + " - " + giaFormat);
         pnlContent.setFont(new Font("Tahoma", Font.BOLD, 10));
         pnlContent.setForeground(Color.BLACK);
         topRowPanel.add(pnlContent);
-
-        String giaFormat = Formater.FormatVND(san.getGiasan());
-        pnlGia = new JLabel("Giá: " + giaFormat);
-        pnlGia.setPreferredSize(new Dimension(200, 25));
-        pnlGia.setFont(new Font("Tahoma", Font.BOLD, 10));
-        pnlGia.setForeground(Color.GRAY);
-        topRowPanel.add(pnlGia);
 
         right.add(topRowPanel);
 
         JPanel bottomRowPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
         bottomRowPanel.setOpaque(false);
 
-//        pnlSoLuong = new JLabel();
-//        pnlSoLuong.setFont(new Font("Tahoma", Font.BOLD, 12));
-//        pnlSoLuong.setForeground(Color.GRAY);
-//
-//        bottomRowPanel.add(pnlSoLuong);
+        String stt = san.getTrangthai() == 5 ? "Đã thanh toán"
+                : (san.getTrangthai() == 3) ? "Đã đặt"
+                : (san.getTrangthai() == 4) ? "Đã hủy" : "Trống";
+        JLabel trangthai = new JLabel("CC:" + stt);
+        trangthai.setFont(new Font("Arial", Font.BOLD, 10));
+        bottomRowPanel.add(trangthai);
+        right.add(bottomRowPanel);
+    }
+
+    public itemTaskbar(DatSanDTO ds, String type) {
+        this.setLayout(new BorderLayout(0, 0));
+        this.setPreferredSize(new Dimension(340, 80));
+        this.setBackground(new Color(255, 248, 230));
+        this.setBorder(new EmptyBorder(2, 2, 2, 2));
+        this.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+        Font fontSize = new Font("Arial", Font.BOLD, 11);
+        img = new JLabel("");
+        img.setBorder(new EmptyBorder(2, 2, 2, 2));
+        String imageIcon = ds.getTrangthai() == 5 ? "./src/image/field-50-blue.png"
+                : ds.getTrangthai() == 4 ? "./src/image/field-50-gray.png"
+                : ds.getTrangthai() == 3 ? "./src/image/field-50-green.png"
+                : "./src/image/field-50-yellow.png";
+
+        img.setIcon(new ImageIcon(imageIcon));
+        img.setPreferredSize(new Dimension(45, 60));
+        this.add(img, BorderLayout.WEST);
+
+        right = new JPanel();
+        right.setLayout(new BoxLayout(right, BoxLayout.Y_AXIS));
+        right.setBorder(new EmptyBorder(10, 10, 0, 0));
+        right.setOpaque(false);
+        this.add(right, BorderLayout.CENTER);
+
+        JPanel topRowPanel = new JPanel(new GridLayout(2, 2));
+        topRowPanel.setOpaque(false);
+        topRowPanel.setPreferredSize(new Dimension(340, 20));
+
+        pnlContent = new JLabel(ds.getTensan());
+        pnlContent.setFont(new Font("Arial", Font.BOLD, 11));
+        pnlContent.setForeground(Color.BLACK);
+        pnlContent.setPreferredSize(new Dimension(50, 20));
+        topRowPanel.add(pnlContent);
+
+// Giá sân
+        String giaFormat = Formater.FormatVND(ds.getGiasan());
+        JLabel pnlGia = new JLabel(giaFormat);
+        pnlGia.setFont(fontSize);
+        pnlGia.setForeground(Color.GRAY);
+
+// Checkin
+        JLabel checkin = new JLabel("In: " + ds.getCheckin());
+        checkin.setFont(fontSize);
+        checkin.setForeground(Color.BLACK);
+// Checkout
+        JLabel checkout = new JLabel("Out: " + ds.getCheckout());
+        checkout.setFont(fontSize);
+        checkout.setForeground(Color.BLACK);
+
+        topRowPanel.add(pnlGia);
+        topRowPanel.add(checkin);
+        topRowPanel.add(checkout);
+
+        JPanel bottomRowPanel = new JPanel(new GridLayout(2, 2));
+        bottomRowPanel.setOpaque(false);
+        // Tông tiền
+        String thanhTienFormat = Formater.FormatVND(ds.getTongtien());
+        JLabel pnlThanhTien = new JLabel("Tổng tiền: " + thanhTienFormat);
+        pnlThanhTien.setFont(new Font("Arial", Font.BOLD, 12));
+        pnlThanhTien.setForeground(Color.RED);
+        bottomRowPanel.add(pnlThanhTien);
+// Ngày đặt
+
+        JLabel ngayDat = new JLabel(ds.getNgaydat() + "");
+        ngayDat.setFont(new Font("Arial", Font.BOLD, 10));
+        bottomRowPanel.add(ngayDat);
+// Trang thái
+        String stt = ds.getTrangthai() == 5 ? "Đã thanh toán" : (ds.getTrangthai() == 4) ? "Đã hủy" : "Đã đặt";
+        JLabel trangthai = new JLabel("Trạng thái: " + stt);
+        trangthai.setFont(new Font("Arial", Font.BOLD, 10));
+        bottomRowPanel.add(trangthai);
+
+        right.add(topRowPanel);
         right.add(bottomRowPanel);
     }
 

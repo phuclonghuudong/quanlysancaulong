@@ -48,7 +48,7 @@ public class SanPhamBUS {
                 }
             }
         } catch (NumberFormatException e) {
-            System.err.println("Lỗi: mã sản phẩm không hợp lệ -> " + maSP);
+//            System.err.println("Lỗi: mã sản phẩm không hợp lệ -> " + maSP);
         }
         return null;
     }

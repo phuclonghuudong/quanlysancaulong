@@ -26,7 +26,9 @@ public class DatSanDTO {
     private Timestamp ngaytao;
     private Timestamp ngaycapnhat;
 
+    private String tensan;
     private String sodienthoaiKH;
+    private String tenloaiSan;
 
     public DatSanDTO() {
     }
@@ -160,6 +162,14 @@ public class DatSanDTO {
         return Objects.equals(this.ngaycapnhat, other.ngaycapnhat);
     }
 
+    public String getTenloaiSan() {
+        return tenloaiSan;
+    }
+
+    public void setTenloaiSan(String tenloaiSan) {
+        this.tenloaiSan = tenloaiSan;
+    }
+
     public Date getNgaydat() {
         return ngaydat;
     }
@@ -278,6 +288,14 @@ public class DatSanDTO {
 
     public void setNgaytao(Timestamp ngaytao) {
         this.ngaytao = ngaytao;
+    }
+
+    public String getTensan() {
+        return tensan;
+    }
+
+    public void setTensan(String tensan) {
+        this.tensan = tensan;
     }
 
 }

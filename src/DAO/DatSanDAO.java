@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.sql.Time;
 
 /**
  *
@@ -214,6 +215,99 @@ public class DatSanDAO implements DAOinterface<DatSanDTO> {
             }
             JDBCUtil.closeConnection(con);
         } catch (SQLException e) {
+        }
+        return result;
+    }
+
+    public static ArrayList<DatSanDTO> getByKhachHang() {
+        ArrayList<DatSanDTO> result = new ArrayList<>();
+        try {
+            Connection con = (Connection) JDBCUtil.getConnection();
+            String sql = "SELECT ds.madatsan AS madatsan, s.masan AS masan, s.tensan AS tensan, s.giasan AS giasan, s.trangthai AS trangthaisan, "
+                    + "ls.maloaisan AS loaisan, ls.tenloaisan AS tenloaisan, ds.trangthai AS trangthai, "
+                    + "ds.checkin AS checkin, ds.checkout AS checkout, ds.ngaydat AS ngaydat, "
+                    + "ds.tongtien AS tongtien, ds.madatsan AS madatsan, ds.manhanvien AS manhanvien, "
+                    + "ds.ghichu AS ghichu, ds.thanhtoan AS thanhtoan, "
+                    + "kh.hoten AS hoten, kh.sodienthoai AS sodienthoai, kh.makhachhang AS makhachhang "
+                    + "FROM san AS s "
+                    + "JOIN loaisan AS ls ON ls.maloaisan = s.loaisan "
+                    + "JOIN datsan AS ds ON ds.masan = s.masan "
+                    + "JOIN khachhang AS kh ON kh.makhachhang = ds.makhachhang;";
+            PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
+            ResultSet rs = (ResultSet) pst.executeQuery();
+            while (rs.next()) {
+                int maDS = rs.getInt("madatsan");
+                int maNV = rs.getInt("manhanvien");
+                int maS = rs.getInt("masan");
+                int maKH = rs.getInt("makhachhang");
+                LocalTime checkin = rs.getTime("checkin").toLocalTime();
+                LocalTime checkout = rs.getTime("checkout").toLocalTime();
+                Double giasan = rs.getDouble("giasan");
+                Double tongtien = rs.getDouble("tongtien");
+                Date ngaydat = rs.getDate("ngaydat");
+                String thanhtoan = rs.getString("thanhtoan");
+                String ghichu = rs.getString("ghichu");
+                int trangthai = rs.getInt("trangthai");
+                String tensan = rs.getString("tensan");
+                DatSanDTO ds = new DatSanDTO(maDS, maKH, maS, maNV, checkin, checkout, ngaydat, giasan, tongtien, thanhtoan, ghichu, trangthai);
+                ds.setTensan(tensan);
+                result.add(ds);
+            }
+            JDBCUtil.closeConnection(con);
+        } catch (SQLException e) {
+        }
+        return result;
+    }
+
+    public static ArrayList<DatSanDTO> danhsachSanPhamViewPanelDatSan(java.sql.Date text) {
+        ArrayList<DatSanDTO> result = new ArrayList<>();
+        try {
+            Connection con = (Connection) JDBCUtil.getConnection();
+            String sql = "SELECT ds.madatsan AS madatsan, s.masan AS masan, s.tensan AS tensan, "
+                    + " s.giasan AS giasan, s.loaisan, ls.tenloaisan as tenloaisan, ds.trangthai AS trangthai, "
+                    + " ds.checkin AS checkin, ds.checkout AS checkout, ds.ngaydat AS ngaydat, "
+                    + " ds.tongtien AS tongtien, ds.madatsan AS madatsan, ds.manhanvien AS manhanvien, "
+                    + " ds.ghichu AS ghichu, ds.thanhtoan AS thanhtoan, ds.makhachhang AS makhachhang"
+                    + " FROM san AS s JOIN loaisan AS ls ON ls.maloaisan = s.loaisan"
+                    + " LEFT JOIN datsan AS ds ON ds.masan = s.masan AND ds.ngaydat=? AND ds.checkin =? ORDER BY ds.checkin ASC ";
+            PreparedStatement pst = (PreparedStatement) con.prepareStatement(sql);
+            pst.setDate(1, text);
+
+            LocalTime timeNow = LocalTime.now();
+            if (timeNow.getMinute() > 0 || timeNow.getSecond() > 0) {
+                timeNow = timeNow.plusHours(1).withMinute(0).withSecond(0).withNano(0);
+            }
+            Time sqlTime = Time.valueOf(timeNow);
+
+            pst.setTime(2, sqlTime);
+
+            ResultSet rs = (ResultSet) pst.executeQuery();
+            while (rs.next()) {
+                int maDS = rs.getInt("madatsan");
+                int maNV = rs.getInt("manhanvien");
+                int maS = rs.getInt("masan");
+                int maKH = rs.getInt("makhachhang");
+                Time checkinTime = rs.getTime("checkin");
+                LocalTime checkin = (checkinTime != null) ? checkinTime.toLocalTime() : null;
+
+                Time checkoutTime = rs.getTime("checkout");
+                LocalTime checkout = (checkoutTime != null) ? checkoutTime.toLocalTime() : null;
+                Double giasan = rs.getDouble("giasan");
+                Double tongtien = rs.getDouble("tongtien");
+                Date ngaydat = rs.getDate("ngaydat");
+                String thanhtoan = rs.getString("thanhtoan");
+                String ghichu = rs.getString("ghichu");
+                int trangthai = rs.getInt("trangthai");
+                String tensan = rs.getString("tensan");
+                String tenloaisan = rs.getString("tenloaisan");
+                DatSanDTO ds = new DatSanDTO(maDS, maNV, maS, maKH, checkin, checkout, ngaydat, giasan, tongtien, thanhtoan, ghichu, trangthai);
+                ds.setTensan(tensan);
+                ds.setTenloaiSan(tenloaisan);
+                result.add(ds);
+            }
+            JDBCUtil.closeConnection(con);
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         return result;
     }

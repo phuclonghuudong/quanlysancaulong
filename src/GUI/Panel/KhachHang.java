@@ -1,16 +1,22 @@
 package GUI.Panel;
 
+import BUS.DatSanBUS;
 import BUS.KhachHangBUS;
+import DTO.DatSanDTO;
 import DTO.KhachHangDTO;
+import GUI.Component.CustomScrollBar;
 import GUI.Component.IntegratedSearch;
 import GUI.Component.MainFunction;
 import GUI.Component.PanelBorderRadius;
 import GUI.Component.TableModel;
+import GUI.Component.itemTaskbar;
 import GUI.Dialog.KhachHangDialog;
 import GUI.Main;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -18,6 +24,8 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -48,6 +56,7 @@ public final class KhachHang extends JPanel implements ActionListener, ItemListe
     JScrollPane scrollPane;
 
     public KhachHangBUS khBUS = new KhachHangBUS();
+    public DatSanBUS datsanBUS = new DatSanBUS();
     public ArrayList<KhachHangDTO> listDS = khBUS.getAll();
     private TableModel<KhachHangDTO> tableModel;
     JFrame owner = (JFrame) SwingUtilities.getWindowAncestor(this);
@@ -55,7 +64,7 @@ public final class KhachHang extends JPanel implements ActionListener, ItemListe
     DefaultTableModel tblModel;
 
     String[] header = new String[]{"Mã KH", "Họ tên", "Số điện thoại", "Địa chỉ", "Trạng thái"};
-    String[] headerSearch = new String[]{"Tất cả", "Mã khách hàng", "Họ tên", "Số điện thoại", "Địa chỉ", "Trạng thái"};
+    String[] headerSearch = new String[]{"Tất cả", "Mã khách hàng", "Họ tên", "Số điện thoại", "Trạng thái"};
 
     public KhachHang(Main main) {
         this.m = main;
@@ -92,6 +101,18 @@ public final class KhachHang extends JPanel implements ActionListener, ItemListe
         tableContent.getColumnModel().getColumn(4).setCellRenderer(centerRenderer);
 
         tableContent.setAutoCreateRowSorter(true);
+
+        tableContent.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                int index = tableContent.getSelectedRow();
+                if (index != -1) {
+                    ArrayList<DatSanDTO> listDSDatSan = datsanBUS.getByKhachHang(listDS.get(index).getMakhachhang());
+                    System.out.println("listDSDatSan 111" + listDSDatSan);
+                    ListCustomersInDePot(listDSDatSan);
+                }
+            }
+        });
 
         contentCenter = new JPanel();
         contentCenter.setPreferredSize(new Dimension(1100, 600));
@@ -138,6 +159,21 @@ public final class KhachHang extends JPanel implements ActionListener, ItemListe
         contentCenter.add(main, BorderLayout.CENTER);
 
         main.add(scrollTable);
+
+        right = new JPanel();
+        right.setBackground(Color.WHITE);
+        right.setBackground(colorStyle.mainBackgroundColor());
+        right.setLayout(new FlowLayout(0, 0, 10));
+        right.setBorder(new EmptyBorder(0, 10, 0, 0));
+        right.setPreferredSize(new Dimension(300, 800));
+        JLabel tit = new JLabel("Danh sách sân khách hàng đã đặt:");
+        tit.setFont(new Font("Tahoma", Font.BOLD, 14));
+        right.add(tit);
+        scrollPane = new JScrollPane(right, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.setBorder(new EmptyBorder(0, 0, 0, 0));
+        scrollPane.setVerticalScrollBar(new CustomScrollBar(JScrollBar.VERTICAL));
+        scrollPane.setHorizontalScrollBar(new CustomScrollBar(JScrollBar.HORIZONTAL));
+        contentCenter.add(scrollPane, BorderLayout.EAST);
     }
 
     @SuppressWarnings("empty-statement")
@@ -167,6 +203,31 @@ public final class KhachHang extends JPanel implements ActionListener, ItemListe
             JOptionPane.showMessageDialog(this, "Vui lòng chọn dữ liệu!");
         }
         return index;
+    }
+
+    public void ListCustomersInDePot(ArrayList<DatSanDTO> result) {
+        right.removeAll();
+        JLabel tit = new JLabel("Danh sách sân khách hàng đã đặt:");
+        tit.setFont(new Font("Arial", Font.BOLD, 14));
+        right.add(tit);
+        itemTaskbar listItem[] = new itemTaskbar[result.size()];
+        int i = 0;
+        System.out.println("sp 215" + result);
+        for (DatSanDTO sp : result) {
+            listItem[i] = new itemTaskbar(sp, "success");
+            right.add(listItem[i]);
+            i++;
+        }
+
+        if (i == 0) {
+            if (result.isEmpty()) {
+                JLabel lblIcon = new JLabel("Khách hàng chưa đặt sân nào.");
+                lblIcon.setFont(new Font("Arial", Font.BOLD, 13));
+                right.add(lblIcon);
+            }
+        }
+        right.repaint();
+        right.validate();
     }
 
     /**

@@ -12,7 +12,6 @@ import DTO.KhachHangDTO;
 import DTO.LoaiHangDTO;
 import DTO.LoaiSanDTO;
 import DTO.NhanVienDTO;
-import DTO.SanDTO;
 import DTO.SanPhamDTO;
 import GUI.Component.CustomScrollBar;
 import GUI.Component.TableModel;
@@ -64,6 +63,7 @@ public final class DatSan extends JPanel implements ActionListener, KeyListener,
     JTable tableSanPham;
     DefaultTableModel tblModelSanPham;
     private SanPhamBUS sanphamBUS = new SanPhamBUS();
+    DatSanBUS datSanBUS = new DatSanBUS();
     private ArrayList<SanPhamDTO> listSanPham = sanphamBUS.getAllLoaiSanPhamHoatDong();
     private TableModel<SanPhamDTO> tableModelSanPham;
 
@@ -75,7 +75,7 @@ public final class DatSan extends JPanel implements ActionListener, KeyListener,
     private LoaiHangBUS loaiHangBUS = new LoaiHangBUS();
     private ArrayList<LoaiHangDTO> listLoaiHang;
 
-    private SanDTO sanDuocChon;  // sân hiện tại đang chọn
+    private DatSanDTO sanDuocChon;  // sân hiện tại đang chọn
     private ArrayList<SanPhamDTO> listSanPhamDaChon = new ArrayList<>();
 
     int soGioChoi = 0;
@@ -197,7 +197,10 @@ public final class DatSan extends JPanel implements ActionListener, KeyListener,
         jPanelMainDanhSachSan.setBackground(Color.WHITE);
         jPanelMainDanhSachSan.add(jPanelDanhSachSan, BorderLayout.CENTER);
         jPanelMainDanhSachSan.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        ArrayList<SanDTO> listSan = sanBUS.getAllLoaiSanHoatDong();
+
+        LocalDate localDate = LocalDate.now();
+        java.sql.Date sqlDate = java.sql.Date.valueOf(localDate);
+        ArrayList<DatSanDTO> listSan = DatSanBUS.danhsachSanPhamViewPanelDatSan(sqlDate);
 
         jPanelDanhSachSan.removeAll();
         jPanelDanhSachSan.setLayout(new GridLayout(0, 3, 10, 10));
@@ -225,8 +228,8 @@ public final class DatSan extends JPanel implements ActionListener, KeyListener,
         } catch (DateTimeParseException ex) {
         }
         int i = 0;
-        for (SanDTO san : listSan) {
-            listItem[i] = new itemTaskbar(san);
+        for (DatSanDTO san : listSan) {
+            listItem[i] = new itemTaskbar(san, 1);
             listItem[i].setOnSanSelectedListener(s -> {
                 sanDuocChon = s;
                 hienThiVaoPanelHoaDon(sanDuocChon, listSanPhamDaChon);
@@ -384,15 +387,17 @@ public final class DatSan extends JPanel implements ActionListener, KeyListener,
         jPanelDanhSachSan.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         jPanelDanhSachSan.setBackground(Color.WHITE);
 
-        ArrayList<SanDTO> listSan;
+        LocalDate localDate = LocalDate.now();
+        java.sql.Date sqlDate = java.sql.Date.valueOf(localDate);
+        ArrayList<DatSanDTO> listSan;
         if (tenLoaiSan.equals("Tất cả")) {
-            listSan = sanBUS.getAllLoaiSan();
+            listSan = DatSanBUS.danhsachSanPhamViewPanelDatSan(sqlDate);
         } else {
-            listSan = sanBUS.getByLoaiSan(tenLoaiSan);
+            listSan = datSanBUS.danhsachSanPhamViewPanelDatSanByLoaiSan(tenLoaiSan, sqlDate);
         }
 
-        for (SanDTO sp : listSan) {
-            itemTaskbar item = new itemTaskbar(sp);
+        for (DatSanDTO sp : listSan) {
+            itemTaskbar item = new itemTaskbar(sp, 1);
             item.setOnSanSelectedListener(san -> {
                 sanDuocChon = san;
                 hienThiVaoPanelHoaDon(sanDuocChon, listSanPhamDaChon);
@@ -404,7 +409,7 @@ public final class DatSan extends JPanel implements ActionListener, KeyListener,
         jPanelDanhSachSan.repaint();
     }
 
-    private void hienThiSanLenPanel(SanDTO san) {
+    private void hienThiSanLenPanel(DatSanDTO san) {
         sanDuocChon = san;
         JLabel lblTenSan = new JLabel("Sân: " + san.getTensan());
         JLabel lblGiaSan = new JLabel("Giá: " + Formater.FormatVND(san.getGiasan()));
@@ -496,8 +501,7 @@ public final class DatSan extends JPanel implements ActionListener, KeyListener,
         jPanelList.add(Box.createVerticalStrut(5));
     }
 
-// Hàm hiển thị tổng thể sân + danh sách sản phẩm
-    private void hienThiVaoPanelHoaDon(SanDTO san, ArrayList<SanPhamDTO> dsSanPham) {
+    private void hienThiVaoPanelHoaDon(DatSanDTO san, ArrayList<SanPhamDTO> dsSanPham) {
         jPanelThanhToan.setBackground(colorStyle.colorForm());
         jPanelHoaDon.setBackground(Color.WHITE);
         jPanelHoaDon.removeAll();
@@ -641,7 +645,7 @@ public final class DatSan extends JPanel implements ActionListener, KeyListener,
         datSanMoi.setNgaydat(java.sql.Date.valueOf(LocalDate.now()));
         datSanMoi.setCheckin(gioCheckin);
         datSanMoi.setCheckout(gioCheckout);
-        datSanMoi.setTrangthai(1);
+        datSanMoi.setTrangthai(3);
 
         String kq = datsanBUS.datSanBUS(datSanMoi);
         JOptionPane.showMessageDialog(null, kq);

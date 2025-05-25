@@ -92,13 +92,7 @@ public class DatSanBUS {
             return "Tổng tiền không hợp lệ.";
         }
 
-//        if (dto.getThanhtoan() == null || dto.getThanhtoan().trim().isEmpty()) {
-//            return "Phương thức thanh toán không được để trống.";
-//        }
-        if (dto.getTrangthai() < 0 || dto.getTrangthai() > 2) { // giả sử: 0 - Đang sử dụng, 1 - Hoàn tất, 2 - Hủy
-            return "Trạng thái không hợp lệ.";
-        }
-        ArrayList<DatSanDTO> danhSachDaDat = dsDAO.getBySan(dto.getMasan());
+        ArrayList<DatSanDTO> danhSachDaDat = DatSanDAO.getBySan(dto.getMasan());
         for (DatSanDTO ds : danhSachDaDat) {
             if ((ds.getTrangthai() == 0 || ds.getTrangthai() == 1) && dto.getNgaydat().equals(ds.getNgaydat())) {
                 if ((dto.getCheckin().isBefore(ds.getCheckout())) && (dto.getCheckout().isAfter(ds.getCheckin()))) {
@@ -113,6 +107,37 @@ public class DatSanBUS {
     }
 
     public ArrayList<DatSanDTO> getBySan(int index) {
-        return dsDAO.getBySan(index);
+        return DatSanDAO.getBySan(index);
+    }
+
+    public ArrayList<DatSanDTO> getAllKhachHangJOINSan() {
+        return DatSanDAO.getByKhachHang();
+    }
+
+    public static ArrayList<DatSanDTO> danhsachSanPhamViewPanelDatSan(java.sql.Date text) {
+        return DatSanDAO.danhsachSanPhamViewPanelDatSan(text);
+    }
+
+    public ArrayList<DatSanDTO> danhsachSanPhamViewPanelDatSanByLoaiSan(String tenLoaiSan, java.sql.Date text) {
+        ArrayList<DatSanDTO> all = danhsachSanPhamViewPanelDatSan(text);
+        ArrayList<DatSanDTO> filtered = new ArrayList<>();
+        for (DatSanDTO san : all) {
+            if (san.getTenloaiSan().equalsIgnoreCase(tenLoaiSan)) {
+                filtered.add(san);
+            }
+        }
+        return filtered;
+    }
+
+    public ArrayList<DatSanDTO> getByKhachHang(int index) {
+        ArrayList<DatSanDTO> all = getAllKhachHangJOINSan();
+        ArrayList<DatSanDTO> filtered = new ArrayList<>();
+        for (DatSanDTO ds : all) {
+            if (ds.getMakhachhang() == index) {
+                filtered.add(ds);
+            }
+        }
+        return filtered;
+
     }
 }
